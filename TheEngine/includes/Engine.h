@@ -4,8 +4,9 @@
 
 class SDL_Renderer;
 class SDL_Window;
+class IInput;
 
-namespace Engine
+namespace MyEngine
 {
 	class Engine final
 	{
@@ -26,6 +27,10 @@ namespace Engine
 		SDL_Window* _Window = NULL;
 		const uint8_t* _KeyStates = NULL;
 
-		float RecX = 100.f;
+		IInput* _Input;
+
+
+	public:
+		inline IInput* Input() { return _Input; }
 	};
 }

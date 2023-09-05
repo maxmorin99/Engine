@@ -11,7 +11,7 @@ void InitGameplay(void)
 
 INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT)
 {
-	Engine::Engine TheEngine;
+	MyEngine::Engine TheEngine;
 	if (TheEngine.Init("TestGame", 800, 600))
 	{
 		InitGameplay();

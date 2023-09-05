@@ -1,10 +1,5 @@
 #include "Engine.h"
 #include <SDL.h>
-#include <time.h>
-
-SDL_Renderer* Engine::Engine::_Renderer = NULL;
-SDL_Window* Engine::Engine::_Window = NULL;
-const uint8_t* Engine::Engine::_KeyStates = NULL;
 
 bool Engine::Engine::Init(const char* Name, int Width, int Height)
 {
@@ -35,7 +30,6 @@ bool Engine::Engine::Init(const char* Name, int Width, int Height)
 		SDL_Log(SDL_GetError());
 		return false;
 	}
-
 	
 	return true;
 }
@@ -51,16 +45,23 @@ void Engine::Engine::Start(void)
 	}
 
 	_IsRunning = true;
-
-	clock_t End = clock();
+	float TargetFps = 1000.f * 0.01666667f;
+	Uint32 End = SDL_GetTicks();
 
 	while (_IsRunning)
 	{
-		const clock_t Start = clock();
+		Uint32 Start = SDL_GetTicks();
 		float DeltaTime = (Start - End) * 0.001f;
+
 		ProcessInput();
 		Update(DeltaTime);
 		Render();
+
+		if (DeltaTime < TargetFps)
+		{
+			const float SleepTime = TargetFps - DeltaTime;
+			SDL_Delay(SleepTime);
+		}
 
 		End = Start;
 	}
@@ -88,7 +89,7 @@ void Engine::Engine::Update(float DeltaTime)
 {
 	if (_KeyStates[SDL_SCANCODE_D])
 	{
-		SDL_Log("Allo");
+		RecX += 0.1f;
 	}
 }
 
@@ -100,15 +101,13 @@ void Engine::Engine::Render(void)
 	SDL_SetRenderDrawColor(_Renderer, 255, 0, 0, 255);
 	SDL_Rect Rect;
 
-	Rect.x = 100;
+	Rect.x = static_cast<int>(RecX);
 	Rect.y = 100;
 	Rect.w = 100;
 	Rect.h = 100;
-	
 
 	SDL_RenderDrawRect(_Renderer, &Rect);
 	SDL_RenderPresent(_Renderer);
-
 }
 
 void Engine::Engine::Shutdown(void)

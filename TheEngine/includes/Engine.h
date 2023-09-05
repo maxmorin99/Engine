@@ -22,8 +22,10 @@ namespace Engine
 	private:
 		bool _IsRunning = false;
 		bool _IsInit = false;
-		static SDL_Renderer* _Renderer;
-		static SDL_Window* _Window;
-		static const uint8_t* _KeyStates;
+		SDL_Renderer* _Renderer = NULL;
+		SDL_Window* _Window = NULL;
+		const uint8_t* _KeyStates = NULL;
+
+		float RecX = 100.f;
 	};
 }

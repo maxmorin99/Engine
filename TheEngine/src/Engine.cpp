@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include "SDLInput.h"
 
-bool MyEngine::Engine::Init(const char* Name, int Width, int Height)
+bool Engine::Init(const char* Name, int Width, int Height)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
@@ -35,7 +35,7 @@ bool MyEngine::Engine::Init(const char* Name, int Width, int Height)
 	return true;
 }
 
-void MyEngine::Engine::Start(void)
+void Engine::Start(void)
 {
 	if (!_IsInit)
 	{
@@ -70,19 +70,19 @@ void MyEngine::Engine::Start(void)
 	Shutdown();
 }
 
-void MyEngine::Engine::ProcessInput(void)
+void Engine::ProcessInput(void)
 {
 	Input()->Update();
 }
 
-void MyEngine::Engine::Update(float DeltaTime)
+void Engine::Update(float DeltaTime)
 {
-	if (_KeyStates[SDL_SCANCODE_D])
+	/*if (_KeyStates[SDL_SCANCODE_D])
 	{
-	}
+	}*/
 }
 
-void MyEngine::Engine::Render(void)
+void Engine::Render(void)
 {
 	SDL_SetRenderDrawColor(_Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(_Renderer);
@@ -99,7 +99,7 @@ void MyEngine::Engine::Render(void)
 	SDL_RenderPresent(_Renderer);
 }
 
-void MyEngine::Engine::Shutdown(void)
+void Engine::Shutdown(void)
 {
 	if (_Input)
 	{

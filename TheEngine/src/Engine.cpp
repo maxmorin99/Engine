@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include <SDL.h>
 #include "SDLInput.h"
+#include "SDLLogger.h"
 
 bool Core::Engine::Init(const char* Name, int Width, int Height)
 {
@@ -31,6 +32,7 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 	_IsInit = true;
 
 	_Input = new SdlInput();
+	_Logger = new SdlLogger();
 	
 	return true;
 }
@@ -46,8 +48,11 @@ void Core::Engine::Start(void)
 	}
 
 	_IsRunning = true;
+	GetLogger()->DebugLog(EColor::Yellow, "The game IsRunning! %d\n", 2000);
 	float TargetFps = 1000.f / 60.f;
 	Uint32 End = SDL_GetTicks();
+
+	GetLogger()->DebugLog(EColor::Cyan, "The game has just started!");
 
 	while (_IsRunning)
 	{
@@ -72,14 +77,15 @@ void Core::Engine::Start(void)
 
 void Core::Engine::ProcessInput(void)
 {
-	//Input()->Update();
+	GetInput()->Update();
 }
 
 void Core::Engine::Update(float DeltaTime)
 {
-	/*if (_KeyStates[SDL_SCANCODE_D])
+	if (GetInput()->ShouldQuit())
 	{
-	}*/
+		_IsRunning = false;
+	}
 }
 
 void Core::Engine::Render(void)

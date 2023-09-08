@@ -1,13 +1,13 @@
 #pragma once
 
-#include <string>
-#include "IInput.h"
-
 class SDL_Renderer;
 class SDL_Window;
 
 namespace Core
 {
+	class IInput;
+	class ILogger;
+
 	class Engine final
 	{
 	public:
@@ -27,11 +27,12 @@ namespace Core
 		bool _IsInit = false;
 		SDL_Renderer* _Renderer = nullptr;
 		SDL_Window* _Window = nullptr;
-		const uint8_t* _KeyStates = nullptr;
 
-		IInput* _Input;
+		IInput* _Input = nullptr;
+		ILogger* _Logger = nullptr;
 
 	public:
 		inline IInput* GetInput() const { return _Input; }
+		inline ILogger* GetLogger() const { return _Logger; }
 	};
 }

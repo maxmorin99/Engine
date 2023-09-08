@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include "SDLInput.h"
 
-bool Engine::Init(const char* Name, int Width, int Height)
+bool Core::Engine::Init(const char* Name, int Width, int Height)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
@@ -20,7 +20,7 @@ bool Engine::Init(const char* Name, int Width, int Height)
 		return false;
 	}
 
-	Uint32 RendererFlags = SDL_RENDERER_ACCELERATED;
+	const Uint32 RendererFlags = SDL_RENDERER_ACCELERATED;
 	_Renderer = SDL_CreateRenderer(_Window, -1, RendererFlags);
 	if (!_Renderer)
 	{
@@ -35,7 +35,7 @@ bool Engine::Init(const char* Name, int Width, int Height)
 	return true;
 }
 
-void Engine::Start(void)
+void Core::Engine::Start(void)
 {
 	if (!_IsInit)
 	{
@@ -70,19 +70,19 @@ void Engine::Start(void)
 	Shutdown();
 }
 
-void Engine::ProcessInput(void)
+void Core::Engine::ProcessInput(void)
 {
-	Input()->Update();
+	//Input()->Update();
 }
 
-void Engine::Update(float DeltaTime)
+void Core::Engine::Update(float DeltaTime)
 {
 	/*if (_KeyStates[SDL_SCANCODE_D])
 	{
 	}*/
 }
 
-void Engine::Render(void)
+void Core::Engine::Render(void)
 {
 	SDL_SetRenderDrawColor(_Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(_Renderer);
@@ -99,12 +99,12 @@ void Engine::Render(void)
 	SDL_RenderPresent(_Renderer);
 }
 
-void Engine::Shutdown(void)
+void Core::Engine::Shutdown(void)
 {
-	if (_Input)
+	/*if (_Input)
 	{
 		delete _Input;
-	}
+	}*/
 	SDL_DestroyRenderer(_Renderer);
 	SDL_DestroyWindow(_Window);
 	SDL_Quit();

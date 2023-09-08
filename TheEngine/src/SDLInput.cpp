@@ -1,7 +1,7 @@
 #include "SDLInput.h"
 #include <SDL.h>
 
-void SdlInput::Update()
+void Core::SdlInput::Update()
 {
 	SDL_Event Event;
 	while (SDL_PollEvent(&Event))
@@ -10,22 +10,26 @@ void SdlInput::Update()
 		{
 		case SDL_QUIT:
 			break;
+		default:
+			break;
 		}
 	}
 
 	_KeyStates = SDL_GetKeyboardState(nullptr);
 }
 
-bool SdlInput::IsKeyDown(int keycode)
+bool Core::SdlInput::IsKeyDown(int keycode)
 {
 	return false;
 }
 
-bool SdlInput::IsButtonDown(int button)
+bool Core::SdlInput::IsButtonDown(int button)
 {
 	return false;
 }
 
-void SdlInput::GetMousePosition(int* x, int* y)
+void Core::SdlInput::GetMousePosition(int* x, int* y)
 {
+	*x = _MouseX;
+	*y = _MouseY;
 }

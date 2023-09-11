@@ -1,0 +1,9 @@
+﻿  Engine.cpp
+D:\Cours Engin\Engine\sdl\include\SDL_video.h(95,37): warning C4099: 'SDL_Window' : nom de type déjà rencontré avec 'class' et utilisant maintenant 'struct'
+D:\Cours Engin\Engine\TheEngine\includes\Engine.h(6,7): message : voir la déclaration de 'SDL_Window'
+D:\Cours Engin\Engine\sdl\include\SDL_render.h(141,20): warning C4099: 'SDL_Renderer' : nom de type déjà rencontré avec 'class' et utilisant maintenant 'struct'
+D:\Cours Engin\Engine\TheEngine\includes\Engine.h(5,7): message : voir la déclaration de 'SDL_Renderer'
+D:\Cours Engin\Engine\sdl\include\SDL_render.h(142,41): warning C4099: 'SDL_Renderer' : nom de type déjà rencontré avec 'class' et utilisant maintenant 'struct'
+D:\Cours Engin\Engine\sdl\include\SDL_render.h(141,8): message : voir la déclaration de 'SDL_Renderer'
+D:\Cours Engin\Engine\TheEngine\src\Engine.cpp(64,14): warning C4244: 'argument' : conversion de 'const float' en 'Uint32', perte possible de données
+  TheEngine.vcxproj -> D:\Cours Engin\Engine\x64\Debug\TheEngine.lib

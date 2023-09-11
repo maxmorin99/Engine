@@ -1,12 +1,11 @@
 #pragma once
 
-class SDL_Renderer;
-class SDL_Window;
-
 namespace Core
 {
 	class IInput;
 	class ILogger;
+	class IGraphic;
+	class ITimer;
 
 	class Engine final
 	{
@@ -25,14 +24,16 @@ namespace Core
 	private:
 		bool _IsRunning = false;
 		bool _IsInit = false;
-		SDL_Renderer* _Renderer = nullptr;
-		SDL_Window* _Window = nullptr;
 
 		IInput* _Input = nullptr;
 		ILogger* _Logger = nullptr;
+		IGraphic* _Graphic = nullptr;
+		ITimer* _Timer = nullptr;
 
 	public:
 		inline IInput* GetInput() const { return _Input; }
 		inline ILogger* GetLogger() const { return _Logger; }
+		inline IGraphic* GetGraphic() const { return _Graphic; }
+		inline ITimer* GetTimer() const { return _Timer; }
 	};
 }

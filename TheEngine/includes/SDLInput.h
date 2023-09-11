@@ -6,12 +6,16 @@ namespace Core
 	class SdlInput final : public IInput
 	{
 	public:
-		// IInput interface
+		SdlInput() = default;
+
+		// Input interface
 		virtual ~SdlInput() override = default;
 		virtual void Update() override;
 		virtual bool IsKeyDown(int Keycode) override;
 		virtual bool IsButtonDown(int Button) override;
 		virtual void GetMousePosition(int* X, int* Y) override;
+		// End Input interface
+
 		bool ShouldQuit() override;
 		
 

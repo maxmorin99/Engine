@@ -1,39 +1,38 @@
 #include "Engine.h"
-#include <SDL.h>
+#include <ctime>
+#include <Windows.h>
+#include "SdlGraphic.h"
 #include "SDLInput.h"
-#include "SDLLogger.h"
+#include "SdlTime.h"
+#if _DEBUG
+#include "SdlConsoleLogger.h"
+#else
+#include "SdlFileLogger.h"
+#endif
 
 bool Core::Engine::Init(const char* Name, int Width, int Height)
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-	{
-		SDL_Log(SDL_GetError());
-		return false;
-	}
+	// Init logger
+#if _DEBUG
+	_Logger = new SdlConsoleLogger();
+#elif
+	_Logger = new SdlFileLogger();
+#endif
+	if (!_Logger->Init()) return false;
 
-	int X = SDL_WINDOWPOS_CENTERED;
-	int Y = SDL_WINDOWPOS_CENTERED;
-	Uint32 WindowFlags = SDL_WINDOW_TOOLTIP;
-	_Window = SDL_CreateWindow(Name, X, Y, Width, Height, WindowFlags);
-	if (!_Window)
-	{
-		SDL_Log(SDL_GetError());
-		return false;
-	}
+	// Init Graphic
+	_Graphic = new SdlGraphic(Name, Width, Height);
+	if (!_Graphic->Init()) return false;
 
-	const Uint32 RendererFlags = SDL_RENDERER_ACCELERATED;
-	_Renderer = SDL_CreateRenderer(_Window, -1, RendererFlags);
-	if (!_Renderer)
-	{
-		SDL_Log(SDL_GetError());
-		return false;
-	}
+	// Init Input
+	_Input = new SdlInput();
+
+	// Init Timer
+	_Timer = new SdlTimer();
+	_Timer->SetTargetFps(1.f);
 
 	_IsInit = true;
 
-	_Input = new SdlInput();
-	_Logger = new SdlLogger();
-	
 	return true;
 }
 
@@ -48,28 +47,21 @@ void Core::Engine::Start(void)
 	}
 
 	_IsRunning = true;
-	GetLogger()->DebugLog(EColor::Yellow, "The game IsRunning! %d\n", 2000);
-	float TargetFps = 1000.f / 60.f;
-	Uint32 End = SDL_GetTicks();
 
-	GetLogger()->DebugLog(EColor::Cyan, "The game has just started!");
+	_Timer->StartTimer();
 
 	while (_IsRunning)
 	{
-		Uint32 Start = SDL_GetTicks();
-		float DeltaTime = (Start - End) * 0.001f;
+		const float DeltaTime = _Timer->GetDeltaTime();
+		_Logger->DebugLog(EColor::Green, "DT: %f\n", DeltaTime);
+		//_Logger->DebugLog(EColor::Green, "DT: %f\n", DeltaTime);
+		_Timer->UpdateStart();
 
 		ProcessInput();
 		Update(DeltaTime);
 		Render();
 
-		if (DeltaTime < TargetFps)
-		{
-			const float SleepTime = TargetFps - DeltaTime;
-			SDL_Delay(SleepTime);
-		}
-
-		End = Start;
+		_Timer->UpdateEnd();
 	}
 
 	Shutdown();
@@ -90,28 +82,17 @@ void Core::Engine::Update(float DeltaTime)
 
 void Core::Engine::Render(void)
 {
-	SDL_SetRenderDrawColor(_Renderer, 0, 0, 0, 255);
-	SDL_RenderClear(_Renderer);
-
-	SDL_SetRenderDrawColor(_Renderer, 255, 0, 0, 255);
-	SDL_Rect Rect;
-
-	Rect.x = 100;
-	Rect.y = 100;
-	Rect.w = 100;
-	Rect.h = 100;
-
-	SDL_RenderDrawRect(_Renderer, &Rect);
-	SDL_RenderPresent(_Renderer);
+	_Graphic->SetDrawColor(0, 0, 0, 255);
+	_Graphic->Clear();
+	_Graphic->SetDrawColor(255, 0, 0, 255);
+	_Graphic->DrawRect(100.f, 100.f, 100.f, 100.f);
+	_Graphic->Present();
 }
 
 void Core::Engine::Shutdown(void)
 {
-	/*if (_Input)
-	{
-		delete _Input;
-	}*/
-	SDL_DestroyRenderer(_Renderer);
-	SDL_DestroyWindow(_Window);
-	SDL_Quit();
+	delete _Input;
+	delete _Logger;
+	delete _Graphic;
+	delete _Timer;
 }

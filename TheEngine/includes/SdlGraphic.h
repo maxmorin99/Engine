@@ -7,7 +7,7 @@ struct SDL_Renderer;
 
 namespace Core
 {
-	class SdlGraphic : public IGraphic
+	class SdlGraphic final : public IGraphic
 	{
 	public:
 		SdlGraphic(const char* WinName, const int WinW, const int WinH);
@@ -17,10 +17,15 @@ namespace Core
 		virtual bool Init(const char* ErrorMsg = nullptr) override;
 		virtual bool InitWindow(const char* ErrorMsg = nullptr) override;
 		virtual bool InitRenderer(const char* ErrorMsg = nullptr) override;
-		virtual void SetDrawColor(const int Red, const int Green, const int Blue, const int Alpha) override;
+		virtual void SetDrawColor(const Color& NewColor) override;
 		virtual void Clear() override;
 		virtual void Present() override;
-		virtual void DrawRect(const float RectX, const float RectY, const float RectW, const float RectH) override;
+		virtual void DrawRect(bool bFill, const int RectX, const int RectY, const int RectW, const int RectH) override;
+		virtual void DrawRect(bool bFill, Rect<int>* Rect) override;
+		virtual void DrawRectF(bool bFill, const float RectX, const float RectY, const float RectW, const float RectH) override;
+		virtual void DrawRectF(bool bFill, Rect<float>* Rect) override;
+		virtual void DrawLine(const float X1, const float Y1, const float X2, const float Y2) override;
+		virtual size_t LoadTexture(const char* Filename) override;
 		virtual void ShutDown() override;
 		/** End Graphic Interface */
 

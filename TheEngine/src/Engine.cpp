@@ -15,7 +15,7 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 	// Init logger
 #if _DEBUG
 	_Logger = new SdlConsoleLogger();
-#elif
+#else
 	_Logger = new SdlFileLogger();
 #endif
 	if (!_Logger->Init()) return false;
@@ -52,10 +52,10 @@ void Core::Engine::Start(void)
 
 	while (_IsRunning)
 	{
-		const float DeltaTime = _Timer->GetDeltaTime();
-		_Logger->DebugLog(EColor::Green, "DT: %f\n", DeltaTime);
-		//_Logger->DebugLog(EColor::Green, "DT: %f\n", DeltaTime);
 		_Timer->UpdateStart();
+
+		const float DeltaTime = _Timer->GetDeltaTime();
+		_Logger->DebugLog(EColor::Red, "DT: %f\n", DeltaTime);
 
 		ProcessInput();
 		Update(DeltaTime);
@@ -82,10 +82,10 @@ void Core::Engine::Update(float DeltaTime)
 
 void Core::Engine::Render(void)
 {
-	_Graphic->SetDrawColor(0, 0, 0, 255);
+	_Graphic->SetDrawColor(Color(255, 0, 0, 255));
 	_Graphic->Clear();
-	_Graphic->SetDrawColor(255, 0, 0, 255);
-	_Graphic->DrawRect(100.f, 100.f, 100.f, 100.f);
+	_Graphic->SetDrawColor(Color(255, 0, 0, 255));
+	_Graphic->DrawRectF(false, 100.f, 100.f, 100.f, 100.f);
 	_Graphic->Present();
 }
 

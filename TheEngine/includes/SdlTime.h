@@ -5,7 +5,7 @@
 
 namespace Core
 {
-	class SdlTimer : public ITimer
+	class SdlTimer final : public ITimer
 	{
 	public:
 		SdlTimer() = default;

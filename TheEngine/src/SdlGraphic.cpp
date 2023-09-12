@@ -1,5 +1,7 @@
 #include "SdlGraphic.h"
 #include <SDL.h>
+#include <SDL_image.h>
+#include "Rect.h"
 
 Core::SdlGraphic::SdlGraphic(const char* WinName, const int WinW, const int WinH)
 {
@@ -53,9 +55,9 @@ bool Core::SdlGraphic::InitRenderer(const char* ErrorMsg)
 	return true;
 }
 
-void Core::SdlGraphic::SetDrawColor(const int Red, const int Green, const int Blue, const int Alpha)
+void Core::SdlGraphic::SetDrawColor(const Color& NewColor)
 {
-	SDL_SetRenderDrawColor(_Renderer, (Uint8)Red, (Uint8)Green, (Uint8)Blue, (Uint8)Alpha);
+	SDL_SetRenderDrawColor(_Renderer, (Uint8)NewColor.Red, (Uint8)NewColor.Green, (Uint8)NewColor.Blue, (Uint8)NewColor.Alpha);
 }
 
 void Core::SdlGraphic::Clear()
@@ -68,10 +70,78 @@ void Core::SdlGraphic::Present()
 	SDL_RenderPresent(_Renderer);
 }
 
-void Core::SdlGraphic::DrawRect(float RectX, float RectY, float RectW, float RectH)
+void Core::SdlGraphic::DrawRect(bool bFill, const int RectX, const int RectY, const int RectW, const int RectH)
+{
+	SDL_Rect Rect{ RectX, RectY, RectW, RectH };
+	if (bFill)
+	{
+		SDL_RenderFillRect(_Renderer, &Rect);
+	}
+	else
+	{
+		SDL_RenderDrawRect(_Renderer, &Rect);
+	}
+}
+
+void Core::SdlGraphic::DrawRect(bool bFill, Rect<int>* Rect)
+{
+	int RectX = 0;
+	int RectY = 0;
+	int RectW = 0;
+	int RectH = 0;
+	Rect->GetPosition(&RectX, &RectY);
+	Rect->GetSize(&RectW, &RectH);
+	const SDL_Rect SdlRect{ RectX, RectY, RectW, RectH };
+	if (bFill)
+	{
+		SDL_RenderFillRect(_Renderer, &SdlRect);
+	}
+	else
+	{
+		SDL_RenderDrawRect(_Renderer, &SdlRect);
+	}
+}
+
+void Core::SdlGraphic::DrawRectF(bool bFill, float RectX, float RectY, float RectW, float RectH)
 {
 	const SDL_FRect Rect{ RectX, RectY, RectW, RectH };
-	SDL_RenderDrawRectF(_Renderer, &Rect);
+	if (bFill)
+	{
+		SDL_RenderFillRectF(_Renderer, &Rect);
+	}
+	else
+	{
+		SDL_RenderDrawRectF(_Renderer, &Rect);
+	}
+}
+
+void Core::SdlGraphic::DrawRectF(bool bFill, Rect<float>* Rect)
+{
+	float RectX = 0.f;
+	float RectY = 0.f;
+	float RectW = 0.f;
+	float RectH = 0.f;
+	Rect->GetPosition(&RectX, &RectY);
+	Rect->GetSize(&RectW, &RectH);
+	const SDL_FRect SdlRect{ RectX, RectY, RectW, RectH };
+	if (bFill)
+	{
+		SDL_RenderFillRectF(_Renderer, &SdlRect);
+	}
+	else
+	{
+		SDL_RenderDrawRectF(_Renderer, &SdlRect);
+	}
+}
+
+void Core::SdlGraphic::DrawLine(const float X1, const float Y1, const float X2, const float Y2)
+{
+	SDL_RenderDrawLineF(_Renderer, X1, Y1, X2, Y2);
+}
+
+size_t Core::SdlGraphic::LoadTexture(const char* Filename)
+{
+	return size_t();
 }
 
 void Core::SdlGraphic::ShutDown()

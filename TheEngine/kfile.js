@@ -8,11 +8,13 @@ project.addProvider = function(proj, isRoot=false){
         
         if(!isRoot){
             fs.copyFileSync("./sdl/lib/SDL2.dll", "./Deployment/SDL2.dll");
+            fs.copyFileSync("./sdl/lib/SDL2_image.dll", "./Deployment/SDL2_image.dll");
             proj.addDefine("USE_SDL");
             proj.addIncludeDir(path.resolve("./sdl/include"));
         }
         proj.addLib("./sdl/lib/SDL2");
         proj.addLib("./sdl/lib/SDL2main");
+        proj.addLib("./sdl/lib/SDL2_image");
     }
 };
 project.kore = false;

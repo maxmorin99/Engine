@@ -4,7 +4,7 @@
 
 namespace Core
 {
-	class SdlFileLogger : public ILogger
+	class SdlFileLogger final : public ILogger
 	{
 	public:
 		// Logger interface

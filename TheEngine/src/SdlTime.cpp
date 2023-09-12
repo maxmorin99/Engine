@@ -14,11 +14,15 @@ void Core::SdlTimer::UpdateStart()
 
 void Core::SdlTimer::UpdateEnd()
 {
-	if(_DeltaTime < _TargetFps)
+	Uint32 CurrFrameTime = SDL_GetTicks();
+	Uint32 TotalFrameTime = CurrFrameTime - _FrameStartTime;
+
+	if(TotalFrameTime < _TargetFps)
 	{
-		const Uint32 SleepTime = _TargetFps - _DeltaTime;
+		const Uint32 SleepTime = _TargetFps - TotalFrameTime;
 		SDL_Delay(SleepTime);
 	}
+
 	_FrameEndTime = _FrameStartTime;
 }
 

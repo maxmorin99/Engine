@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ILogger.h"
+#include "Interfaces/ILogger.h"
 
 namespace Core
 {

@@ -1,13 +1,14 @@
+#pragma once
+
+
 
 namespace Core
 {
 	template <class T>
-	class Rect
+	class Vector2D
 	{
 	public:
 		T X;
 		T Y;
-		T W;
-		T H;
 	};
 }

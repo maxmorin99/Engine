@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SDL_stdinc.h>
-#include "ITime.h"
+#include "Interfaces/ITime.h"
 
 namespace Core
 {

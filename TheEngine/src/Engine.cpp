@@ -4,6 +4,7 @@
 #include "SdlGraphic.h"
 #include "SDLInput.h"
 #include "SdlTime.h"
+#include "Enums/Enums.h"
 #if _DEBUG
 #include "SdlConsoleLogger.h"
 #else
@@ -82,10 +83,10 @@ void Core::Engine::Update(float DeltaTime)
 
 void Core::Engine::Render(void)
 {
-	_Graphic->SetDrawColor(Color(255, 0, 0, 255));
+	_Graphic->SetDrawColor(EColor::Black);
 	_Graphic->Clear();
-	_Graphic->SetDrawColor(Color(255, 0, 0, 255));
-	_Graphic->DrawRectF(false, 100.f, 100.f, 100.f, 100.f);
+	_Graphic->DrawRectF(false, 100.f, 100.f, 100.f, 100.f, EColor::Red);
+	_Graphic->DrawLine(300.f, 100.f, 375.f, 300.f, EColor::Green);
 	_Graphic->Present();
 }
 

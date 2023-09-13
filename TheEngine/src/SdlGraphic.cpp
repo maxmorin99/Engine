@@ -55,9 +55,10 @@ bool Core::SdlGraphic::InitRenderer(const char* ErrorMsg)
 	return true;
 }
 
-void Core::SdlGraphic::SetDrawColor(const Color& NewColor)
+void Core::SdlGraphic::SetDrawColor(const EColor NewColor)
 {
-	SDL_SetRenderDrawColor(_Renderer, (Uint8)NewColor.Red, (Uint8)NewColor.Green, (Uint8)NewColor.Blue, (Uint8)NewColor.Alpha);
+	SDL_Color SdlColor = ConvertToSdlColor(NewColor);
+	SDL_SetRenderDrawColor(_Renderer, SdlColor.r, SdlColor.g, SdlColor.b, SdlColor.a);
 }
 
 void Core::SdlGraphic::Clear()
@@ -70,8 +71,10 @@ void Core::SdlGraphic::Present()
 	SDL_RenderPresent(_Renderer);
 }
 
-void Core::SdlGraphic::DrawRect(bool bFill, const int RectX, const int RectY, const int RectW, const int RectH)
+void Core::SdlGraphic::DrawRect(bool bFill, const int RectX, const int RectY, const int RectW, const int RectH, const EColor DrawColor)
 {
+	SDL_Color SdlColor = ConvertToSdlColor(DrawColor);
+	SDL_SetRenderDrawColor(_Renderer, SdlColor.r, SdlColor.g, SdlColor.b, SdlColor.a);
 	SDL_Rect Rect{ RectX, RectY, RectW, RectH };
 	if (bFill)
 	{
@@ -83,15 +86,12 @@ void Core::SdlGraphic::DrawRect(bool bFill, const int RectX, const int RectY, co
 	}
 }
 
-void Core::SdlGraphic::DrawRect(bool bFill, Rect<int>* Rect)
+void Core::SdlGraphic::DrawRect(bool bFill, Rect<int>* Rect, const EColor DrawColor)
 {
-	int RectX = 0;
-	int RectY = 0;
-	int RectW = 0;
-	int RectH = 0;
-	Rect->GetPosition(&RectX, &RectY);
-	Rect->GetSize(&RectW, &RectH);
-	const SDL_Rect SdlRect{ RectX, RectY, RectW, RectH };
+	if (!Rect) return;
+	SDL_Color SdlColor = ConvertToSdlColor(DrawColor);
+	SDL_SetRenderDrawColor(_Renderer, SdlColor.r, SdlColor.g, SdlColor.b, SdlColor.a);
+	const SDL_Rect SdlRect{ Rect->X, Rect->Y, Rect->W, Rect->H };
 	if (bFill)
 	{
 		SDL_RenderFillRect(_Renderer, &SdlRect);
@@ -102,8 +102,10 @@ void Core::SdlGraphic::DrawRect(bool bFill, Rect<int>* Rect)
 	}
 }
 
-void Core::SdlGraphic::DrawRectF(bool bFill, float RectX, float RectY, float RectW, float RectH)
+void Core::SdlGraphic::DrawRectF(bool bFill, float RectX, float RectY, float RectW, float RectH, const EColor DrawColor)
 {
+	SDL_Color SdlColor = ConvertToSdlColor(DrawColor);
+	SDL_SetRenderDrawColor(_Renderer, SdlColor.r, SdlColor.g, SdlColor.b, SdlColor.a);
 	const SDL_FRect Rect{ RectX, RectY, RectW, RectH };
 	if (bFill)
 	{
@@ -115,15 +117,12 @@ void Core::SdlGraphic::DrawRectF(bool bFill, float RectX, float RectY, float Rec
 	}
 }
 
-void Core::SdlGraphic::DrawRectF(bool bFill, Rect<float>* Rect)
+void Core::SdlGraphic::DrawRectF(bool bFill, Rect<float>* Rect, const EColor DrawColor)
 {
-	float RectX = 0.f;
-	float RectY = 0.f;
-	float RectW = 0.f;
-	float RectH = 0.f;
-	Rect->GetPosition(&RectX, &RectY);
-	Rect->GetSize(&RectW, &RectH);
-	const SDL_FRect SdlRect{ RectX, RectY, RectW, RectH };
+	if (!Rect) return;
+	SDL_Color SdlColor = ConvertToSdlColor(DrawColor);
+	SDL_SetRenderDrawColor(_Renderer, SdlColor.r, SdlColor.g, SdlColor.b, SdlColor.a);
+	const SDL_FRect SdlRect{ Rect->X, Rect->Y, Rect->W, Rect->H };
 	if (bFill)
 	{
 		SDL_RenderFillRectF(_Renderer, &SdlRect);
@@ -134,13 +133,25 @@ void Core::SdlGraphic::DrawRectF(bool bFill, Rect<float>* Rect)
 	}
 }
 
-void Core::SdlGraphic::DrawLine(const float X1, const float Y1, const float X2, const float Y2)
+void Core::SdlGraphic::DrawLine(const float X1, const float Y1, const float X2, const float Y2, const EColor DrawColor)
 {
+	SDL_Color SdlColor = ConvertToSdlColor(DrawColor);
+	SDL_SetRenderDrawColor(_Renderer, SdlColor.r, SdlColor.g, SdlColor.b, SdlColor.a);
 	SDL_RenderDrawLineF(_Renderer, X1, Y1, X2, Y2);
 }
 
-size_t Core::SdlGraphic::LoadTexture(const char* Filename)
+size_t Core::SdlGraphic::LoadTexture(const char* FileName)
 {
+	/*if (_Map.count(FileName) > 0)
+	{
+		return _Map.at(FileName);
+	}
+	SDL_Texture* Texture = IMG_LoadTexture(_Renderer, FileName);
+	if (Texture)
+	{
+		_Map[FileName] = 0;
+	}
+	*/
 	return size_t();
 }
 
@@ -149,4 +160,61 @@ void Core::SdlGraphic::ShutDown()
 	SDL_DestroyRenderer(_Renderer);
 	SDL_DestroyWindow(_Window);
 	SDL_Quit();
+}
+
+SDL_Color Core::SdlGraphic::ConvertToSdlColor(EColor InColor) const
+{
+	SDL_Color Color;
+	switch (InColor)
+	{
+	case EColor::Black:
+		Color.r = 0;
+		Color.g = 0;
+		Color.b = 0;
+		break;
+	case EColor::Blue:
+		Color.r = 0;
+		Color.g = 0;
+		Color.b = 255;
+		break;
+	case EColor::Green:
+		Color.r = 0;
+		Color.g = 255;
+		Color.b = 0;
+		break;
+	case EColor::Cyan:
+		Color.r = 0;
+		Color.g = 255;
+		Color.b = 255;
+		break;
+	case EColor::Red:
+		Color.r = 255;
+		Color.g = 0;
+		Color.b = 0;
+		break;
+	case EColor::Purple:
+		Color.r = 255;
+		Color.g = 0;
+		Color.b = 255;
+		break;
+	case EColor::Yellow:
+		Color.r = 255;
+		Color.g = 255;
+		Color.b = 0;
+		break;
+	case EColor::White:
+		Color.r = 255;
+		Color.g = 255;
+		Color.b = 255;
+		break;
+	case EColor::Grey:
+		Color.r = 128;
+		Color.g = 128;
+		Color.b = 128;
+		break;
+	default:
+		break;
+	}
+	Color.a = 255;
+	return Color;
 }

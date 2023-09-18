@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Enums/Enums.h"
+#include "Utility.h"
 
 namespace Core
 {
@@ -9,7 +9,7 @@ namespace Core
 	public:
 		virtual ~ILogger() = default;
 		virtual bool Init() = 0;
-		virtual void DebugLog(EColor TextColor, const char* Message, ...) = 0;
+		virtual void DebugLog(const ConsoleColor& TextColor, const char* Message, ...) = 0;
 		virtual void Shutdown() = 0;
 	};
 }

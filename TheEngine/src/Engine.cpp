@@ -4,42 +4,54 @@
 #include "SdlGraphic.h"
 #include "SDLInput.h"
 #include "SdlTime.h"
-#include "Enums/Enums.h"
+#include "Utility.h"
 #if _DEBUG
 #include "SdlConsoleLogger.h"
 #else
 #include "SdlFileLogger.h"
 #endif
 
+Core::Engine* Core::Engine::_Instance = nullptr;
+
+Core::Engine* Core::Engine::GetInstance()
+{
+	if (!_Instance)
+	{
+		_Instance = new Engine();
+	}
+	return _Instance;
+}
+
 bool Core::Engine::Init(const char* Name, int Width, int Height)
 {
-	// Init logger
+	const char* InitMsg = nullptr;
+
+	if (GetInstance()->_IsInit) return false;
+
 #if _DEBUG
-	_Logger = new SdlConsoleLogger();
+	GetInstance()->_Logger = new SdlConsoleLogger();
 #else
-	_Logger = new SdlFileLogger();
+	GetInstance()->_Logger = new SdlFileLogger();
 #endif
-	if (!_Logger->Init()) return false;
+	if (!GetInstance()->_Logger->Init()) return false;
 
-	// Init Graphic
-	_Graphic = new SdlGraphic(Name, Width, Height);
-	if (!_Graphic->Init()) return false;
+	GetInstance()->_Graphic = new SdlGraphic(Name, Width, Height);
+	if (!GetInstance()->_Graphic->Init(&InitMsg)) return false;
 
-	// Init Input
-	_Input = new SdlInput();
+	GetInstance()->_Input = new SdlInput();
 
-	// Init Timer
-	_Timer = new SdlTimer();
-	_Timer->SetTargetFps(1.f);
+	GetInstance()->_Timer = new SdlTimer();
+	GetInstance()->_Timer->SetTargetFps(60.f);
 
-	_IsInit = true;
+	GetInstance()->_IsInit = true;
+	GetInstance()->Logger()->DebugLog(ConsoleColor::White, InitMsg);
 
 	return true;
 }
 
 void Core::Engine::Start(void)
 {
-	if (!_IsInit)
+	if (!GetInstance()->_IsInit)
 	{
 		if (!Init("Unkown Title", 800, 600))
 		{
@@ -47,35 +59,37 @@ void Core::Engine::Start(void)
 		}
 	}
 
-	_IsRunning = true;
+	if (GetInstance()->_IsRunning) return;
 
-	_Timer->StartTimer();
+	GetInstance()->_IsRunning = true;
 
-	while (_IsRunning)
+	GetInstance()->_Timer->StartTimer();
+
+	while (GetInstance()->_IsRunning)
 	{
-		_Timer->UpdateStart();
+		Rect<int> R{200, 200, 512, 512};
+	
+		GetInstance()->_Timer->UpdateStart();
+		const float DeltaTime = GetInstance()->_Timer->GetDeltaTime();
 
-		const float DeltaTime = _Timer->GetDeltaTime();
-		_Logger->DebugLog(EColor::Red, "DT: %f\n", DeltaTime);
+		GetInstance()->ProcessInput();
+		GetInstance()->Update(DeltaTime);
+		GetInstance()->Render();
 
-		ProcessInput();
-		Update(DeltaTime);
-		Render();
-
-		_Timer->UpdateEnd();
+		GetInstance()->_Timer->UpdateEnd();
 	}
 
-	Shutdown();
+	GetInstance()->Shutdown();
 }
 
 void Core::Engine::ProcessInput(void)
 {
-	GetInput()->Update();
+	Input()->Update();
 }
 
 void Core::Engine::Update(float DeltaTime)
 {
-	if (GetInput()->ShouldQuit())
+	if (Input()->ShouldQuit())
 	{
 		_IsRunning = false;
 	}
@@ -83,17 +97,20 @@ void Core::Engine::Update(float DeltaTime)
 
 void Core::Engine::Render(void)
 {
-	_Graphic->SetDrawColor(EColor::Black);
+	_Graphic->SetDrawColor(Color::Black);
 	_Graphic->Clear();
-	_Graphic->DrawRectF(false, 100.f, 100.f, 100.f, 100.f, EColor::Red);
-	_Graphic->DrawLine(300.f, 100.f, 375.f, 300.f, EColor::Green);
+	_Graphic->DrawRectF(false, 100.f, 100.f, 100.f, 100.f, Color::Red);
+	_Graphic->DrawLineF(Vector2D<float>(300.f, 100.f), Vector2D<float>(375.f, 300.f), Color::Green);
+	//size_t textureId = _Graphic->LoadTexture("../ArchHero/Assets/Helmet.png");
 	_Graphic->Present();
 }
 
 void Core::Engine::Shutdown(void)
 {
-	delete _Input;
-	delete _Logger;
-	delete _Graphic;
-	delete _Timer;
+	if (!GetInstance()) return;
+	delete GetInstance()->_Input;
+	delete GetInstance()->_Logger;
+	delete GetInstance()->_Graphic;
+	delete GetInstance()->_Timer;
+	delete GetInstance();
 }

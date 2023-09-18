@@ -12,7 +12,7 @@ namespace Core
 		virtual ~SdlConsoleLogger() override = default;
 		virtual bool Init() override;
 		virtual void Shutdown() override;
-		void DebugLog(EColor TextColor, const char* Message, ...) override;
+		void DebugLog(const ConsoleColor& TextColor, const char* Message, ...) override;
 		/** End Interface */
 	};
 }

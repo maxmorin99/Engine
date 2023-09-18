@@ -10,7 +10,7 @@ bool Core::SdlConsoleLogger::Init()
 	return !_r;
 }
 
-void Core::SdlConsoleLogger::DebugLog(EColor TextColor, const char* Message, ...)
+void Core::SdlConsoleLogger::DebugLog(const ConsoleColor& TextColor, const char* Message, ...)
 {
 	const UINT8 NewColor = static_cast<UINT8>(TextColor);
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);

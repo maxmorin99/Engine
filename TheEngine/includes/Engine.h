@@ -10,18 +10,22 @@ namespace Core
 	class Engine final
 	{
 	public:
-		Engine() = default;
 		~Engine() = default;
-		bool Init(const char* Name, int Width, int Height);
-		void Start(void);
+		static bool Init(const char* Name, int Width, int Height);
+		static void Start(void);
 
 	private:
+		Engine() = default;
+		Engine(const Engine&) = delete;
+		Engine& operator=(const Engine&) = delete;
 		void ProcessInput(void);
 		void Update(float DeltaTime);
 		void Render(void);
 		void Shutdown(void);
+		static Engine* GetInstance();
 
 	private:
+		static Engine* _Instance;
 		bool _IsRunning = false;
 		bool _IsInit = false;
 
@@ -31,9 +35,9 @@ namespace Core
 		ITimer* _Timer = nullptr;
 
 	public:
-		inline IInput* GetInput() const { return _Input; }
-		inline ILogger* GetLogger() const { return _Logger; }
-		inline IGraphic* GetGraphic() const { return _Graphic; }
-		inline ITimer* GetTimer() const { return _Timer; }
+		inline static IInput* Input() { return GetInstance()->_Input; }
+		inline static ILogger* Logger() { return GetInstance()->_Logger; }
+		inline static IGraphic* Graphic() { return GetInstance()->_Graphic; }
+		inline static ITimer* Timer() { return GetInstance()->_Timer; }
 	};
 }

@@ -4,6 +4,8 @@
 #include <Windows.h>
 #include "Engine.h"
 
+using namespace Core;
+
 void InitGameplay(void)
 {
 
@@ -11,11 +13,10 @@ void InitGameplay(void)
 
 INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT)
 {
-	Core::Engine TheEngine;
-	if (TheEngine.Init("TestGame", 800, 600))
+	if (Engine::Init("TestGame", 800, 600))
 	{
 		InitGameplay();
-		TheEngine.Start();
+		Engine::Start();
 	}
 
 	return 0;

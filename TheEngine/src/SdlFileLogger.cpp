@@ -11,7 +11,7 @@ bool Core::SdlFileLogger::Init()
 	return true;
 }
 
-void Core::SdlFileLogger::DebugLog(EColor TextColor, const char* Message, ...)
+void Core::SdlFileLogger::DebugLog(const ConsoleColor& TextColor, const char* Message, ...)
 {
 	if (!_File) return;
 	auto* MyFile = static_cast<std::ofstream*>(_File);

@@ -6,7 +6,7 @@ namespace Core
 	class ILogger;
 	class IGraphic;
 	class ITimer;
-	class IWorld;
+	class World;
 
 	class Engine final
 	{
@@ -34,12 +34,13 @@ namespace Core
 		ILogger* _Logger = nullptr;
 		IGraphic* _Graphic = nullptr;
 		ITimer* _Timer = nullptr;
-		IWorld* _World = nullptr;
+		World* _World = nullptr;
 
 	public:
 		inline static IInput* Input() { return GetInstance()->_Input; }
 		inline static ILogger* Logger() { return GetInstance()->_Logger; }
 		inline static IGraphic* Graphic() { return GetInstance()->_Graphic; }
 		inline static ITimer* Timer() { return GetInstance()->_Timer; }
+		inline static World* GetWorld() { return GetInstance()->_World; }
 	};
 }

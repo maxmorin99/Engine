@@ -69,7 +69,9 @@ void Core::Engine::Start(void)
 
 	GetInstance()->_Timer->StartTimer();
 
-	
+	Object* Obj1 = GetInstance()->GetWorld()->CreateObject<Object>();
+	size_t Id = Obj1->GetId();
+	GetInstance()->Logger()->DebugLog(ConsoleColor::Cyan, "Id: %lli", Id);
 
 	while (GetInstance()->_IsRunning)
 	{

@@ -2,6 +2,8 @@
 
 namespace Core
 {
+	class World;
+
 	class Object
 	{
 	public:
@@ -12,9 +14,12 @@ namespace Core
 		virtual void Destroy() {};
 
 	protected:
-		size_t mId = 0;
+		const char* mId = "0";
+
+		World* GetWorld() const;
 
 	public:
-		inline void SetId(const size_t& Id) { mId = Id; }
+		inline void SetId(const char* Id) { mId = Id; }
+		inline const char* GetId() const { return mId; }
 	};
 }

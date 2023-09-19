@@ -4,12 +4,14 @@
 #include "SdlGraphic.h"
 #include "SDLInput.h"
 #include "SdlTime.h"
+#include "World.h"
 #include "Utility.h"
 #if _DEBUG
 #include "SdlConsoleLogger.h"
 #else
 #include "SdlFileLogger.h"
 #endif
+#include "Object.h"
 
 Core::Engine* Core::Engine::_Instance = nullptr;
 
@@ -46,6 +48,8 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 	GetInstance()->_IsInit = true;
 	GetInstance()->Logger()->DebugLog(ConsoleColor::White, InitMsg);
 
+	GetInstance()->_World = new World();
+
 	return true;
 }
 
@@ -64,6 +68,8 @@ void Core::Engine::Start(void)
 	GetInstance()->_IsRunning = true;
 
 	GetInstance()->_Timer->StartTimer();
+
+	
 
 	while (GetInstance()->_IsRunning)
 	{

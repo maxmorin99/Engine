@@ -36,6 +36,10 @@ namespace Core
 			: X(InX), Y(InY) {}
 		T X;
 		T Y;
+
+
+		static const Vector2D<float> ZeroVectorF;
+		static const Vector2D<int> ZeroVector;
 	};
 
 	/** 

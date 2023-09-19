@@ -6,6 +6,7 @@ namespace Core
 	class ILogger;
 	class IGraphic;
 	class ITimer;
+	class IWorld;
 
 	class Engine final
 	{
@@ -33,6 +34,7 @@ namespace Core
 		ILogger* _Logger = nullptr;
 		IGraphic* _Graphic = nullptr;
 		ITimer* _Timer = nullptr;
+		IWorld* _World = nullptr;
 
 	public:
 		inline static IInput* Input() { return GetInstance()->_Input; }

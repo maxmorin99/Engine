@@ -1,61 +1,61 @@
 #include "Engine.h"
 #include <ctime>
 #include <Windows.h>
-#include "SdlGraphic.h"
-#include "SDLInput.h"
-#include "SdlTime.h"
-#include "World.h"
+#include "Services/SdlGraphic.h"
+#include "Services/SDLInput.h"
+#include "Services/SdlTime.h"
+#include "Services/World.h"
 #include "Utility.h"
 #if _DEBUG
-#include "SdlConsoleLogger.h"
+#include "Services/SdlConsoleLogger.h"
 #else
 #include "SdlFileLogger.h"
 #endif
 #include "Object.h"
 
-Core::Engine* Core::Engine::_Instance = nullptr;
+Core::Engine* Core::Engine::mInstance = nullptr;
 
 Core::Engine* Core::Engine::GetInstance()
 {
-	if (!_Instance)
+	if (!mInstance)
 	{
-		_Instance = new Engine();
+		mInstance = new Engine();
 	}
-	return _Instance;
+	return mInstance;
 }
 
 bool Core::Engine::Init(const char* Name, int Width, int Height)
 {
 	const char* InitMsg = nullptr;
 
-	if (GetInstance()->_IsInit) return false;
+	if (GetInstance()->mIsInit) return false;
 
 #if _DEBUG
-	GetInstance()->_Logger = new SdlConsoleLogger();
+	GetInstance()->mLogger = new SdlConsoleLogger();
 #else
 	GetInstance()->_Logger = new SdlFileLogger();
 #endif
-	if (!GetInstance()->_Logger->Init()) return false;
+	if (!GetLogger()->Init()) return false;
 
-	GetInstance()->_Graphic = new SdlGraphic(Name, Width, Height);
-	if (!GetInstance()->_Graphic->Init(&InitMsg)) return false;
+	GetInstance()->mGraphic = new SdlGraphic(Name, Width, Height);
+	if (!GetGraphic()->Init(&InitMsg)) return false;
 
-	GetInstance()->_Input = new SdlInput();
+	GetInstance()->mInput = new SdlInput();
 
-	GetInstance()->_Timer = new SdlTimer();
-	GetInstance()->_Timer->SetTargetFps(60.f);
+	GetInstance()->mTimer = new SdlTimer();
+	GetTimer()->SetTargetFps(60.f);
 
-	GetInstance()->_IsInit = true;
-	GetInstance()->Logger()->DebugLog(ConsoleColor::White, InitMsg);
+	GetInstance()->mIsInit = true;
+	GetLogger()->DebugLog(ConsoleColor::White, InitMsg);
 
-	GetInstance()->_World = new World();
+	GetInstance()->mWorld = new World();
 
 	return true;
 }
 
 void Core::Engine::Start(void)
 {
-	if (!GetInstance()->_IsInit)
+	if (!GetInstance()->mIsInit)
 	{
 		if (!Init("Unkown Title", 800, 600))
 		{
@@ -63,28 +63,32 @@ void Core::Engine::Start(void)
 		}
 	}
 
-	if (GetInstance()->_IsRunning) return;
+	if (GetInstance()->mIsRunning) return;
 
-	GetInstance()->_IsRunning = true;
+	GetInstance()->mIsRunning = true;
 
-	GetInstance()->_Timer->StartTimer();
+	GetTimer()->StartTimer();
 
 	Object* Obj1 = GetInstance()->GetWorld()->CreateObject<Object>();
-	size_t Id = Obj1->GetId();
-	GetInstance()->Logger()->DebugLog(ConsoleColor::Cyan, "Id: %lli", Id);
+	std::string Id = Obj1->GetId();
+	GetLogger()->DebugLog(ConsoleColor::Cyan, "Id: %s", Id.c_str());
 
-	while (GetInstance()->_IsRunning)
+	while (GetInstance()->mIsRunning)
 	{
+		if (GetInput()->IsKeyDown(EKey::V))
+		{
+			GetLogger()->DebugLog(ConsoleColor::Red, "V was pressed");
+		}
 		Rect<int> R{200, 200, 512, 512};
 	
-		GetInstance()->_Timer->UpdateStart();
-		const float DeltaTime = GetInstance()->_Timer->GetDeltaTime();
+		GetTimer()->UpdateStart();
+		const float DeltaTime = GetInstance()->mTimer->GetDeltaTime();
 
 		GetInstance()->ProcessInput();
 		GetInstance()->Update(DeltaTime);
 		GetInstance()->Render();
 
-		GetInstance()->_Timer->UpdateEnd();
+		GetTimer()->UpdateEnd();
 	}
 
 	GetInstance()->Shutdown();
@@ -92,33 +96,33 @@ void Core::Engine::Start(void)
 
 void Core::Engine::ProcessInput(void)
 {
-	Input()->Update();
+	GetInput()->Update();
 }
 
 void Core::Engine::Update(float DeltaTime)
 {
-	if (Input()->ShouldQuit())
+	if (GetInput()->ShouldQuit())
 	{
-		_IsRunning = false;
+		mIsRunning = false;
 	}
 }
 
 void Core::Engine::Render(void)
 {
-	_Graphic->SetDrawColor(Color::Black);
-	_Graphic->Clear();
-	_Graphic->DrawRectF(false, 100.f, 100.f, 100.f, 100.f, Color::Red);
-	_Graphic->DrawLineF(Vector2D<float>(300.f, 100.f), Vector2D<float>(375.f, 300.f), Color::Green);
+	mGraphic->SetDrawColor(Color::Black);
+	mGraphic->Clear();
+	mGraphic->DrawRectF(false, 100.f, 100.f, 100.f, 100.f, Color::Red);
+	mGraphic->DrawLineF(Vector2D<float>(300.f, 100.f), Vector2D<float>(375.f, 300.f), Color::Green);
 	//size_t textureId = _Graphic->LoadTexture("../ArchHero/Assets/Helmet.png");
-	_Graphic->Present();
+	mGraphic->Present();
 }
 
 void Core::Engine::Shutdown(void)
 {
 	if (!GetInstance()) return;
-	delete GetInstance()->_Input;
-	delete GetInstance()->_Logger;
-	delete GetInstance()->_Graphic;
-	delete GetInstance()->_Timer;
+	delete GetInstance()->mInput;
+	delete GetInstance()->mLogger;
+	delete GetInstance()->mGraphic;
+	delete GetInstance()->mTimer;
 	delete GetInstance();
 }

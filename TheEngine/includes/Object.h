@@ -1,8 +1,11 @@
 #pragma once
 
+#include <string>
+
 namespace Core
 {
 	class World;
+	class IInput;
 
 	class Object
 	{
@@ -14,12 +17,14 @@ namespace Core
 		virtual void Destroy() {};
 
 	protected:
-		const char* mId = "0";
+		std::string mId = "0";
+
 
 		World* GetWorld() const;
+		IInput* Input() const;
 
 	public:
-		inline void SetId(const char* Id) { mId = Id; }
-		inline const char* GetId() const { return mId; }
+		inline void SetId(const std::string& Id) { mId = Id; }
+		inline std::string GetId() const { return mId; }
 	};
 }

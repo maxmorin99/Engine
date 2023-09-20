@@ -26,21 +26,21 @@ namespace Core
 		static Engine* GetInstance();
 
 	private:
-		static Engine* _Instance;
-		bool _IsRunning = false;
-		bool _IsInit = false;
+		static Engine* mInstance;
+		bool mIsRunning = false;
+		bool mIsInit = false;
 
-		IInput* _Input = nullptr;
-		ILogger* _Logger = nullptr;
-		IGraphic* _Graphic = nullptr;
-		ITimer* _Timer = nullptr;
-		World* _World = nullptr;
+		IInput* mInput = nullptr;
+		ILogger* mLogger = nullptr;
+		IGraphic* mGraphic = nullptr;
+		ITimer* mTimer = nullptr;
+		World* mWorld = nullptr;
 
 	public:
-		inline static IInput* Input() { return GetInstance()->_Input; }
-		inline static ILogger* Logger() { return GetInstance()->_Logger; }
-		inline static IGraphic* Graphic() { return GetInstance()->_Graphic; }
-		inline static ITimer* Timer() { return GetInstance()->_Timer; }
-		inline static World* GetWorld() { return GetInstance()->_World; }
+		inline static IInput* GetInput() { return GetInstance()->mInput; }
+		inline static ILogger* GetLogger() { return GetInstance()->mLogger; }
+		inline static IGraphic* GetGraphic() { return GetInstance()->mGraphic; }
+		inline static ITimer* GetTimer() { return GetInstance()->mTimer; }
+		inline static World* GetWorld() { return GetInstance()->mWorld; }
 	};
 }

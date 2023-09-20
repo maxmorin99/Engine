@@ -20,9 +20,9 @@ namespace Core
 		/** End Interface */
 
 	private:
-		Uint32 _TargetFps = 0;
-		Uint32 _DeltaTime = 0;
-		Uint32 _FrameStartTime = 0;
-		Uint32 _FrameEndTime = 0;
+		Uint32 mTargetFps = 0;
+		Uint32 mDeltaTime = 0;
+		Uint32 mFrameStartTime = 0;
+		Uint32 mFrameEndTime = 0;
 	};
 }

@@ -15,6 +15,6 @@ namespace Core
 		virtual void Shutdown() override;
 
 	private:
-		void* _File = nullptr;
+		void* mFile = nullptr;
 	};
 }

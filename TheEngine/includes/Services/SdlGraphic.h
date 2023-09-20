@@ -39,11 +39,11 @@ namespace Core
 		/** End Graphic Interface */
 
 	private:
-		SDL_Window* _Window = nullptr;
-		SDL_Renderer* _Renderer = nullptr;
-		const char* _WindowName = nullptr;
-		int _WindowW = 0;
-		int _WindowH = 0;
+		SDL_Window* mWindow = nullptr;
+		SDL_Renderer* mRenderer = nullptr;
+		const char* mWindowName = nullptr;
+		int mWindowWidth = 0;
+		int mWindowHeight = 0;
 
 		std::unordered_map<size_t, SDL_Texture*> _TexturesMap;
 		SDL_Color ConvertToSdlColor(const Color& InColor) const;

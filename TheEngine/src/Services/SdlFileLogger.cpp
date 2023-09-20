@@ -1,4 +1,4 @@
-#include "SdlFileLogger.h"
+#include "Services/SdlFileLogger.h"
 #include <iostream>
 #include <fstream>
 #include <cstdarg>
@@ -6,15 +6,15 @@
 bool Core::SdlFileLogger::Init()
 {
 	// Open the file
-	_File = new std::ofstream("DebugLog.txt");
-	if (_File == nullptr) return false;
+	mFile = new std::ofstream("DebugLog.txt");
+	if (mFile == nullptr) return false;
 	return true;
 }
 
 void Core::SdlFileLogger::DebugLog(const ConsoleColor& TextColor, const char* Message, ...)
 {
-	if (!_File) return;
-	auto* MyFile = static_cast<std::ofstream*>(_File);
+	if (!mFile) return;
+	auto* MyFile = static_cast<std::ofstream*>(mFile);
 	if (!MyFile) return;
 	va_list args;
 	va_start(args, Message);
@@ -28,9 +28,9 @@ void Core::SdlFileLogger::DebugLog(const ConsoleColor& TextColor, const char* Me
 void Core::SdlFileLogger::Shutdown()
 {
 	// Close the file
-	if (!_File) return;
-	auto* MyFile = static_cast<std::ofstream*>(_File);
+	if (!mFile) return;
+	auto* MyFile = static_cast<std::ofstream*>(mFile);
 	if (!MyFile) return;
 	MyFile->close();
-	_File = nullptr;
+	mFile = nullptr;
 }

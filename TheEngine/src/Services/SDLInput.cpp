@@ -1,6 +1,10 @@
 #include "Services/SDLInput.h"
 #include <SDL.h>
 
+Core::SdlInput::SdlInput()
+{
+}
+
 void Core::SdlInput::Update()
 {
 	SDL_Event Event;
@@ -72,6 +76,12 @@ int Core::SdlInput::GetSdlScancode(const EKey& Key) const
     case EKey::X: return 27;
     case EKey::Y: return 28;
     case EKey::Z: return 29;
+    case EKey::Space: return 44;
+    case EKey::Right: return 79;
+    case EKey::Left: return 80;
+    case EKey::Down: return 81;
+    case EKey::Up: return 82;
+
     default: return -1;
     }
 }

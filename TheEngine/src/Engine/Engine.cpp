@@ -1,4 +1,4 @@
-#include "Engine.h"
+#include "Engine/Engine.h"
 #include <ctime>
 #include <Windows.h>
 #include "Services/SdlGraphic.h"
@@ -50,6 +50,7 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 
 	GetInstance()->mWorld = new World();
 
+
 	return true;
 }
 
@@ -68,10 +69,6 @@ void Core::Engine::Start(void)
 	GetInstance()->mIsRunning = true;
 
 	GetTimer()->StartTimer();
-
-	Object* Obj1 = GetInstance()->GetWorld()->CreateObject<Object>();
-	std::string Id = Obj1->GetId();
-	GetLogger()->DebugLog(ConsoleColor::Cyan, "Id: %s", Id.c_str());
 
 	while (GetInstance()->mIsRunning)
 	{
@@ -101,6 +98,7 @@ void Core::Engine::ProcessInput(void)
 
 void Core::Engine::Update(float DeltaTime)
 {
+	GetWorld()->Update(DeltaTime);
 	if (GetInput()->ShouldQuit())
 	{
 		mIsRunning = false;
@@ -119,10 +117,12 @@ void Core::Engine::Render(void)
 
 void Core::Engine::Shutdown(void)
 {
+	//EventManager::Shutdown();
 	if (!GetInstance()) return;
 	delete GetInstance()->mInput;
 	delete GetInstance()->mLogger;
 	delete GetInstance()->mGraphic;
 	delete GetInstance()->mTimer;
 	delete GetInstance();
+	
 }

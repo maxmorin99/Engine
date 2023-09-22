@@ -1,15 +1,16 @@
 #include "GameObject.h"
 
-void Core::GameObject::Init()
-{
-}
-
 void Core::GameObject::Start()
 {
+	GetLogger()->DebugLog(ConsoleColor::Red, "Start!\n");
 }
 
 void Core::GameObject::Update(float deltaTime)
 {
+	if (GetInput()->IsKeyDown(EKey::Down))
+	{
+		GetLogger()->DebugLog(ConsoleColor::Red, "Down key pressed!\n");
+	}
 }
 
 void Core::GameObject::Destroy()

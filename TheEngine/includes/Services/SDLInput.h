@@ -4,13 +4,13 @@
 
 namespace Core
 {
-	typedef void (*func_t)(void*, int yolo);
-	static func_t func = NULL;
+	/*typedef void (*func_t)(void*, int yolo);
+	static func_t func = NULL;*/
 
 	class SdlInput final : public IInput
 	{
 	public:
-		SdlInput() = default;
+		SdlInput();
 
 		// Input interface
 		virtual ~SdlInput() override = default;

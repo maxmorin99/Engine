@@ -8,22 +8,26 @@ namespace Core
 {
 	class Object;
 
-	class World final
+	class World
 	{
 	public:
 		World() = default;
 		virtual ~World() = default;
-		void Update(float DetaTime);
+		void Update(float DeltaTime);
 		void Draw();
+		void Destroy(Object* Obj);
 
 		template <typename T>
 		T* CreateObject();
 
 	private:
-		std::unordered_map<std::string, Object*> mObjects;
+		std::unordered_map<std::string, Object*> mObjectMap;
+		std::vector<Object*> mObjectList;
+		std::vector<Object*> mToDestroyList;
+
 
 		void SetObjectId(Object* InObj) const;
-
+		std::vector<Object*>::const_iterator GetObjectIt(const Object* InObj) const;
 	};
 
 	template<typename T>
@@ -34,8 +38,9 @@ namespace Core
 		if (Obj)
 		{
 			SetObjectId(Obj);
-			mObjects[Obj->GetId()] = Obj;
-			Obj->Init();
+			mObjectMap[Obj->GetId()] = Obj;
+			mObjectList.push_back(Obj);
+			Obj->Start();
 		}
 
 		return NewTObject;

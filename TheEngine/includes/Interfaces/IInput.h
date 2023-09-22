@@ -29,6 +29,11 @@ namespace Core
         X = 23,
         Y = 24,
         Z = 25,
+        Space = 26,
+        Right = 27,
+        Left = 28,
+        Down = 29,
+        Up = 30,
     };
 
 	class IInput

@@ -1,48 +1,34 @@
 #pragma once
 
+#include "Interfaces/IWorld.h"
 #include <vector>
 #include <unordered_map>
-#include <string>
 
 namespace Core
 {
-	class Object;
-
-	class World
+	class World final : public IWorld
 	{
 	public:
 		World() = default;
 		virtual ~World() = default;
-		void Update(float DeltaTime);
-		void Draw();
-		void Destroy(Object* Obj);
-
-		template <typename T>
-		T* CreateObject();
+		virtual void Update(float DeltaTime) override;
+		virtual void Render() override;
+		virtual void Destroy(Object* Obj) override;
+		virtual void Register(const std::string& SceneName, IScene* Scene) override;
+		virtual void Load(const std::string& SceneName) override;
+		virtual void Unload() override;
+		void AddObject(Object* Obj);
+	
 
 	private:
 		std::unordered_map<std::string, Object*> mObjectMap;
 		std::vector<Object*> mObjectList;
 		std::vector<Object*> mToDestroyList;
 
+		std::unordered_map < std::string, IScene*> mSceneMap;
+		IScene* mCurrentScene = nullptr;
 
-		void SetObjectId(Object* InObj) const;
+
 		std::vector<Object*>::const_iterator GetObjectIt(const Object* InObj) const;
 	};
-
-	template<typename T>
-	inline T* World::CreateObject()
-	{
-		T* NewTObject = new T();
-		Object* Obj = dynamic_cast<Object*>(NewTObject);
-		if (Obj)
-		{
-			SetObjectId(Obj);
-			mObjectMap[Obj->GetId()] = Obj;
-			mObjectList.push_back(Obj);
-			Obj->Start();
-		}
-
-		return NewTObject;
-	}
 }

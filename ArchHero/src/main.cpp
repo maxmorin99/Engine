@@ -2,16 +2,16 @@
 #define VC_EXTRALEAN
 
 #include <Windows.h>
-#include "Engine/Engine.h"
 #include "Engine/Core.h"
-#include "GameObject.h"
+#include "Engine/Engine.h"
 
 using namespace Core;
 
 void InitGameplay(void)
 {
-	GameObject* Obj = Engine::GetWorld()->CreateObject<GameObject>();
-	GameObject* Obj2 = Engine::GetWorld()->CreateObject<GameObject>();
+	IScene* S = new Scene("Scene01");
+	Engine::GetWorld().Register("Scene01", S);
+	Engine::GetWorld().Load("Scene01");
 }
 
 INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT)

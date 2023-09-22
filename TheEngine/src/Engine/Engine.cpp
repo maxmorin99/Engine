@@ -35,18 +35,18 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 #else
 	GetInstance()->_Logger = new SdlFileLogger();
 #endif
-	if (!GetLogger()->Init()) return false;
+	if (!GetLogger().Init()) return false;
 
 	GetInstance()->mGraphic = new SdlGraphic(Name, Width, Height);
-	if (!GetGraphic()->Init(&InitMsg)) return false;
+	if (!GetGraphic().Init(&InitMsg)) return false;
 
 	GetInstance()->mInput = new SdlInput();
 
 	GetInstance()->mTimer = new SdlTimer();
-	GetTimer()->SetTargetFps(60.f);
+	GetTimer().SetTargetFps(60.f);
 
 	GetInstance()->mIsInit = true;
-	GetLogger()->DebugLog(ConsoleColor::White, InitMsg);
+	GetLogger().DebugLog(ConsoleColor::White, InitMsg);
 
 	GetInstance()->mWorld = new World();
 
@@ -68,51 +68,45 @@ void Core::Engine::Start(void)
 
 	GetInstance()->mIsRunning = true;
 
-	GetTimer()->StartTimer();
+	GetTimer().StartTimer();
 
 	while (GetInstance()->mIsRunning)
 	{
-		if (GetInput()->IsKeyDown(EKey::V))
-		{
-			GetLogger()->DebugLog(ConsoleColor::Red, "V was pressed");
-		}
-		Rect<int> R{200, 200, 512, 512};
-	
-		GetTimer()->UpdateStart();
+		GetTimer().UpdateStart();
 		const float DeltaTime = GetInstance()->mTimer->GetDeltaTime();
 
-		GetInstance()->ProcessInput();
-		GetInstance()->Update(DeltaTime);
-		GetInstance()->Render();
+		ProcessInput();
+		Update(DeltaTime);
+		Render();
 
-		GetTimer()->UpdateEnd();
+		GetTimer().UpdateEnd();
 	}
 
-	GetInstance()->Shutdown();
+	Shutdown();
 }
 
 void Core::Engine::ProcessInput(void)
 {
-	GetInput()->Update();
+	GetInput().Update();
 }
 
 void Core::Engine::Update(float DeltaTime)
 {
-	GetWorld()->Update(DeltaTime);
-	if (GetInput()->ShouldQuit())
+	GetWorld().Update(DeltaTime);
+	if (GetInput().ShouldQuit())
 	{
-		mIsRunning = false;
+		GetInstance()->mIsRunning = false;
 	}
 }
 
 void Core::Engine::Render(void)
 {
-	mGraphic->SetDrawColor(Color::Black);
-	mGraphic->Clear();
-	mGraphic->DrawRectF(false, 100.f, 100.f, 100.f, 100.f, Color::Red);
-	mGraphic->DrawLineF(Vector2D<float>(300.f, 100.f), Vector2D<float>(375.f, 300.f), Color::Green);
+	GetGraphic().SetDrawColor(Color::Black);
+	GetGraphic().Clear();
+	GetGraphic().DrawRectF(false, 100.f, 100.f, 100.f, 100.f, Color::Red);
+	GetGraphic().DrawLineF(Vector2D<float>(300.f, 100.f), Vector2D<float>(375.f, 300.f), Color::Green);
 	//size_t textureId = _Graphic->LoadTexture("../ArchHero/Assets/Helmet.png");
-	mGraphic->Present();
+	GetGraphic().Present();
 }
 
 void Core::Engine::Shutdown(void)

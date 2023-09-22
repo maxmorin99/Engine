@@ -25,7 +25,7 @@ bool Core::SdlGraphic::Init(const char** ErrorMsg)
 	{
 		return false;
 	}
-	*ErrorMsg = "Graphic Init was succesful";
+	*ErrorMsg = "Graphic Init was succesful\n";
 	return true;
 }
 

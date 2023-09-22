@@ -6,7 +6,7 @@ namespace Core
 	class ILogger;
 	class IGraphic;
 	class ITimer;
-	class World;
+	class IWorld;
 
 
 	class Engine final
@@ -20,10 +20,10 @@ namespace Core
 		Engine() = default;
 		Engine(const Engine&) = delete;
 		Engine& operator=(const Engine&) = delete;
-		void ProcessInput(void);
-		void Update(float DeltaTime);
-		void Render(void);
-		void Shutdown(void);
+		static void ProcessInput(void);
+		static void Update(float DeltaTime);
+		static void Render(void);
+		static void Shutdown(void);
 		static Engine* GetInstance();
 
 	private:
@@ -35,13 +35,13 @@ namespace Core
 		ILogger* mLogger = nullptr;
 		IGraphic* mGraphic = nullptr;
 		ITimer* mTimer = nullptr;
-		World* mWorld = nullptr;
+		IWorld* mWorld = nullptr;
 
 	public:
-		inline static IInput* GetInput() { return GetInstance()->mInput; }
-		inline static ILogger* GetLogger() { return GetInstance()->mLogger; }
-		inline static IGraphic* GetGraphic() { return GetInstance()->mGraphic; }
-		inline static ITimer* GetTimer() { return GetInstance()->mTimer; }
-		inline static World* GetWorld() { return GetInstance()->mWorld; }
+		inline static IInput& GetInput() { return *GetInstance()->mInput; }
+		inline static ILogger& GetLogger() { return *GetInstance()->mLogger; }
+		inline static IGraphic& GetGraphic() { return *GetInstance()->mGraphic; }
+		inline static ITimer& GetTimer() { return *GetInstance()->mTimer; }
+		inline static IWorld& GetWorld() { return *GetInstance()->mWorld; }
 	};
 }

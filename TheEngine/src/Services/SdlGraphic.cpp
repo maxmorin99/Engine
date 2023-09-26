@@ -25,7 +25,7 @@ bool Core::SdlGraphic::Init(const char** ErrorMsg)
 	{
 		return false;
 	}
-	*ErrorMsg = "Graphic Init was succesful\n";
+	*ErrorMsg = "Graphic init was succesful\n";
 	return true;
 }
 
@@ -239,6 +239,7 @@ void Core::SdlGraphic::GetTextureSize(size_t Id, int* OutW, int* OutH)
 
 void Core::SdlGraphic::ShutDown()
 {
+	// free textures todo
 	SDL_DestroyRenderer(mRenderer);
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();

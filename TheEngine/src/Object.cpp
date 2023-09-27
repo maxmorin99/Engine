@@ -2,6 +2,7 @@
 #include "Engine/Engine.h"
 #include "Services/World.h"
 #include <sstream>
+#include "Components/Component.h"
 
 size_t Core::Object::sId = -1;
 std::string Core::Object::sName = "Object_";
@@ -47,51 +48,43 @@ void Core::Object::GetLocation(Vector2D<float>& OutLocation) const
     OutLocation = mLocation;
 }
 
-void Core::Object::GetSize(float* OutW, float* OutH) const
-{
-    if (!OutW || !OutH) return;
-    *OutW = mW;
-    *OutH = mH;
-}
-
 void Core::Object::Start()
 {
-    GetLogger().DebugLog(ConsoleColor::Red, "Start!\n");
-    mTextureId = GetGraphic().LoadTexture(mTexturePath.c_str());
+    AddComponent<Component>();
+    for (Component* Cmp : mComponents)
+    {
+        Cmp->Start();
+    }
+    GetComponent<Component>();
 }
 
-void Core::Object::Update(float deltaTime)
+void Core::Object::Update(float DeltaTime)
 {
-    if (GetInput().IsKeyDown(EKey::Down))
+    for (IUpdatable* Updatable : mUpdatable)
     {
-        GetLogger().DebugLog(ConsoleColor::Red, "Down key pressed!\n");
+        Updatable->Update(DeltaTime);
     }
 }
 
 void Core::Object::Render()
 {
-    int InTextureW = 0;
-    int InTextureH = 0;
-    GetGraphic().GetTextureSize(mTextureId, &InTextureW, &InTextureH);
-    int Idx = 2;
-    Rect<int> Src =  {
-        0,
-        115,
-        InTextureW / 8,
-        InTextureH / 4
-    };
-
-    Rect<int> Dst = {
-        100,
-        100,
-        mW,
-        mH
-    };
-    
-    GetGraphic().DrawTexture(mTextureId, Src, Dst, 0, Flip::None, Color::White);
+    for (IDrawable* Drawable : mDrawable)
+    {
+        Drawable->Draw();
+    }
 }
 
 void Core::Object::Destroy()
 {
+    for (Component* Cmp : mComponents)
+    {
+        Cmp->Destroy();
+        delete Cmp;
+    }
+    mComponents.clear();
+    mDrawable.clear();
+    mUpdatable.clear();
+    mComponentsByType.clear();
+
     GetWorld().Destroy(this);
 }

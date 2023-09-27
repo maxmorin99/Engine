@@ -5,4 +5,6 @@
 #include "Interfaces/ILogger.h"
 #include "Interfaces/ITime.h"
 #include "Interfaces/IWorld.h"
+#include "Interfaces/IUpdatable.h"
+#include "Interfaces/IDrawable.h"
 #include "Services/Scene.h"

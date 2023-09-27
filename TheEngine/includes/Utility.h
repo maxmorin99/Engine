@@ -1,5 +1,7 @@
 #pragma once
 
+#define ASSET_PATH "../ArchHero/Assets/"
+
 namespace Core
 {
 	/** Enum for debug text color in console or files */

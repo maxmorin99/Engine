@@ -11,7 +11,5 @@ Core::Scene::Scene(const char* name) :
 void Core::Scene::Load()
 {
 	Object* Player = new Object();
-	Player->SetTexturePath("../ArchHero/Assets/Character.png");
-	Player->SetSize(100, 100);
 	Engine::GetWorld().AddObject(Player);
 }

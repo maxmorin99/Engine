@@ -103,7 +103,7 @@ void Core::Engine::Update(float DeltaTime)
 
 void Core::Engine::Render(void)
 {
-	GetGraphic().SetDrawColor(Color::Black);
+	GetGraphic().SetDrawColor(Color::Grey);
 	GetGraphic().Clear();
 	//size_t textureId = _Graphic->LoadTexture("../ArchHero/Assets/Helmet.png");
 	GetWorld().Render();

@@ -57,6 +57,7 @@ void Core::Object::GetSize(float* OutW, float* OutH) const
 void Core::Object::Start()
 {
     GetLogger().DebugLog(ConsoleColor::Red, "Start!\n");
+    mTextureId = GetGraphic().LoadTexture(mTexturePath.c_str());
 }
 
 void Core::Object::Update(float deltaTime)
@@ -69,6 +70,25 @@ void Core::Object::Update(float deltaTime)
 
 void Core::Object::Render()
 {
+    int InTextureW = 0;
+    int InTextureH = 0;
+    GetGraphic().GetTextureSize(mTextureId, &InTextureW, &InTextureH);
+    int Idx = 2;
+    Rect<int> Src =  {
+        0,
+        115,
+        InTextureW / 8,
+        InTextureH / 4
+    };
+
+    Rect<int> Dst = {
+        100,
+        100,
+        mW,
+        mH
+    };
+    
+    GetGraphic().DrawTexture(mTextureId, Src, Dst, 0, Flip::None, Color::White);
 }
 
 void Core::Object::Destroy()

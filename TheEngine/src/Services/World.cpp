@@ -6,6 +6,7 @@
 std::vector<Core::Object*>::const_iterator Core::World::GetObjectIt(const Object* InObj) const
 {
 	std::vector<Object*>::const_iterator It;
+
 	for (It = std::begin(mObjectList); It != mObjectList.end(); It++)
 	{
 		if (*It == InObj)
@@ -15,6 +16,18 @@ std::vector<Core::Object*>::const_iterator Core::World::GetObjectIt(const Object
 	}
 	
 	return It;
+}
+
+void Core::World::Start()
+{
+	for (int i = 0; i < mObjectList.size(); i++)
+	{
+		Object* Obj = mObjectList[i];
+		if (Obj)
+		{
+			Obj->Start();
+		}
+	}
 }
 
 void Core::World::Update(float DeltaTime)

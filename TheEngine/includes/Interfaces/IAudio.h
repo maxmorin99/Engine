@@ -15,7 +15,8 @@ namespace Core
 		virtual void StopMusic() = 0;
 		virtual void ResumeMusic() = 0;
 		virtual void SetVolume(int Volume) = 0;
-		virtual void SetVolume(size_t SoundId, int Volume) = 0;
+		virtual void SetSFXVolume(size_t SoundId, int Volume) = 0;
+		virtual void SetMusicVolume(size_t MusicId, int Volume) = 0;
 		virtual void ShutDown() = 0;
 	};
 }

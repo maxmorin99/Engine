@@ -49,8 +49,12 @@ namespace Core
 	*/
 	struct Flip
 	{
+		Flip(bool InH, bool InV) :
+			H(InH), V(InV) {}
 		bool H;
 		bool V;
+
+		static const Flip None;
 	};
 
 	/** Color for SDL objects (rect, lines, textures, ...) */

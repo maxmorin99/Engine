@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <string>
+#include <SDL_ttf.h>
 
 Core::SdlGraphic::SdlGraphic(const char* WinName, const int WinW, const int WinH)
 {
@@ -23,6 +24,11 @@ bool Core::SdlGraphic::Init(const char** ErrorMsg)
 	}
 	if(!InitRenderer(ErrorMsg))
 	{
+		return false;
+	}
+	if (TTF_Init() != 0)
+	{
+		*ErrorMsg = SDL_GetError();
 		return false;
 	}
 	*ErrorMsg = "Graphic init was succesful\n";
@@ -166,11 +172,11 @@ size_t Core::SdlGraphic::LoadTexture(const char* FileName)
 {
 	size_t TextureId = std::hash<std::string>()(FileName);
 
-	if (_TexturesMap.find(TextureId) == _TexturesMap.end())
+	if (mTextureMap.find(TextureId) == mTextureMap.end())
 	{
 		SDL_Texture* Texture = IMG_LoadTexture(mRenderer, FileName);
 		if (!Texture) return -1;
-		_TexturesMap[TextureId] = Texture;
+		mTextureMap[TextureId] = Texture;
 	}
 	
 	return TextureId;
@@ -178,8 +184,8 @@ size_t Core::SdlGraphic::LoadTexture(const char* FileName)
 
 void Core::SdlGraphic::DrawTexture(size_t Id, const Rect<int>& Src, const Rect<int>& Dst, double Angle, const Flip& TextureFlip, const Color& Color)
 {
-	if (_TexturesMap.find(Id) == _TexturesMap.end()) return;
-	SDL_Texture* Texture = _TexturesMap[Id];
+	if (mTextureMap.find(Id) == mTextureMap.end()) return;
+	SDL_Texture* Texture = mTextureMap[Id];
 	if (!Texture) return;
 
 	SDL_Rect SrcRect{ Src.X, Src.Y, Src.W, Src.H };
@@ -207,8 +213,8 @@ void Core::SdlGraphic::DrawTexture(size_t Id, const Rect<int>& Src, const Rect<i
 
 void Core::SdlGraphic::DrawTexture(size_t Id, const Rect<int>& Dst, const Color& Color)
 {
-	if (_TexturesMap.find(Id) == _TexturesMap.end()) return;
-	SDL_Texture* Texture = _TexturesMap[Id];
+	if (mTextureMap.find(Id) == mTextureMap.end()) return;
+	SDL_Texture* Texture = mTextureMap[Id];
 	if (!Texture) return;
 
 	SDL_Rect DstRect{ Dst.X, Dst.Y, Dst.W, Dst.H };
@@ -220,13 +226,13 @@ void Core::SdlGraphic::DrawTexture(size_t Id, const Rect<int>& Dst, const Color&
 
 void Core::SdlGraphic::GetTextureSize(size_t Id, int* OutW, int* OutH)
 {
-	if (_TexturesMap.find(Id) == _TexturesMap.end())
+	if (mTextureMap.find(Id) == mTextureMap.end())
 	{
 		*OutW = 0;
 		*OutH = 0;
 		return;
 	}
-	SDL_Texture* Texture = _TexturesMap[Id];
+	SDL_Texture* Texture = mTextureMap[Id];
 	if (!Texture)
 	{
 		*OutW = 0;
@@ -237,11 +243,55 @@ void Core::SdlGraphic::GetTextureSize(size_t Id, int* OutW, int* OutH)
 	SDL_QueryTexture(Texture, nullptr, nullptr, OutW, OutH);
 }
 
+size_t Core::SdlGraphic::LoadFont(const char* FileName, int FontSize)
+{
+	size_t FontId = std::hash<std::string>()(FileName);
+	if (mFontMap.find(FontId) == mFontMap.end())
+	{
+		TTF_Font* Font = TTF_OpenFont(FileName, FontSize);
+		if (!Font) return -1;
+		mFontMap[FontId] = Font;
+	}
+	return FontId;
+}
+
+void Core::SdlGraphic::DrawString(const char* Text, size_t FontId, float X, float Y, const Color& DrawColor)
+{
+	if (mFontMap.count(FontId) > 0)
+	{
+		SDL_Color StrColor = ConvertToSdlColor(DrawColor);
+		TTF_Font* Font = mFontMap[FontId];
+		SDL_Surface* Surface = TTF_RenderText_Solid(Font, Text, StrColor);
+		SDL_Texture* TextureBuffer = SDL_CreateTextureFromSurface(mRenderer, Surface);
+		SDL_Rect Dst = { X, Y };
+		SDL_RenderCopy(mRenderer, TextureBuffer, nullptr, &Dst);
+		SDL_FreeSurface(Surface);
+	}
+}
+
+void Core::SdlGraphic::GetTextSize(const char* Text, size_t FontId, int* OutW, int* OutH)
+{
+	if (mFontMap.count(FontId) > 0)
+	{
+		TTF_Font* Font = mFontMap[FontId];
+		TTF_SizeText(Font, Text, OutW, OutH);
+	}
+}
+
 void Core::SdlGraphic::ShutDown()
 {
-	// free textures todo
+	// free textures and fonts
+	for (auto& Pair : mTextureMap)
+	{
+		SDL_DestroyTexture(Pair.second);
+	}
+	for (auto& Pair : mFontMap)
+	{
+		TTF_CloseFont(Pair.second);
+	}
 	SDL_DestroyRenderer(mRenderer);
 	SDL_DestroyWindow(mWindow);
+	TTF_Quit();
 	SDL_Quit();
 }
 

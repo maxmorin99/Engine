@@ -10,9 +10,8 @@ Core::Scene::Scene(const char* name) :
 
 void Core::Scene::Load()
 {
-	Object* Obj1 = new Object();
-	Object* Obj2 = new Object();
-
-	Engine::GetWorld().AddObject(Obj1);
-	Engine::GetWorld().AddObject(Obj2);
+	Object* Player = new Object();
+	Player->SetTexturePath("../ArchHero/Assets/Character.png");
+	Player->SetSize(100, 100);
+	Engine::GetWorld().AddObject(Player);
 }

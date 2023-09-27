@@ -39,7 +39,7 @@ size_t Core::SdlAudio::LoadSound(const char* FileName)
 
 int Core::SdlAudio::PlayMusic(size_t Id)
 {
-    if (mMusicMap.find(Id) == mMusicMap.end()) return;
+    if (mMusicMap.find(Id) == mMusicMap.end()) return -1;
     Mix_Music* MusicToPlay = mMusicMap[Id];
     if (!MusicToPlay) return -1;
     return Mix_PlayMusic(MusicToPlay, 0);
@@ -95,12 +95,27 @@ void Core::SdlAudio::SetVolume(int Volume)
     Mix_Volume(-1, Volume);
 }
 
-void Core::SdlAudio::SetVolume(size_t SoundId, int Volume)
+void Core::SdlAudio::SetSFXVolume(size_t SoundId, int Volume)
 {
-    // faire une fonction pour les sons et une pour la music
+    if (mSoundMap.find(SoundId) == mSoundMap.end()) return;
+    Mix_Chunk* Sfx = mSoundMap[SoundId];
+    Mix_VolumeChunk(Sfx, Volume);
+}
+
+void Core::SdlAudio::SetMusicVolume(size_t MusicId, int Volume)
+{
+    Mix_VolumeMusic(Volume);
 }
 
 void Core::SdlAudio::ShutDown()
 {
+    for (auto& Music : mMusicMap)
+    {
+        Mix_FreeMusic(Music.second);
+    }
+    for (auto& Sfx : mSoundMap)
+    {
+        Mix_FreeChunk(Sfx.second);
+    }
     Mix_CloseAudio();
 }

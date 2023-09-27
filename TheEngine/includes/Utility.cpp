@@ -14,3 +14,6 @@ const Core::Color Core::Color::Grey = { 192, 192, 192, 255 };
 // Vector
 const Core::Vector2D<float> Core::Vector2D<float>::ZeroVectorF = Vector2D(0.f, 0.f);
 const Core::Vector2D<int> Core::Vector2D<int>::ZeroVector = Vector2D(0, 0);
+
+// Flip
+const Core::Flip Core::Flip::None = Core::Flip(false, false);

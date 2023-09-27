@@ -70,6 +70,8 @@ void Core::Engine::Start(void)
 
 	GetTimer().StartTimer();
 
+	GetWorld().Start();
+
 	while (GetInstance()->mIsRunning)
 	{
 		GetTimer().UpdateStart();
@@ -103,9 +105,8 @@ void Core::Engine::Render(void)
 {
 	GetGraphic().SetDrawColor(Color::Black);
 	GetGraphic().Clear();
-	GetGraphic().DrawRectF(false, 100.f, 100.f, 100.f, 100.f, Color::Red);
-	GetGraphic().DrawLineF(Vector2D<float>(300.f, 100.f), Vector2D<float>(375.f, 300.f), Color::Green);
 	//size_t textureId = _Graphic->LoadTexture("../ArchHero/Assets/Helmet.png");
+	GetWorld().Render();
 	GetGraphic().Present();
 }
 

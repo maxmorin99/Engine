@@ -11,6 +11,7 @@ namespace Core
 	{
 	public:
 		virtual ~IWorld() = default;
+		virtual void Start() = 0;
 		virtual void Update(float DeltaTime) = 0;
 		virtual void Render() = 0;;
 		virtual void Destroy(Object* Obj) = 0;

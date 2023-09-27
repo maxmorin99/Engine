@@ -7,6 +7,7 @@ struct SDL_Window;
 struct SDL_Renderer;
 struct SDL_Color;
 struct SDL_Texture;
+typedef struct _TTF_Font TTF_Font;
 
 namespace Core
 {
@@ -35,6 +36,9 @@ namespace Core
 		virtual void DrawTexture(size_t Id, const Rect<int>& Src, const Rect<int>& Dst, double Angle, const Flip& TextureFlip, const Color& Color) override;
 		virtual void DrawTexture(size_t Id, const Rect<int>& Dst, const Color& Color) override;
 		virtual void GetTextureSize(size_t Id, int* OutW, int* OutH) override;
+		virtual size_t LoadFont(const char* FileName, int FontSize) override;
+		virtual void DrawString(const char* Text, size_t FontId, float X, float Y, const Color& DrawColor) override;
+		virtual void GetTextSize(const char* Text, size_t FontId, int* OutW, int* OutH) override;
 		virtual void ShutDown() override;
 		/** End Graphic Interface */
 
@@ -45,7 +49,8 @@ namespace Core
 		int mWindowWidth = 0;
 		int mWindowHeight = 0;
 
-		std::unordered_map<size_t, SDL_Texture*> _TexturesMap;
+		std::unordered_map<size_t, SDL_Texture*> mTextureMap;
+		std::unordered_map<size_t, TTF_Font*> mFontMap;
 		SDL_Color ConvertToSdlColor(const Color& InColor) const;
 	};
 }

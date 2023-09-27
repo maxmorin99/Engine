@@ -22,7 +22,8 @@ namespace Core
 		void StopMusic() override;
 		void ResumeMusic() override;
 		void SetVolume(int Volume) override;
-		void SetVolume(size_t SoundId, int Volume) override;
+		virtual void SetSFXVolume(size_t SoundId, int Volume) override;
+		virtual void SetMusicVolume(size_t MusicId, int Volume) override;
 		virtual void ShutDown() override;
 
 	private:

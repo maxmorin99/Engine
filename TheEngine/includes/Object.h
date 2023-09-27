@@ -27,6 +27,7 @@ namespace Core
 	private:
 		std::string mId = "\0";
 		std::string mTexturePath;
+		size_t mTextureId = -1;
 		Vector2D<float> mLocation = Vector2D<float>::ZeroVectorF;
 		float mW = 0.f;
 		float mH = 0.f;

@@ -25,6 +25,7 @@ namespace Core
 		static void Render(void);
 		static void Shutdown(void);
 		static Engine* GetInstance();
+		void WindowQuitCallback();
 
 	private:
 		static Engine* mInstance;

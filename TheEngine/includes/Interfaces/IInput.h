@@ -1,8 +1,11 @@
 #pragma once
 
+#include <functional>
+
 namespace Core
 {
-    enum class EKey {
+    enum class EKey 
+    {
         A = 0,
         B = 1,
         C = 2,
@@ -29,11 +32,12 @@ namespace Core
         X = 23,
         Y = 24,
         Z = 25,
-        Space = 26,
-        Right = 27,
-        Left = 28,
-        Down = 29,
-        Up = 30,
+        ESC = 26,
+        Space = 27,
+        Right = 28,
+        Left = 29,
+        Down = 30,
+        Up = 31,
     };
 
 	class IInput
@@ -43,7 +47,7 @@ namespace Core
 		virtual bool IsKeyDown(const EKey& Key) = 0;
 		virtual bool IsButtonDown(int Button) = 0;
 		virtual void GetMousePosition(int* X, int* Y) = 0;
-		virtual bool ShouldQuit() = 0;
+        virtual void BindQuitFunction(std::function<void()> FunPtr) = 0;
 
 	protected:
 		friend class Engine;

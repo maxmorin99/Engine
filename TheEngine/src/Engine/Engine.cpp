@@ -24,6 +24,11 @@ Core::Engine* Core::Engine::GetInstance()
 	return mInstance;
 }
 
+void Core::Engine::WindowQuitCallback()
+{
+	mIsRunning = false;
+}
+
 bool Core::Engine::Init(const char* Name, int Width, int Height)
 {
 	const char* InitMsg = nullptr;
@@ -63,17 +68,24 @@ void Core::Engine::Start(void)
 			return;
 		}
 	}
-
+	
+	// Bind WindowQuitCallback function to SDL_QUIT event
+	GetInput().BindQuitFunction(std::bind(&Core::Engine::WindowQuitCallback, GetInstance()));
+		
 	if (GetInstance()->mIsRunning) return;
-
 	GetInstance()->mIsRunning = true;
 
 	GetTimer().StartTimer();
-
 	GetWorld().Start();
 
 	while (GetInstance()->mIsRunning)
 	{
+		// Quit if user press ESC key
+		if (GetInput().IsKeyDown(EKey::ESC))
+		{
+			GetInstance()->mIsRunning = false;
+		}
+
 		GetTimer().UpdateStart();
 		const float DeltaTime = GetInstance()->mTimer->GetDeltaTime();
 
@@ -95,10 +107,6 @@ void Core::Engine::ProcessInput(void)
 void Core::Engine::Update(float DeltaTime)
 {
 	GetWorld().Update(DeltaTime);
-	if (GetInput().ShouldQuit())
-	{
-		GetInstance()->mIsRunning = false;
-	}
 }
 
 void Core::Engine::Render(void)

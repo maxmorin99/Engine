@@ -77,11 +77,10 @@ namespace Core
 	template<typename T>
 	inline Component* Object::GetComponent() const
 	{
-		const type_info* Type = &typeid(T);
+		const type_info* Type = &(typeid(T));
 		if (mComponentsByType.count(Type) > 0)
 		{
-			//return mComponentsByType[Type];
-			int bob;
+			return mComponentsByType.at(Type);
 		}
 		return nullptr;
 	}

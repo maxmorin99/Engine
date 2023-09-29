@@ -12,11 +12,21 @@ void Core::SdlInput::Update()
 	{
 		switch (Event.type)
 		{
-		case SDL_QUIT:
-			mQuit = true;
-			break;
-		default:
-			break;
+        case SDL_QUIT:
+            EngineQuitFunction();
+            break;
+        case SDL_MOUSEMOTION:
+            SDL_GetMouseState(&mMouseX, &mMouseY);
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            mMouseStates[0] = SDL_BUTTON_LEFT;
+            mMouseStates[1] = SDL_BUTTON_MIDDLE;
+            mMouseStates[2] = SDL_BUTTON_RIGHT;
+        case SDL_MOUSEBUTTONUP:
+            mMouseStates[0] = SDL_BUTTON_LEFT;
+            mMouseStates[1] = SDL_BUTTON_MIDDLE;
+            mMouseStates[2] = SDL_BUTTON_RIGHT;
+            break;
 		}
 	}
 	mKeyStates = SDL_GetKeyboardState(nullptr);
@@ -41,9 +51,9 @@ void Core::SdlInput::GetMousePosition(int* x, int* y)
 	*y = mMouseY;
 }
 
-bool Core::SdlInput::ShouldQuit()
+void Core::SdlInput::BindQuitFunction(std::function<void()> FunPtr)
 {
-	return mQuit;
+    EngineQuitFunction = FunPtr;
 }
 
 int Core::SdlInput::GetSdlScancode(const EKey& Key) const
@@ -76,6 +86,7 @@ int Core::SdlInput::GetSdlScancode(const EKey& Key) const
     case EKey::X: return 27;
     case EKey::Y: return 28;
     case EKey::Z: return 29;
+    case EKey::ESC: return 41;
     case EKey::Space: return 44;
     case EKey::Right: return 79;
     case EKey::Left: return 80;

@@ -5,6 +5,7 @@
 #include "Services/SdlInput.h"
 #include "Services/SdlTime.h"
 #include "Services/World.h"
+#include "Services/SdlAudio.h"
 #include "Utility.h"
 #if _DEBUG
 #include "Services/SdlConsoleLogger.h"
@@ -47,6 +48,9 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 
 	GetInstance()->mInput = new SdlInput();
 
+	GetInstance()->mAudio = new SdlAudio();
+	GetAudio().Init(&InitMsg);
+
 	GetInstance()->mTimer = new SdlTimer();
 	GetTimer().SetTargetFps(60.f);
 
@@ -79,6 +83,12 @@ void Core::Engine::Start(void)
 
 	GetTimer().StartTimer();
 	GetWorld().Start();
+
+	// Play music
+	std::string File = ASSET_PATH + std::string("Music/Music.mp3");
+	size_t MusicId = GetAudio().LoadMusic(File.c_str());
+	GetAudio().PlayMusic(MusicId, true);
+	GetAudio().SetMusicVolume(MusicId, 10.f);
 
 	while (GetInstance()->mIsRunning)
 	{
@@ -115,7 +125,7 @@ void Core::Engine::Render(void)
 {
 	GetGraphic().SetDrawColor(Color::Grey);
 	GetGraphic().Clear();
-	//size_t textureId = _Graphic->LoadTexture("../ArchHero/Assets/Helmet.png");
+	
 	GetWorld().Render();
 	GetGraphic().Present();
 }

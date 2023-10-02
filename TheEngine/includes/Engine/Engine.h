@@ -7,7 +7,7 @@ namespace Core
 	class IGraphic;
 	class ITimer;
 	class IWorld;
-
+	class IAudio;
 
 	class Engine final
 	{
@@ -37,6 +37,7 @@ namespace Core
 		IGraphic* mGraphic = nullptr;
 		ITimer* mTimer = nullptr;
 		IWorld* mWorld = nullptr;
+		IAudio* mAudio = nullptr;
 
 	public:
 		inline static IInput& GetInput() { return *GetInstance()->mInput; }
@@ -44,5 +45,6 @@ namespace Core
 		inline static IGraphic& GetGraphic() { return *GetInstance()->mGraphic; }
 		inline static ITimer& GetTimer() { return *GetInstance()->mTimer; }
 		inline static IWorld& GetWorld() { return *GetInstance()->mWorld; }
+		inline static IAudio& GetAudio() { return *GetInstance()->mAudio; }
 	};
 }

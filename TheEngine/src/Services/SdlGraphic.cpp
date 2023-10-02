@@ -255,7 +255,7 @@ size_t Core::SdlGraphic::LoadFont(const char* FileName, int FontSize)
 	return FontId;
 }
 
-void Core::SdlGraphic::DrawString(const char* Text, size_t FontId, float X, float Y, const Color& DrawColor)
+void Core::SdlGraphic::DrawString(const char* Text, size_t FontId, float X, float Y, float W, float H, const Color& DrawColor)
 {
 	if (mFontMap.count(FontId) > 0)
 	{
@@ -263,7 +263,7 @@ void Core::SdlGraphic::DrawString(const char* Text, size_t FontId, float X, floa
 		TTF_Font* Font = mFontMap[FontId];
 		SDL_Surface* Surface = TTF_RenderText_Solid(Font, Text, StrColor);
 		SDL_Texture* TextureBuffer = SDL_CreateTextureFromSurface(mRenderer, Surface);
-		SDL_Rect Dst = { X, Y };
+		SDL_Rect Dst = { X, Y, W, H };
 		SDL_RenderCopy(mRenderer, TextureBuffer, nullptr, &Dst);
 		SDL_FreeSurface(Surface);
 	}

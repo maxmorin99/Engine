@@ -37,7 +37,7 @@ namespace Core
 		virtual void DrawTexture(size_t Id, const Rect<int>& Dst, const Color& Color) override;
 		virtual void GetTextureSize(size_t Id, int* OutW, int* OutH) override;
 		virtual size_t LoadFont(const char* FileName, int FontSize) override;
-		virtual void DrawString(const char* Text, size_t FontId, float X, float Y, const Color& DrawColor) override;
+		virtual void DrawString(const char* Text, size_t FontId, float X, float Y, float W, float H, const Color& DrawColor) override;
 		virtual void GetTextSize(const char* Text, size_t FontId, int* OutW, int* OutH) override;
 		virtual void ShutDown() override;
 		/** End Graphic Interface */

@@ -18,7 +18,7 @@ namespace Core
 
 		virtual void Draw() override;
 
-	private:
+	protected:
 		/** Path of the texture */
 		std::string mFile;
 

@@ -97,7 +97,7 @@ namespace Core
 		{
 			T CurrentLength = Length();
 			T NormalizedX = X / CurrentLength;
-			T NormalizedY = Y / CurrentLength();
+			T NormalizedY = Y / CurrentLength;
 			return Vector<T>(NormalizedX, NormalizedY);
 		}
 

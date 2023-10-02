@@ -29,7 +29,7 @@ namespace Core
 		inline float GetMovementSpeed() const { return mMovementSpeed; }
 		inline void SetMaxMovementSpeed(float NewSpeed) { mMaxMovementSpeed = NewSpeed; }
 		inline float GetMaxMovementSpeed() const { return mMaxMovementSpeed; }
-		inline void SetMass(float Mass) { mMass = Mass; }
+		void SetMass(float Mass);
 		inline float GetMass() const { return mMass; }
 		inline Vector<float> GetVelocity() const { return mVelocity; }
 	};

@@ -15,6 +15,7 @@ void Core::PhysicComponent::Update(float DeltaTime)
 	if (!mOwner) return;
 	Vector<float> OwnerPos = mOwner->GetLocation();
 	Vector<float> NewPos = OwnerPos + mVelocity * DeltaTime;
+	mOwner->SetLocation(NewPos);
 }
 
 void Core::PhysicComponent::AddMovement(const Vector<float>& MovementDirection)
@@ -25,6 +26,11 @@ void Core::PhysicComponent::AddMovement(const Vector<float>& MovementDirection)
 	{
 		mVelocity = mVelocity.GetNormalized() * mMaxMovementSpeed;
 	}
+}
+
+void Core::PhysicComponent::SetMass(float Mass)
+{
+	mMass = Mass == 0.f ? 1.f : Mass;
 }
 
 void Core::PhysicComponent::Destroy()

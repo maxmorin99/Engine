@@ -5,6 +5,7 @@
 #include "Components/SpriteComponent.h"
 #include "Components/PlayerComponent.h"
 #include "Components/PhysicComponent.h"
+#include "Interfaces/IAudio.h"
 
 Core::Scene::Scene(const char* name) :
 	mName(name)
@@ -20,9 +21,10 @@ void Core::Scene::Load()
 	Sprite->SetFile(ASSET_PATH + std::string("Character_Atlas.png"));
 	Player->AddComponent<PlayerComponent>();
 	PhysicComponent* Px = Player->AddComponent<PhysicComponent>();
-	Px->SetMass(10.f);
-	Px->SetMaxMovementSpeed(100.f);
+	Px->SetMass(1.f);
+	Px->SetMaxMovementSpeed(250.f);
 	Px->SetMovementSpeed(10.f);
+
 	
 
 

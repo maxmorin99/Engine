@@ -27,7 +27,7 @@ namespace Core
 		virtual void DrawTexture(size_t Id, const Rect<int>& Dst, const Color& Color) = 0;
 		virtual void GetTextureSize(size_t Id, int* OutW, int* OutH) = 0;
 		virtual size_t LoadFont(const char* FileName, int FontSize) = 0;
-		virtual void DrawString(const char* Text, size_t FontId, float X, float Y, const Color& DrawColor) = 0;
+		virtual void DrawString(const char* Text, size_t FontId, float X, float Y, float W, float H, const Color& DrawColor) = 0;
 		virtual void GetTextSize(const char* Text, size_t FontId, int* OutW, int* OutH) = 0;
 
 		virtual void ShutDown() = 0;

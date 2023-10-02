@@ -27,7 +27,7 @@ void Core::SpriteComponent::Draw()
 {
 	if (!mOwner) return;
 
-	Vector<int> OwnerSize = mOwner->GetSize();
+	Vector<float> OwnerSize = mOwner->GetSize();
 	Vector<float> OwnerLoc = mOwner->GetLocation();
 	Rect<int> Dst(static_cast<int>(OwnerLoc.X), static_cast<int>(OwnerLoc.Y), static_cast<int>(OwnerSize.X), static_cast<int>(OwnerSize.Y));
 	

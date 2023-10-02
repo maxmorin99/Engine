@@ -11,9 +11,7 @@ const Core::Color Core::Color::Yellow = { 255, 255, 0, 255 };
 const Core::Color Core::Color::White = { 255, 255, 255, 255 };
 const Core::Color Core::Color::Grey = { 192, 192, 192, 255 };
 
-// Vector
-const Core::Vector<float> Core::Vector<float>::ZeroVectorF = Vector(0.f, 0.f);
-const Core::Vector<int> Core::Vector<int>::ZeroVector = Vector(0, 0);
-
 // Flip
 const Core::Flip Core::Flip::None = Core::Flip(false, false);
+
+

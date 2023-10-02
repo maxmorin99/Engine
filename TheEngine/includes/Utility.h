@@ -1,5 +1,6 @@
 #pragma once
 
+#include <math.h>
 
 
 namespace Core
@@ -34,18 +35,73 @@ namespace Core
 		T H;
 	};
 
+	/* Vector */
+
 	template <typename T>
 	struct Vector
 	{
 	public:
-		Vector(T InX, T InY)
-			: X(InX), Y(InY) {}
+		Vector(T InX, T InY) :
+			X(InX), Y(InY) {}
+
 		T X;
 		T Y;
 
+		static Vector<T> ZeroVector(){
+			return Vector<T>(0, 0);
+		}
 
-		static const Vector<float> ZeroVectorF;
-		static const Vector<int> ZeroVector;
+		/** Operator overload ----------------------------------------- */
+
+		Vector<T> operator + (const Vector& Other) const
+		{
+			return Vector<T>(X + Other.X, Y + Other.Y);
+		}
+
+		Vector<T>& operator += (const Vector& Other)
+		{
+			X += Other.X;
+			Y += Other.Y;
+			return *this;
+		}
+
+		bool operator == (const Vector& Other) const
+		{
+			return this->X == Other.X && this->Y == Other.Y;
+		}
+
+		Vector<T>& operator = (const Vector& Other)
+		{
+			this->X = Other.X;
+			this->Y = Other.Y;
+			return *this;
+		}
+
+		Vector<T> operator * (T Scalar) const
+		{
+			return Vector<T>(X * Scalar, Y * Scalar);
+		}
+
+		Vector<T> operator / (T Scalar) const
+		{
+			return Vector<float>(X / Scalar, Y / Scalar);
+		}
+
+		
+		T Length() const
+		{
+			return static_cast<T>(sqrt(pow(X, 2) + pow(Y, 2)));
+		}
+
+		Vector<T> GetNormalized() const
+		{
+			T CurrentLength = Length();
+			T NormalizedX = X / CurrentLength;
+			T NormalizedY = Y / CurrentLength();
+			return Vector<T>(NormalizedX, NormalizedY);
+		}
+
+		//void SetLength();
 	};
 
 	/** 

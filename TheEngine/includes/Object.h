@@ -52,10 +52,10 @@ namespace Core
 		void GetLocation(float* OutX, float* OutY);
 		void SetLocation(const Vector<float>& NewLoc);
 		void SetLocation(float NewX, float NewY);
-		const Vector<int> GetSize() const;
-		void GetSize(int* OutW, int* OutH) const;
-		void SetSize(const Vector<int>& NewSize);
-		void SetSize(int NewW, int NewH);
+		const Vector<float> GetSize() const;
+		void GetSize(float* OutW, float* OutH) const;
+		void SetSize(const Vector<float>& NewSize);
+		void SetSize(float NewW, float NewH);
 		float GetRotation() const;
 		void SetRotation(float NewRot);
 	};

@@ -9,14 +9,14 @@ namespace Core
 	{
 	public:
 		TransformComponent(Object* Owner);
-		TransformComponent(Object* Owner, const Vector<float>& Loc, const Vector<int>& Size, float Rotation);
+		TransformComponent(Object* Owner, const Vector<float>& Loc, const Vector<float>& Size, float Rotation);
 		virtual ~TransformComponent() = default;
 		virtual void Start();
 		virtual void Destroy();
 
 	private:
-		Vector<float> mLocation = Vector<float>::ZeroVectorF;
-		Vector<int> mSize = Vector<int>::ZeroVector;
+		Vector<float> mLocation = Vector<float>::ZeroVector();
+		Vector<float> mSize = Vector<float>::ZeroVector();
 		float mRotation = 0.f;
 
 	public:
@@ -25,10 +25,10 @@ namespace Core
 		inline void SetLocation(const Vector<float>& NewLoc) { mLocation = NewLoc; }
 		void SetLocation(float NewX, float NewY);
 
-		inline const Vector<int> GetSize() const { return mSize; }
-		void GetSize(int* OutW, int* OutH) const;
-		inline void SetSize(const Vector<int>& NewSize) { mSize = NewSize; }
-		void SetSize(int NewW, int NewH);
+		inline const Vector<float> GetSize() const { return mSize; }
+		void GetSize(float* OutW, float* OutH) const;
+		inline void SetSize(const Vector<float>& NewSize) { mSize = NewSize; }
+		void SetSize(float NewW, float NewH);
 
 		inline float GetRotation() const { return mRotation; }
 		inline void SetRotation(float NewRot) { mRotation = NewRot; }

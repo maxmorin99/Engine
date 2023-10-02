@@ -4,6 +4,7 @@
 #include "Interfaces/IWorld.h"
 #include "Components/SpriteComponent.h"
 #include "Components/PlayerComponent.h"
+#include "Components/PhysicComponent.h"
 
 Core::Scene::Scene(const char* name) :
 	mName(name)
@@ -16,8 +17,14 @@ void Core::Scene::Load()
 	Player->SetLocation(100.f, 100.f);
 	Player->SetSize(100, 100);
 	SpriteComponent* Sprite = Player->AddComponent<SpriteComponent>();
-	Player->AddComponent<PlayerComponent>();
 	Sprite->SetFile(ASSET_PATH + std::string("Character_Atlas.png"));
+	Player->AddComponent<PlayerComponent>();
+	PhysicComponent* Px = Player->AddComponent<PhysicComponent>();
+	Px->SetMass(10.f);
+	Px->SetMaxMovementSpeed(100.f);
+	Px->SetMovementSpeed(10.f);
+	
+
 
 	Engine::GetWorld().AddObject(Player);
 }

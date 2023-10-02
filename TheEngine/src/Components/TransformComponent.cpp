@@ -5,7 +5,7 @@ Core::TransformComponent::TransformComponent(Object* Owner) :
 {
 }
 
-Core::TransformComponent::TransformComponent(Object* Owner, const Vector<float>& Loc, const Vector<int>& Size, float Rotation):
+Core::TransformComponent::TransformComponent(Object* Owner, const Vector<float>& Loc, const Vector<float>& Size, float Rotation):
 	Component(Owner),
 	mLocation(Loc),
 	mSize(Size),
@@ -35,7 +35,7 @@ void Core::TransformComponent::SetLocation(float NewX, float NewY)
 	mLocation.Y = NewY;
 }
 
-void Core::TransformComponent::GetSize(int* OutW, int* OutH) const
+void Core::TransformComponent::GetSize(float* OutW, float* OutH) const
 {
 	if (!OutW || !OutH) return;
 
@@ -43,7 +43,7 @@ void Core::TransformComponent::GetSize(int* OutW, int* OutH) const
 	*OutH = mSize.Y;
 }
 
-void Core::TransformComponent::SetSize(int NewW, int NewH)
+void Core::TransformComponent::SetSize(float NewW, float NewH)
 {
 	mSize.X = NewW;
 	mSize.Y = NewH;

@@ -44,7 +44,7 @@ void Core::Object::SetLocation(float NewX, float NewY)
     mTransform->SetLocation(NewX, NewY);
 }
 
-void Core::Object::GetSize(int* OutW, int* OutH) const
+void Core::Object::GetSize(float* OutW, float* OutH) const
 {
     if (!OutW || !OutH) return;
     if (!mTransform)
@@ -56,19 +56,19 @@ void Core::Object::GetSize(int* OutW, int* OutH) const
     mTransform->GetSize(OutW, OutH);
 }
 
-const Core::Vector<int> Core::Object::GetSize() const
+const Core::Vector<float> Core::Object::GetSize() const
 {
-    if (!mTransform) return Vector<int>::ZeroVector;
+    if (!mTransform) return Vector<float>::ZeroVector();
     return mTransform->GetSize();
 }
 
-void Core::Object::SetSize(int NewW, int NewH)
+void Core::Object::SetSize(float NewW, float NewH)
 {
     if (!mTransform) return;
     mTransform->SetSize(NewW, NewH);
 }
 
-void Core::Object::SetSize(const Vector<int>& NewSize)
+void Core::Object::SetSize(const Vector<float>& NewSize)
 {
     if (!mTransform) return;
     mTransform->SetSize(NewSize);
@@ -82,7 +82,7 @@ void Core::Object::SetLocation(const Core::Vector<float>& NewLoc)
 
 const Core::Vector<float> Core::Object::GetLocation() const
 {
-    if (!mTransform) return Vector<float>::ZeroVectorF;
+    if (!mTransform) return Vector<float>::ZeroVector();
     return mTransform->GetLocation();
 }
 

@@ -5,7 +5,7 @@
 namespace Core
 {
 	template <class T>
-	class Vector2D
+	class Vector
 	{
 	public:
 		T X;

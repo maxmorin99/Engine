@@ -6,11 +6,8 @@
 
 namespace Core
 {
-	class IWorld;
-	class IInput;
-	class ILogger;
-	class IGraphic;
 	class Component;
+	class TransformComponent;
 
 	class Object final
 	{
@@ -26,35 +23,48 @@ namespace Core
 		void Destroy();
 
 		template<typename T>
-		void AddComponent();
+		T* AddComponent();
 
 		template<typename T>
-		Component* GetComponent() const;
+		T* GetComponent() const;
 
 	private:
 		std::string mId = "\0";
-		Vector2D<float> mLocation = Vector2D<float>::ZeroVectorF;
+
+		/* Components --------------------------------------------- */
+
+		TransformComponent* mTransform = nullptr;
+
+
 		std::vector<Component*> mComponents;
 		std::vector<IDrawable*> mDrawable;
 		std::vector<IUpdatable*> mUpdatable;
 		std::unordered_map<const type_info*, Component*> mComponentsByType;
 
-		IWorld& GetWorld() const;
-		IInput& GetInput() const;
-		ILogger& GetLogger() const;
-		IGraphic& GetGraphic() const;
-
 		size_t GenerateId();
 
 	public:
-		inline void SetId(const std::string& Id) { mId = Id; }
 		inline std::string GetId() const { return mId; }
-		inline void SetLocation(const Vector2D<float>& InLocation) { mLocation = InLocation; }
-		void GetLocation(Vector2D<float>& outLocation) const;
+
+		/* Transform get/set -------------------------------------- */
+
+		const Vector<float> GetLocation() const;
+		void GetLocation(float* OutX, float* OutY);
+		void SetLocation(const Vector<float>& NewLoc);
+		void SetLocation(float NewX, float NewY);
+		const Vector<int> GetSize() const;
+		void GetSize(int* OutW, int* OutH) const;
+		void SetSize(const Vector<int>& NewSize);
+		void SetSize(int NewW, int NewH);
+		float GetRotation() const;
+		void SetRotation(float NewRot);
 	};
 
+
+	/* Template function definitions -------------------------- */
+
 	template<typename T>
-	inline void Object::AddComponent()
+	inline T* Object::AddComponent()
 	{
 		Component* NewComponent = new T(this);
 		mComponents.push_back(NewComponent);
@@ -72,15 +82,16 @@ namespace Core
 
 		const type_info* Type = &typeid(*NewComponent);
 		mComponentsByType.emplace(Type, NewComponent);
+		return static_cast<T*>(NewComponent);
 	}
 
 	template<typename T>
-	inline Component* Object::GetComponent() const
+	inline T* Object::GetComponent() const
 	{
 		const type_info* Type = &(typeid(T));
 		if (mComponentsByType.count(Type) > 0)
 		{
-			return mComponentsByType.at(Type);
+			return static_cast<T*>(mComponentsByType.at(Type));
 		}
 		return nullptr;
 	}

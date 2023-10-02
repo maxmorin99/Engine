@@ -154,14 +154,14 @@ void Core::SdlGraphic::DrawLine(const int X1, const int Y1, const int X2, const 
 	SDL_RenderDrawLine(mRenderer, X1, Y1, X2, Y2);
 }
 
-void Core::SdlGraphic::DrawLine(const Vector2D<int>& Point1, const Vector2D<int>& Point2, const Color& DrawColor)
+void Core::SdlGraphic::DrawLine(const Vector<int>& Point1, const Vector<int>& Point2, const Color& DrawColor)
 {
 	SDL_Color SdlColor = ConvertToSdlColor(DrawColor);
 	SDL_SetRenderDrawColor(mRenderer, SdlColor.r, SdlColor.g, SdlColor.b, SdlColor.a);
 	SDL_RenderDrawLine(mRenderer, Point1.X, Point1.Y, Point2.X, Point2.Y);
 }
 
-void Core::SdlGraphic::DrawLineF(const Vector2D<float>& Point1, const Vector2D<float>& Point2, const Color& DrawColor)
+void Core::SdlGraphic::DrawLineF(const Vector<float>& Point1, const Vector<float>& Point2, const Color& DrawColor)
 {
 	SDL_Color SdlColor = ConvertToSdlColor(DrawColor);
 	SDL_SetRenderDrawColor(mRenderer, SdlColor.r, SdlColor.g, SdlColor.b, SdlColor.a);

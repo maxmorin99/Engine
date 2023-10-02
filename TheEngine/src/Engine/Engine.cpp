@@ -2,14 +2,14 @@
 #include <ctime>
 #include <Windows.h>
 #include "Services/SdlGraphic.h"
-#include "Services/SDLInput.h"
+#include "Services/SdlInput.h"
 #include "Services/SdlTime.h"
 #include "Services/World.h"
 #include "Utility.h"
 #if _DEBUG
 #include "Services/SdlConsoleLogger.h"
 #else
-#include "SdlFileLogger.h"
+#include "Services/SdlFileLogger.h"
 #endif
 #include "Object.h"
 
@@ -38,7 +38,7 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 #if _DEBUG
 	GetInstance()->mLogger = new SdlConsoleLogger();
 #else
-	GetInstance()->_Logger = new SdlFileLogger();
+	GetInstance()->mLogger = new SdlFileLogger();
 #endif
 	if (!GetLogger().Init()) return false;
 
@@ -69,8 +69,10 @@ void Core::Engine::Start(void)
 		}
 	}
 	
+#if _DEBUG
 	// Bind WindowQuitCallback function to SDL_QUIT event
 	GetInput().BindQuitFunction(std::bind(&Core::Engine::WindowQuitCallback, GetInstance()));
+#endif
 		
 	if (GetInstance()->mIsRunning) return;
 	GetInstance()->mIsRunning = true;

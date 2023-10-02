@@ -3,34 +3,22 @@
 #include "Services/World.h"
 #include <sstream>
 #include "Components/Component.h"
+#include "Components/TransformComponent.h"
 
 size_t Core::Object::sId = -1;
 std::string Core::Object::sName = "Object_";
 
 Core::Object::Object()
 {
+    // Generate Id
     size_t Id = GenerateId();
     std::ostringstream Oss;
     Oss << Id;
     std::string IdStr = Oss.str();
     mId = sName + IdStr;
-    GetLogger().DebugLog(ConsoleColor::Green, "%s\n", mId.c_str());
-    SetId(IdStr);
-}
 
-Core::IWorld& Core::Object::GetWorld() const
-{
-    return Engine::GetWorld();
-}
-
-Core::ILogger& Core::Object::GetLogger() const
-{
-    return Engine::GetLogger();
-} 
-
-Core::IGraphic& Core::Object::GetGraphic() const
-{
-    return Engine::GetGraphic();
+    // Instantiate components
+    mTransform = AddComponent<TransformComponent>();
 }
 
 size_t Core::Object::GenerateId()
@@ -38,14 +26,76 @@ size_t Core::Object::GenerateId()
     return ++sId;
 }
 
-Core::IInput& Core::Object::GetInput() const
+void Core::Object::GetLocation(float* OutX, float* OutY)
 {
-    return Engine::GetInput();
+    if (!OutX || !OutY) return;
+    if (!mTransform)
+    {
+        *OutX = 0.f;
+        *OutY = 0.f;
+    }
+    
+    mTransform->GetLocation(OutX, OutY);
 }
 
-void Core::Object::GetLocation(Vector2D<float>& OutLocation) const
+void Core::Object::SetLocation(float NewX, float NewY)
 {
-    OutLocation = mLocation;
+    if (!mTransform) return;
+    mTransform->SetLocation(NewX, NewY);
+}
+
+void Core::Object::GetSize(int* OutW, int* OutH) const
+{
+    if (!OutW || !OutH) return;
+    if (!mTransform)
+    {
+        *OutW = 0;
+        *OutH = 0;
+        return;
+    }
+    mTransform->GetSize(OutW, OutH);
+}
+
+const Core::Vector<int> Core::Object::GetSize() const
+{
+    if (!mTransform) return Vector<int>::ZeroVector;
+    return mTransform->GetSize();
+}
+
+void Core::Object::SetSize(int NewW, int NewH)
+{
+    if (!mTransform) return;
+    mTransform->SetSize(NewW, NewH);
+}
+
+void Core::Object::SetSize(const Vector<int>& NewSize)
+{
+    if (!mTransform) return;
+    mTransform->SetSize(NewSize);
+}
+
+void Core::Object::SetLocation(const Core::Vector<float>& NewLoc)
+{
+    if (!mTransform) return;
+    mTransform->SetLocation(NewLoc);
+}
+
+const Core::Vector<float> Core::Object::GetLocation() const
+{
+    if (!mTransform) return Vector<float>::ZeroVectorF;
+    return mTransform->GetLocation();
+}
+
+float Core::Object::GetRotation() const
+{
+    if (!mTransform) return 0.f;
+    return mTransform->GetRotation();
+}
+
+void Core::Object::SetRotation(float NewRot)
+{
+    if (!mTransform) return;
+    mTransform->SetRotation(NewRot);
 }
 
 void Core::Object::Start()
@@ -86,5 +136,5 @@ void Core::Object::Destroy()
     mUpdatable.clear();
     mComponentsByType.clear();
 
-    GetWorld().Destroy(this);
+    Engine::GetWorld().Destroy(this);
 }

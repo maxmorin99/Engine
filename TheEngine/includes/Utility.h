@@ -1,9 +1,11 @@
 #pragma once
 
-#define ASSET_PATH "../ArchHero/Assets/"
+
 
 namespace Core
 {
+#define ASSET_PATH "../ArchHero/Assets/"
+
 	/** Enum for debug text color in console or files */
 	enum class ConsoleColor
 	{
@@ -23,6 +25,8 @@ namespace Core
 	template <typename T>
 	struct Rect
 	{
+		Rect(T InX, T InY, T InW, T InH)
+			: X(InX), Y(InY), W(InW), H(InH) {}
 	public:
 		T X;
 		T Y;
@@ -31,17 +35,17 @@ namespace Core
 	};
 
 	template <typename T>
-	struct Vector2D
+	struct Vector
 	{
 	public:
-		Vector2D(T InX, T InY)
+		Vector(T InX, T InY)
 			: X(InX), Y(InY) {}
 		T X;
 		T Y;
 
 
-		static const Vector2D<float> ZeroVectorF;
-		static const Vector2D<int> ZeroVector;
+		static const Vector<float> ZeroVectorF;
+		static const Vector<int> ZeroVector;
 	};
 
 	/** 

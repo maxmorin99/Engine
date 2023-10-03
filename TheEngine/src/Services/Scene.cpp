@@ -21,11 +21,11 @@ void Core::Scene::Load()
 	Sprite->SetFile(ASSET_PATH + std::string("Character_Atlas.png"));
 	Player->AddComponent<PlayerComponent>();
 	PhysicComponent* Px = Player->AddComponent<PhysicComponent>();
-	Px->SetMass(1.f);
+	Px->SetMass(10.f);
+	Px->SetSlideFactor(10);
 	Px->SetMaxMovementSpeed(250.f);
-	Px->SetMovementSpeed(10.f);
-
-	
+	Px->SetAccelerationSpeed(10000);
+	Px->SetDecelerationSpeed(10000);
 
 
 	Engine::GetWorld().AddObject(Player);

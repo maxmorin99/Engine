@@ -16,13 +16,29 @@ void Core::PlayerComponent::Start()
 void Core::PlayerComponent::Update(float DeltaTime)
 {
 	if (!mOwner) return;
-	if (Engine::GetInput().IsKeyDown(EKey::D))
+	Vector<float> MovementInput = Vector<float>::ZeroVector();
+
+	if (Input().IsKeyDown(EKey::D))
 	{
-		PhysicComponent* PxComp = mOwner->GetComponent<PhysicComponent>();
-		if (PxComp)
-		{
-			PxComp->AddMovement(Vector<float>(1.f, 0));
-		}
+		MovementInput.X += 1.f;
+	}
+	if (Input().IsKeyDown(EKey::A))
+	{
+		MovementInput.X -= 1.f;
+	}
+	if (Input().IsKeyDown(EKey::W))
+	{
+		MovementInput.Y += 1.f;
+	}
+	if (Input().IsKeyDown(EKey::S))
+	{
+		MovementInput.Y -= 1.f;
+	}
+
+	PhysicComponent* PxComp = mOwner->GetComponent<PhysicComponent>();
+	if (PxComp)
+	{
+		PxComp->AddMovement(MovementInput);
 	}
 }
 

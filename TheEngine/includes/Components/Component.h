@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Core.h"
 
 namespace Core
 {
@@ -14,5 +15,11 @@ namespace Core
 
 	protected:
 		Object* mOwner = nullptr;
+
+		IInput& Input() const;
+		IGraphic& Graphic() const;
+		ITimer& Timer() const;
+		IAudio& Audio() const;
+		ILogger& Logger() const;
 	};
 }

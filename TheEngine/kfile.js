@@ -24,6 +24,7 @@ project.addProvider = function(proj, isRoot=false){
     }
 };
 project.kore = false;
+project.setCppStd("c++17");
 
 
 project.addDefine("KINC_STATIC_COMPILE");

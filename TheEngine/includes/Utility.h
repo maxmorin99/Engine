@@ -65,6 +65,20 @@ namespace Core
 			return *this;
 		}
 
+		Vector<T>& operator -= (const Vector& Other)
+		{
+			X -= Other.X;
+			Y -= Other.Y;
+			return *this;
+		}
+
+		Vector<T>& operator -= (const T Scalar)
+		{
+			X -= Scalar;
+			Y -= Scalar;
+			return *this;
+		}
+
 		bool operator == (const Vector& Other) const
 		{
 			return this->X == Other.X && this->Y == Other.Y;
@@ -95,13 +109,21 @@ namespace Core
 
 		Vector<T> GetNormalized() const
 		{
-			T CurrentLength = Length();
-			T NormalizedX = X / CurrentLength;
-			T NormalizedY = Y / CurrentLength;
-			return Vector<T>(NormalizedX, NormalizedY);
+			if (Length() != 0.f)
+			{
+				T CurrentLength = Length();
+				T NormalizedX = X / CurrentLength;
+				T NormalizedY = Y / CurrentLength;
+				return Vector<T>(NormalizedX, NormalizedY);
+			}
+			return *this;
 		}
 
-		//void SetLength();
+		void Normalize()
+		{
+			*this = Vector<T>::ZeroVector();
+		}
+
 	};
 
 	/** 

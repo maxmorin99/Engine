@@ -7,4 +7,5 @@
 #include "Interfaces/IWorld.h"
 #include "Interfaces/IUpdatable.h"
 #include "Interfaces/IDrawable.h"
+#include "Interfaces/IAudio.h"
 #include "Services/Scene.h"

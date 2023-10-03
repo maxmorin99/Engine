@@ -59,7 +59,6 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 
 	GetInstance()->mWorld = new World();
 
-
 	return true;
 }
 
@@ -88,7 +87,7 @@ void Core::Engine::Start(void)
 	std::string File = ASSET_PATH + std::string("Music/Music.mp3");
 	size_t MusicId = GetAudio().LoadMusic(File.c_str());
 	GetAudio().PlayMusic(MusicId, true);
-	GetAudio().SetMusicVolume(MusicId, 10.f);
+	GetAudio().SetMusicVolume(MusicId, 100.f);
 
 	while (GetInstance()->mIsRunning)
 	{

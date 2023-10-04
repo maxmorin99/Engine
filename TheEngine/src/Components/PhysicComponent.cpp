@@ -18,7 +18,7 @@ void Core::PhysicComponent::Update(float DeltaTime)
 	mVelocity.X += mPendingMove.X * DeltaTime;
 	mVelocity.Y -= mPendingMove.Y * DeltaTime;
 
-	// keep the velocity under the max movement speed
+	// keep the velocity <= max movement speed
 	if (mVelocity.Length() > mMaxMovementSpeed)
 	{
 		mVelocity = mVelocity.GetNormalized() * mMaxMovementSpeed;
@@ -28,6 +28,7 @@ void Core::PhysicComponent::Update(float DeltaTime)
 	Vector<float> NewPos = OwnerPos + mVelocity * DeltaTime;
 	mOwner->SetLocation(NewPos);
 
+	// Deceleration
 	if (mPendingMove.X == 0.f)
 	{
 		if (mVelocity.X < 0.f)

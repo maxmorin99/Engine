@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <string>
 
 
 namespace Core
@@ -161,5 +162,21 @@ namespace Core
 		static const Color Yellow;
 		static const Color White;
 		static const Color Grey;
+	};
+
+	struct TextureData
+	{
+		TextureData(const std::string& Texture, size_t R, size_t C, size_t Idx) :
+			File(Texture), Rows(R), Col(C), Index(Idx) {}
+
+		std::string File;
+		size_t Rows;
+		size_t Col;
+		size_t Index;
+
+		static TextureData& Empty()
+		{
+			return TextureData("", 0, 0, 0);
+		}
 	};
 }

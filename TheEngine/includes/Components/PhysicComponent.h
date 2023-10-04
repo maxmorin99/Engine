@@ -13,13 +13,11 @@ namespace Core
 		virtual ~PhysicComponent() = default;
 		virtual void Start();
 		virtual void Destroy();
-
 		virtual void Update(float DeltaTime) override;
 		
 		void AddMovement(const Vector<float>& MovementDirection);
 
 	private:
-		/** Maximum velocity length allowed for movement */
 		float mMaxMovementSpeed = 100.f;
 		float mDecelerationSpeed = 50.f;
 		float mAccelerationSpeed = 100.f;

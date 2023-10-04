@@ -2,23 +2,24 @@
 
 #include "Component.h"
 #include "Interfaces/IDrawable.h"
-#include <string>
-#include "Utility.h"
+#include "Interfaces/IUpdatable.h"
 
 namespace Core
 {
-	class SpriteComponent : public Component, public IDrawable
+	class AnimationComponent : public Component, public IDrawable, public IUpdatable
 	{
 	public:
-		SpriteComponent(Object* Owner);
-		virtual ~SpriteComponent() = default;
+		AnimationComponent(Object* Owner);
+		virtual ~AnimationComponent() = default;
 		virtual void Start();
 		virtual void Destroy();
+
 		virtual void Draw() override;
 
 	protected:
-		std::string mFile = "";
+		TextureData mTextureData;
 		size_t mTextureId = 0;
+		Vector<int> mTextureSize = Vector<int>::ZeroVector();
 		Rect<int> mSrc = Rect<int>(0, 0, 0, 0);
 		Rect<int> mDst = Rect<int>(0, 0, 0, 0);
 		Color mColor = Color::White;
@@ -26,6 +27,7 @@ namespace Core
 	public:
 		inline void SetColor(const Color& NewColor) { mColor = NewColor; }
 		inline const Color& getColor() const { return mColor; }
-		inline void SetFile(const std::string& File) { mFile = File; }
+
+		inline void SetTextureData(const TextureData& Data) { mTextureData = Data; }
 	};
 }

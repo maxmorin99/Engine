@@ -2,7 +2,7 @@
 #include "Object.h"
 #include "Engine/Engine.h"
 #include "Interfaces/IWorld.h"
-#include "Components/SpriteComponent.h"
+#include "Components/AtlasComponent.h"
 #include "Components/PlayerComponent.h"
 #include "Components/PhysicComponent.h"
 #include "Interfaces/IAudio.h"
@@ -19,10 +19,9 @@ void Core::Scene::Load()
 	Player->SetSize(250, 250);
 	Player->AddComponent<PlayerComponent>();
 
-	SpriteComponent* Sprite = Player->AddComponent<SpriteComponent>();
+	AtlasComponent* Atlas = Player->AddComponent<AtlasComponent>();
 	std::string FilePath = ASSET_PATH + std::string("Character_Atlas.png");
-	TextureData TData(FilePath, 6, 7, 35);
-	Sprite->SetTextureData(TData);
+	Atlas->SetFile(FilePath);
 	
 	PhysicComponent* Px = Player->AddComponent<PhysicComponent>();
 	Px->SetMass(1.f);

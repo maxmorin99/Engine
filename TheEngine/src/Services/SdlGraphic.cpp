@@ -263,7 +263,7 @@ void Core::SdlGraphic::DrawString(const char* Text, size_t FontId, float X, floa
 		TTF_Font* Font = mFontMap[FontId];
 		SDL_Surface* Surface = TTF_RenderText_Solid(Font, Text, StrColor);
 		SDL_Texture* TextureBuffer = SDL_CreateTextureFromSurface(mRenderer, Surface);
-		SDL_Rect Dst = { X, Y, W, H };
+		SDL_Rect Dst = { static_cast<int>(X), static_cast<int>(Y), static_cast<int>(W), static_cast<int>(H) };
 		SDL_RenderCopy(mRenderer, TextureBuffer, nullptr, &Dst);
 		SDL_FreeSurface(Surface);
 	}

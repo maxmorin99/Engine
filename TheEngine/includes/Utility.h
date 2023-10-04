@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <string>
+#include <vector>
 
 
 namespace Core
@@ -166,17 +167,34 @@ namespace Core
 
 	struct TextureData
 	{
-		TextureData(const std::string& Texture, size_t R, size_t C, size_t Idx) :
-			File(Texture), Rows(R), Col(C), Index(Idx) {}
+		TextureData(const std::string& Texture, int R, int C, int Idx, uint8_t Pad) :
+			File(Texture), Rows(R), Col(C), Index(Idx), Padding(Pad) {}
 
+		/* File path of the texture */
 		std::string File;
-		size_t Rows;
-		size_t Col;
-		size_t Index;
+
+		/* Rows count */
+		int Rows;
+
+		/* Columns count */
+		int Col;
+
+		/* Index in the sprite sheet of the desired sprite */
+		int Index;
+
+		/* Padding in Px between each sprites */
+		uint8_t Padding;
 
 		static TextureData& Empty()
 		{
-			return TextureData("", 0, 0, 0);
+			return TextureData("", 0, 0, 0, 0);
 		}
+	};
+
+	struct TextureAnimationData
+	{
+		std::string Name;
+		size_t TextureId;
+		std::vector<size_t> Indexes;
 	};
 }

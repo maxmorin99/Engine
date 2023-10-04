@@ -4,28 +4,14 @@
 #include "Object.h"
 
 Core::SpriteComponent::SpriteComponent(Object* Owner) :
-	Component(Owner),
-	mTextureData(TextureData::Empty())
-{
-}
-
-Core::SpriteComponent::SpriteComponent(Object* Owner, const TextureData& Data) :
-	Component(Owner),
-	mTextureData(Data)
+	Component(Owner)
 {
 }
 
 void Core::SpriteComponent::Start()
 {
-	mTextureId = Graphic().LoadTexture(mTextureData.File.c_str());
-	Graphic().GetTextureSize(mTextureId, &mTextureSize.X, &mTextureSize.Y);
-	
-	mSrc.W = mTextureSize.X / mTextureData.Col;
-	mSrc.H = mTextureSize.Y / mTextureData.Rows;
-	mSrc.Y = mTextureData.Index / mTextureData.Col;
-	mSrc.X = mTextureData.Index - mSrc.Y * mTextureData.Col;
-	mSrc.Y *= mSrc.H;
-	mSrc.X *= mSrc.W;
+	mTextureId = Graphic().LoadTexture(mFile.c_str());
+	Graphic().GetTextureSize(mTextureId, &mSrc.W, &mSrc.H);
 }
 
 void Core::SpriteComponent::Destroy()
@@ -38,9 +24,7 @@ void Core::SpriteComponent::Draw()
 
 	Vector<float> OwnerSize = mOwner->GetSize();
 	Vector<float> OwnerLoc = mOwner->GetLocation();
-	Rect<int> Dst(static_cast<int>(OwnerLoc.X), static_cast<int>(OwnerLoc.Y), static_cast<int>(OwnerSize.X), static_cast<int>(OwnerSize.Y));
-	
+	mDst = Rect<int>(static_cast<int>(OwnerLoc.X), static_cast<int>(OwnerLoc.Y), static_cast<int>(OwnerSize.X), static_cast<int>(OwnerSize.Y));
 	Graphic().SetDrawColor(mColor);
-	//Graphic().DrawTexture(mTextureId, Dst, mColor);
-	Graphic().DrawTexture(mTextureId, mSrc, Dst, 0, Flip::None, Color::White);
+	Graphic().DrawTexture(mTextureId, mSrc, mDst, 0, Flip::None, Color::White);
 }

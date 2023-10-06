@@ -3,6 +3,7 @@
 #include "Interfaces/IInput.h"
 #include "Object.h"
 #include "Components/PhysicComponent.h"
+#include "Components/AtlasComponent.h"
 
 Core::PlayerComponent::PlayerComponent(Object* Owner) :
 	Component(Owner)
@@ -39,6 +40,15 @@ void Core::PlayerComponent::Update(float DeltaTime)
 	if (PxComp)
 	{
 		PxComp->AddMovement(MovementInput);
+	}
+
+	if (Input().IsKeyDown(EKey::Space))
+	{
+		AtlasComponent* Atlas = mOwner->GetComponent<AtlasComponent>();
+		if (Atlas)
+		{
+			Atlas->SetFrame("Idle2");
+		}
 	}
 }
 

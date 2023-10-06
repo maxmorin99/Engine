@@ -83,12 +83,6 @@ void Core::Engine::Start(void)
 	GetTimer().StartTimer();
 	GetWorld().Start();
 
-	// Play music
-	std::string File = ASSET_PATH + std::string("Music/Music.mp3");
-	size_t MusicId = GetAudio().LoadMusic(File.c_str());
-	GetAudio().PlayMusic(MusicId, true);
-	GetAudio().SetMusicVolume(MusicId, 100.f);
-
 	while (GetInstance()->mIsRunning)
 	{
 		// Quit if user press ESC key
@@ -124,19 +118,19 @@ void Core::Engine::Render(void)
 {
 	GetGraphic().SetDrawColor(Color::Grey);
 	GetGraphic().Clear();
-	
+
 	GetWorld().Render();
+
 	GetGraphic().Present();
 }
 
 void Core::Engine::Shutdown(void)
 {
-	//EventManager::Shutdown();
 	if (!GetInstance()) return;
 	delete GetInstance()->mInput;
 	delete GetInstance()->mLogger;
 	delete GetInstance()->mGraphic;
 	delete GetInstance()->mTimer;
+	delete GetInstance()->mWorld;
 	delete GetInstance();
-	
 }

@@ -10,12 +10,7 @@ Core::SpriteComponent::SpriteComponent(Object* Owner) :
 
 void Core::SpriteComponent::Start()
 {
-	mTextureId = Graphic().LoadTexture(mFile.c_str());
-	Graphic().GetTextureSize(mTextureId, &mSrc.W, &mSrc.H);
-}
-
-void Core::SpriteComponent::Destroy()
-{
+	Component::Start();
 }
 
 void Core::SpriteComponent::Draw()
@@ -27,4 +22,16 @@ void Core::SpriteComponent::Draw()
 	mDst = Rect<int>(static_cast<int>(OwnerLoc.X), static_cast<int>(OwnerLoc.Y), static_cast<int>(OwnerSize.X), static_cast<int>(OwnerSize.Y));
 	Graphic().SetDrawColor(mColor);
 	Graphic().DrawTexture(mTextureId, mSrc, mDst, 0, Flip::None, Color::White);
+}
+
+void Core::SpriteComponent::SetFile(const std::string& File)
+{
+	mFile = File;
+	mTextureId = Graphic().LoadTexture(mFile.c_str());
+	Graphic().GetTextureSize(mTextureId, &mSrc.W, &mSrc.H);
+}
+
+void Core::SpriteComponent::Destroy()
+{
+	Component::Destroy();
 }

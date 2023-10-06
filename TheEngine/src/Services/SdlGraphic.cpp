@@ -295,6 +295,13 @@ void Core::SdlGraphic::ShutDown()
 	SDL_Quit();
 }
 
+void Core::SdlGraphic::GetWindowSize(int* WinW, int* WinH)
+{
+	if (!WinW || !WinH) return;
+	*WinW = mWindowWidth;
+	*WinH = mWindowHeight;
+}
+
 SDL_Color Core::SdlGraphic::ConvertToSdlColor(const Color& InColor) const
 {
 	SDL_Color Color;

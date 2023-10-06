@@ -13,5 +13,3 @@ const Core::Color Core::Color::Grey = { 192, 192, 192, 255 };
 
 // Flip
 const Core::Flip Core::Flip::None = Core::Flip(false, false);
-
-

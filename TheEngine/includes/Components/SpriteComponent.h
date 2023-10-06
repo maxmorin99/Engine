@@ -26,6 +26,6 @@ namespace Core
 	public:
 		inline void SetColor(const Color& NewColor) { mColor = NewColor; }
 		inline const Color& getColor() const { return mColor; }
-		inline void SetFile(const std::string& File) { mFile = File; }
+		void SetFile(const std::string& File);
 	};
 }

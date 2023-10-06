@@ -40,6 +40,7 @@ namespace Core
 		virtual void DrawString(const char* Text, size_t FontId, float X, float Y, float W, float H, const Color& DrawColor) override;
 		virtual void GetTextSize(const char* Text, size_t FontId, int* OutW, int* OutH) override;
 		virtual void ShutDown() override;
+		virtual void GetWindowSize(int* WinW, int* WinH) override;
 		/** End Graphic Interface */
 
 	private:

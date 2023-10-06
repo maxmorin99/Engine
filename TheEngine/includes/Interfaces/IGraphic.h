@@ -29,6 +29,7 @@ namespace Core
 		virtual size_t LoadFont(const char* FileName, int FontSize) = 0;
 		virtual void DrawString(const char* Text, size_t FontId, float X, float Y, float W, float H, const Color& DrawColor) = 0;
 		virtual void GetTextSize(const char* Text, size_t FontId, int* OutW, int* OutH) = 0;
+		virtual void GetWindowSize(int* WinW, int* WinH) = 0;
 
 		virtual void ShutDown() = 0;
 	};

@@ -35,6 +35,8 @@ size_t Core::SdlAudio::LoadSound(const char* FileName)
         if (!Sound) return -1;
         mSoundMap[SoundId] = Sound;
     }
+
+    return SoundId;
 }
 
 int Core::SdlAudio::PlayMusic(size_t Id)

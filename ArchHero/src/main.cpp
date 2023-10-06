@@ -9,6 +9,7 @@ using namespace Core;
 
 void InitGameplay(void)
 {
+	// Init base scene
 	IScene* S = new Scene("Scene01");
 	Engine::GetWorld().Register("Scene01", S);
 	Engine::GetWorld().Load("Scene01");

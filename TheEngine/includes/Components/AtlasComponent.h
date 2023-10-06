@@ -6,6 +6,16 @@
 
 namespace Core
 {
+	struct Frame
+	{
+		Frame();
+		Frame(int X, int Y, int W, int H, const std::string& InName);
+		static Frame& Empty();
+
+		Rect<int> Rect;
+		std::string Name;
+	};
+
 	class AtlasComponent : public SpriteComponent
 	{
 	public:
@@ -20,6 +30,7 @@ namespace Core
 
 	protected:
 		Vector<int> mTextureSize = Vector<int>::ZeroVector();
-		std::unordered_map<std::string, Rect<int>> mFrames;	
+		std::unordered_map<std::string, Frame> mFrames;	
+		Frame mCurrentFrame = Frame::Empty();
 	};
 }

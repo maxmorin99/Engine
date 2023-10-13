@@ -13,6 +13,7 @@
 #include "Services/SdlFileLogger.h"
 #endif
 #include "Object.h"
+#include "vld.h"
 
 Core::Engine* Core::Engine::mInstance = nullptr;
 
@@ -89,6 +90,7 @@ void Core::Engine::Start(void)
 		if (GetInput().IsKeyDown(EKey::ESC))
 		{
 			GetInstance()->mIsRunning = false;
+			GetInstance()->GetWorld().Unload();
 		}
 
 		GetTimer().UpdateStart();
@@ -127,6 +129,9 @@ void Core::Engine::Render(void)
 void Core::Engine::Shutdown(void)
 {
 	if (!GetInstance()) return;
+	GetInstance()->GetWorld().ShutDown();
+	GetInstance()->GetLogger().Shutdown();
+	GetInstance()->GetGraphic().ShutDown();
 	delete GetInstance()->mInput;
 	delete GetInstance()->mLogger;
 	delete GetInstance()->mGraphic;

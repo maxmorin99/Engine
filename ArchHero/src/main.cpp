@@ -4,10 +4,11 @@
 #include <Windows.h>
 #include "Engine/Core.h"
 #include "Engine/Engine.h"
+#include <vector>
 
 using namespace Core;
 
-void InitGameplay(void)
+void InitGameplay()
 {
 	// Init base scene
 	IScene* S = new Scene("Scene01");

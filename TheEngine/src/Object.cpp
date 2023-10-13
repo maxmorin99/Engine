@@ -135,6 +135,4 @@ void Core::Object::Destroy()
     mDrawable.clear();
     mUpdatable.clear();
     mComponentsByType.clear();
-
-    Engine::GetWorld().Destroy(this);
 }

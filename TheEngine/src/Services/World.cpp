@@ -72,6 +72,15 @@ void Core::World::Render()
 void Core::World::Destroy(Object* Obj)
 {
 	if (!Obj) return;
+	int count = 0;
+	for (Object* Obj : mToDestroyList)
+	{
+		if (Obj == Obj)
+		{
+			count++;
+		}
+	}
+	if (count > 0) return;
 	mToDestroyList.push_back(Obj);
 }
 
@@ -98,7 +107,7 @@ void Core::World::Unload()
 	if (!mCurrentScene) return;
 	for (Object* Obj : mObjectList)
 	{
-		delete Obj;
+		Destroy(Obj);
 	}
 	mObjectList.clear();
 	mObjectMap.clear();
@@ -111,4 +120,12 @@ void Core::World::AddObject(Object* Obj)
 	if (!Obj ||  mObjectMap.count(Obj->GetId()) > 0) return;
 	mObjectList.push_back(Obj);
 	mObjectMap[Obj->GetId()] = Obj;
+}
+
+void Core::World::ShutDown()
+{
+	for (auto& S : mSceneMap)
+	{
+		delete S.second;
+	}
 }

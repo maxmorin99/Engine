@@ -19,6 +19,7 @@ namespace Core
 		virtual void Register(const std::string& SceneName, IScene* Scene) override;
 		virtual void Load(const std::string& SceneName) override;
 		virtual void Unload() override;
+		virtual void ShutDown() override;
 
 	private:
 		std::unordered_map<std::string, Object*> mObjectMap;

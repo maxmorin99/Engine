@@ -3,8 +3,6 @@ let project = new Project("ArchHero");
 project.kore = false;
 
 project.addFile("ArchHero/**");
-project.setCppStd("c++17");
-
 
 project.setDebugDir("Deployment");
 

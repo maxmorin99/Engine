@@ -172,7 +172,7 @@ size_t Core::SdlGraphic::LoadTexture(const char* FileName)
 {
 	size_t TextureId = std::hash<std::string>()(FileName);
 
-	if (mTextureMap.find(TextureId) == mTextureMap.end())
+	if (mTextureMap.count(TextureId) == 0)
 	{
 		SDL_Texture* Texture = IMG_LoadTexture(mRenderer, FileName);
 		if (!Texture) return -1;
@@ -285,10 +285,16 @@ void Core::SdlGraphic::ShutDown()
 	{
 		SDL_DestroyTexture(Pair.second);
 	}
+	mTextureMap.clear();
+
+	delete &mTextureMap;
+
 	for (auto& Pair : mFontMap)
 	{
 		TTF_CloseFont(Pair.second);
 	}
+	mFontMap.clear();
+
 	SDL_DestroyRenderer(mRenderer);
 	SDL_DestroyWindow(mWindow);
 	TTF_Quit();

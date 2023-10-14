@@ -28,7 +28,7 @@ namespace Core
 		std::unordered_map < std::string, IScene*> mSceneMap;
 		IScene* mCurrentScene = nullptr;
 
-
+		/** Get object Iterator */
 		std::vector<Object*>::const_iterator GetObjectIt(const Object* InObj) const;
 	};
 }

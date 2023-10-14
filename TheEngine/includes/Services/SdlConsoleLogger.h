@@ -9,7 +9,7 @@ namespace Core
 	public:
 		/** Logger Interface */
 		SdlConsoleLogger() = default;
-		virtual ~SdlConsoleLogger() override = default;
+		virtual ~SdlConsoleLogger() = default;
 		virtual bool Init() override;
 		virtual void Shutdown() override;
 		void DebugLog(const ConsoleColor& TextColor, const char* Message, ...) override;

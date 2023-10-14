@@ -5,6 +5,11 @@ Core::SdlInput::SdlInput()
 {
 }
 
+Core::SdlInput::~SdlInput()
+{
+    mKeyStates = nullptr;
+}
+
 void Core::SdlInput::Update()
 {
 	SDL_Event Event;

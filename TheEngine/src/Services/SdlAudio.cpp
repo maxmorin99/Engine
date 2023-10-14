@@ -114,10 +114,14 @@ void Core::SdlAudio::ShutDown()
     for (auto& Music : mMusicMap)
     {
         Mix_FreeMusic(Music.second);
+        Music.second = nullptr;
     }
     for (auto& Sfx : mSoundMap)
     {
         Mix_FreeChunk(Sfx.second);
+        Sfx.second = nullptr;
     }
+    mMusicMap.clear();
+    mSoundMap.clear();
     Mix_CloseAudio();
 }

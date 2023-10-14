@@ -13,7 +13,7 @@ namespace Core
 		SdlInput();
 
 		// Input interface
-		virtual ~SdlInput() override = default;
+		virtual ~SdlInput() override;
 		virtual void Update() override;
 		virtual bool IsKeyDown(const EKey& Key) override;
 		virtual bool IsButtonDown(int Button) override;

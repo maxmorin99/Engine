@@ -284,14 +284,14 @@ void Core::SdlGraphic::ShutDown()
 	for (auto& Pair : mTextureMap)
 	{
 		SDL_DestroyTexture(Pair.second);
+		Pair.second = nullptr;
 	}
 	mTextureMap.clear();
-
-	delete &mTextureMap;
 
 	for (auto& Pair : mFontMap)
 	{
 		TTF_CloseFont(Pair.second);
+		Pair.second = nullptr;
 	}
 	mFontMap.clear();
 
@@ -299,6 +299,9 @@ void Core::SdlGraphic::ShutDown()
 	SDL_DestroyWindow(mWindow);
 	TTF_Quit();
 	SDL_Quit();
+
+	mRenderer = nullptr;
+	mWindow = nullptr;
 }
 
 void Core::SdlGraphic::GetWindowSize(int* WinW, int* WinH)

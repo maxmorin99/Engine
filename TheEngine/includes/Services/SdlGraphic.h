@@ -50,7 +50,7 @@ namespace Core
 		int mWindowWidth = 0;
 		int mWindowHeight = 0;
 
-		std::unordered_map<size_t, SDL_Texture*>& mTextureMap = *(new std::unordered_map<size_t, SDL_Texture*>());
+		std::unordered_map<size_t, SDL_Texture*> mTextureMap;
 		std::unordered_map<size_t, TTF_Font*> mFontMap;
 		SDL_Color ConvertToSdlColor(const Color& InColor) const;
 	};

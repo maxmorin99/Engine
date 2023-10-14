@@ -50,8 +50,12 @@ void Core::World::Update(float DeltaTime)
 
 		// erase from object list
 		std::vector<Object*>::const_iterator It = GetObjectIt(Obj);
-		mObjectList.erase(It);
+		if (mObjectList.size() > 0)
+		{
+			mObjectList.erase(It);
+		}
 
+		Obj->Destroy();
 		delete Obj;
 	}
 	mToDestroyList.clear();
@@ -72,16 +76,21 @@ void Core::World::Render()
 void Core::World::Destroy(Object* Obj)
 {
 	if (!Obj) return;
-	int count = 0;
-	for (Object* Obj : mToDestroyList)
+
+	// Be sure to add only one time a ptr instance
+	bool bContains = false;
+	for (Object* ObjToDestroy : mToDestroyList)
 	{
-		if (Obj == Obj)
+		if (ObjToDestroy == Obj)
 		{
-			count++;
+			bContains = true;
+			break;
 		}
 	}
-	if (count > 0) return;
-	mToDestroyList.push_back(Obj);
+	if (!bContains)
+	{
+		mToDestroyList.push_back(Obj);
+	}
 }
 
 void Core::World::Register(const std::string& SceneName, IScene* Scene)
@@ -109,9 +118,9 @@ void Core::World::Unload()
 	{
 		Destroy(Obj);
 	}
+
 	mObjectList.clear();
 	mObjectMap.clear();
-	mToDestroyList.clear();
 	mCurrentScene = nullptr;
 }
 
@@ -128,4 +137,5 @@ void Core::World::ShutDown()
 	{
 		delete S.second;
 	}
+	mSceneMap.clear();
 }

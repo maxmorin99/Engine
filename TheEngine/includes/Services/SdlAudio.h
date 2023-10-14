@@ -11,6 +11,7 @@ namespace Core
 	class SdlAudio final : public IAudio
 	{
 	public:
+		virtual ~SdlAudio() = default;
 		virtual void Init(const char** ErrorMsg = nullptr) override;
 		size_t LoadMusic(const char* FileName) override;
 		size_t LoadSound(const char* FileName) override;

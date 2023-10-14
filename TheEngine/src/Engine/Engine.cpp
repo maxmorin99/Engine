@@ -33,6 +33,8 @@ void Core::Engine::WindowQuitCallback()
 
 bool Core::Engine::Init(const char* Name, int Width, int Height)
 {
+	VLDEnable();
+
 	const char* InitMsg = nullptr;
 
 	if (GetInstance()->mIsInit) return false;
@@ -44,20 +46,25 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 #endif
 	if (!GetLogger().Init()) return false;
 
+	// Graphics
 	GetInstance()->mGraphic = new SdlGraphic(Name, Width, Height);
 	if (!GetGraphic().Init(&InitMsg)) return false;
 
+	// Input
 	GetInstance()->mInput = new SdlInput();
 
+	// Audio
 	GetInstance()->mAudio = new SdlAudio();
 	GetAudio().Init(&InitMsg);
 
+	// Timer
 	GetInstance()->mTimer = new SdlTimer();
 	GetTimer().SetTargetFps(60.f);
 
 	GetInstance()->mIsInit = true;
 	GetLogger().DebugLog(ConsoleColor::White, InitMsg);
 
+	// World
 	GetInstance()->mWorld = new World();
 
 	return true;
@@ -90,7 +97,6 @@ void Core::Engine::Start(void)
 		if (GetInput().IsKeyDown(EKey::ESC))
 		{
 			GetInstance()->mIsRunning = false;
-			GetInstance()->GetWorld().Unload();
 		}
 
 		GetTimer().UpdateStart();
@@ -103,7 +109,12 @@ void Core::Engine::Start(void)
 		GetTimer().UpdateEnd();
 	}
 
+	GetInstance()->GetWorld().Unload();
+	Update(0.f);
 	Shutdown();
+
+	delete mInstance;
+	VLDDisable();
 }
 
 void Core::Engine::ProcessInput(void)
@@ -120,9 +131,7 @@ void Core::Engine::Render(void)
 {
 	GetGraphic().SetDrawColor(Color::Grey);
 	GetGraphic().Clear();
-
 	GetWorld().Render();
-
 	GetGraphic().Present();
 }
 
@@ -132,10 +141,11 @@ void Core::Engine::Shutdown(void)
 	GetInstance()->GetWorld().ShutDown();
 	GetInstance()->GetLogger().Shutdown();
 	GetInstance()->GetGraphic().ShutDown();
+	GetInstance()->GetAudio().ShutDown();
 	delete GetInstance()->mInput;
 	delete GetInstance()->mLogger;
+	delete GetInstance()->mAudio;
 	delete GetInstance()->mGraphic;
 	delete GetInstance()->mTimer;
 	delete GetInstance()->mWorld;
-	delete GetInstance();
 }

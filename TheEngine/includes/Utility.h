@@ -7,7 +7,7 @@
 
 namespace Core
 {
-#define ASSET_PATH "../ArchHero/Assets/"
+#define ASSET_PATH "./Assets/"
 
 	/** Enum for debug text color in console or files */
 	enum class ConsoleColor

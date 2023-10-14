@@ -5,6 +5,7 @@ namespace Core
 	class IAudio
 	{
 	public:
+		virtual ~IAudio() = default;
 		virtual void Init(const char** ErrorMsg = nullptr) = 0;
 		virtual size_t LoadMusic(const char* FileName) = 0;
 		virtual size_t LoadSound(const char* FileName) = 0;

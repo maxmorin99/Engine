@@ -9,7 +9,7 @@ Core::Frame::Frame() :
 Core::Frame::Frame(int X, int Y, int W, int H, const std::string& InName) :
 	Rect(X, Y, W, H), Name(InName) {}
 
-Core::Frame& Core::Frame::Empty()
+Core::Frame Core::Frame::Empty()
 {
 	return Frame();
 }

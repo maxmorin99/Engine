@@ -197,7 +197,7 @@ namespace Core
 		/* Padding in Px between each sprites */
 		uint8_t Padding;
 
-		static TextureData& Empty()
+		static TextureData Empty()
 		{
 			return TextureData("", 0, 0, 0, 0);
 		}

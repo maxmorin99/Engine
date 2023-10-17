@@ -10,7 +10,7 @@ namespace Core
 	{
 		Frame();
 		Frame(int X, int Y, int W, int H, const std::string& InName);
-		static Frame& Empty();
+		static Frame Empty();
 
 		Rect<int> Rect;
 		std::string Name;

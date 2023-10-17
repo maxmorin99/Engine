@@ -24,7 +24,7 @@ namespace Core
 		const unsigned char* mKeyStates = nullptr;
 		int mMouseX = 0;
 		int mMouseY = 0;
-		bool mMouseStates[3]{ false, false, false };
+		int mMouseStates[3]{ 0, 0, 0 };
 		std::function<void()> EngineQuitFunction;
 
 		int GetSdlScancode(const EKey& Key) const;

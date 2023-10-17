@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 typedef struct _Mix_Music Mix_Music;
-typedef struct Mix_Chunk;
+struct Mix_Chunk;
 
 namespace Core
 {

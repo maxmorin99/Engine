@@ -1,3 +1,4 @@
 build
 Deployment/* 
 !Deployment/keepme
+!Deployment/Assets

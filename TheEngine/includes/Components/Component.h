@@ -21,5 +21,6 @@ namespace Core
 		ITimer& Timer() const;
 		IAudio& Audio() const;
 		ILogger& Logger() const;
+		IWorld& World() const;
 	};
 }

@@ -65,7 +65,7 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 	GetLogger().DebugLog(ConsoleColor::White, InitMsg);
 
 	// World
-	GetInstance()->mWorld = new World();
+	GetInstance()->mWorld = new World(*GetInstance()->mLogger);
 
 	return true;
 }

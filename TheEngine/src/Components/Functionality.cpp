@@ -22,7 +22,8 @@ void Core::FunctionalityComponent::Update(float DeltaTime)
 	mDelay += DeltaTime;
 	if (mDelay >= mPlaySoundDelay)
 	{
-		PlaySfx();
+		//PlaySfx();
+		World().Load("FirstScene");
 		mDelay = 0.f;
 	}
 }
@@ -73,4 +74,5 @@ void Core::FunctionalityComponent::DrawString() const
 void Core::FunctionalityComponent::Destroy()
 {
 	Component::Destroy();
+	
 }

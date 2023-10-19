@@ -3,6 +3,11 @@
 #include "Object.h"
 #include "Interfaces/IScene.h"
 
+Core::World::World(ILogger& Logger) :
+	mLogger(Logger)
+{
+}
+
 std::vector<Core::Object*>::const_iterator Core::World::GetObjectIt(const Object* InObj) const
 {
 	std::vector<Object*>::const_iterator It;
@@ -32,6 +37,16 @@ void Core::World::Start()
 
 void Core::World::Update(float DeltaTime)
 {
+	UpdateObjects(DeltaTime);
+	DeleteObjects();
+	CheckObjectsForStart();
+}
+
+void Core::World::UpdateObjects(float DeltaTime)
+{
+	// Don't update if we are changing scene
+	if (bChangeSceneRequested) return;
+
 	for (int i = 0; i < mObjectList.size(); i++)
 	{
 		Object* Obj = mObjectList[i];
@@ -40,17 +55,22 @@ void Core::World::Update(float DeltaTime)
 			Obj->Update(DeltaTime);
 		}
 	}
-	
-	// Delete objects in delete list
+}
+
+void Core::World::DeleteObjects()
+{
 	for (Object* Obj : mToDestroyList)
 	{
 		// earse from map
 		std::string ObjId = Obj->GetId();
-		mObjectMap.erase(ObjId);
+		if (mObjectMap.count(ObjId) > 0)
+		{
+			mObjectMap.erase(ObjId);
+		}
 
 		// erase from object list
 		std::vector<Object*>::const_iterator It = GetObjectIt(Obj);
-		if (mObjectList.size() > 0)
+		if (mObjectList.size() > 0 && It != mObjectList.end())
 		{
 			mObjectList.erase(It);
 		}
@@ -59,6 +79,18 @@ void Core::World::Update(float DeltaTime)
 		delete Obj;
 	}
 	mToDestroyList.clear();
+}
+
+void Core::World::CheckObjectsForStart()
+{
+	if (bChangeSceneRequested)
+	{
+		for (Object* Obj : mObjectList)
+		{
+			Obj->Start();
+		}
+		bChangeSceneRequested = false;
+	}
 }
 
 void Core::World::Render()
@@ -105,7 +137,12 @@ void Core::World::Load(const std::string& SceneName)
 	IScene* Scene = mSceneMap[SceneName];
 	if (Scene)
 	{
-		Unload();
+		if (mCurrentScene)
+		{
+			Unload();
+			bChangeSceneRequested = true;
+		}
+		
 		mCurrentScene = Scene;
 		mCurrentScene->Load();
 	}
@@ -113,7 +150,6 @@ void Core::World::Load(const std::string& SceneName)
 
 void Core::World::Unload()
 {
-	if (!mCurrentScene) return;
 	for (Object* Obj : mObjectList)
 	{
 		Destroy(Obj);

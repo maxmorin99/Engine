@@ -10,6 +10,7 @@ namespace Core
 	class IWorld
 	{
 	public:
+		IWorld() = default;
 		virtual ~IWorld() = default;
 		virtual void Start() = 0;
 		virtual void Update(float DeltaTime) = 0;

@@ -6,10 +6,12 @@
 
 namespace Core
 {
+	class ILogger;
+
 	class World final : public IWorld
 	{
 	public:
-		World() = default;
+		World(ILogger& Logger);
 		virtual ~World() = default;
 		virtual void Start() override;
 		virtual void Update(float DeltaTime) override;
@@ -28,7 +30,16 @@ namespace Core
 		std::unordered_map < std::string, IScene*> mSceneMap;
 		IScene* mCurrentScene = nullptr;
 
+		ILogger& mLogger;
+
+		/** Wheter or not a scene change was requested (false if it is the first scene loaded) */
+		bool bChangeSceneRequested = false;
+
 		/** Get object Iterator */
 		std::vector<Object*>::const_iterator GetObjectIt(const Object* InObj) const;
+
+		void UpdateObjects(float DeltaTime);
+		void DeleteObjects();
+		void CheckObjectsForStart();
 	};
 }

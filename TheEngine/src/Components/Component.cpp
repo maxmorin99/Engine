@@ -30,3 +30,8 @@ Core::ILogger& Core::Component::Logger() const
 {
 	return Engine::GetLogger();
 }
+
+Core::IWorld& Core::Component::World() const
+{
+	return Engine::GetWorld();
+}

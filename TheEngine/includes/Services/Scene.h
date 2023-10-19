@@ -5,11 +5,11 @@
 
 namespace Core
 {
-	class Scene final : public IScene
+	class Scene : public IScene
 	{
 	public:
 		Scene(const char* name);
-		void Load() override;
+		virtual void Load() override;
 
 	private:
 		std::string mName = "\0";

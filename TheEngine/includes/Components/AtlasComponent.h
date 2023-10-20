@@ -30,7 +30,9 @@ namespace Core
 
 	protected:
 		Vector<int> mTextureSize = Vector<int>::ZeroVector();
-		std::unordered_map<std::string, Frame> mFrames;	
+		std::unordered_map<std::string, Frame> mFrames;
 		Frame mCurrentFrame = Frame::Empty();
+
+		void SetFrame(Frame& InFrame);
 	};
 }

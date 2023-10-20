@@ -47,6 +47,24 @@ void Core::AtlasComponent::SetFrame(const std::string& Name)
 	mSrc = mCurrentFrame.Rect;
 }
 
+void Core::AtlasComponent::SetFrame(Frame& InFrame)
+{
+	bool bCountains = false;
+	for (auto& Pair : mFrames)
+	{
+		Frame F = Pair.second;
+		if (F.Name == InFrame.Name)
+		{
+			bCountains = true;
+			break;
+		}
+	}
+	if (!bCountains) return;
+
+	mCurrentFrame = InFrame;
+	mSrc = mCurrentFrame.Rect;
+}
+
 void Core::AtlasComponent::Destroy()
 {
 	SpriteComponent::Destroy();

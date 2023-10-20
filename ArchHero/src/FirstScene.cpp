@@ -6,6 +6,7 @@
 #include "Components/PlayerComponent.h"
 #include "Components/PhysicComponent.h"
 #include "Components/Functionality.h"
+#include "Components/AnimationComponent.h";
 
 FirstScene::FirstScene(const char* name) :
 	Scene(name)
@@ -18,13 +19,14 @@ void FirstScene::Load()
 
 	/* Init Functionality obj ---------------------------------- */
 
-	Object* FunctionalityObj = new Object();
-	FunctionalityComponent* Functionality = FunctionalityObj->AddComponent<FunctionalityComponent>();
-	std::string FontFile = ASSET_PATH + std::string("Font/Pacifico.ttf");
-	std::string MusicFile = ASSET_PATH + std::string("Music/BatCountry.mp3");
-	std::string SoundFile = ASSET_PATH + std::string("Sfx/IceImpact.wav");
-	Functionality->SetFontFile(FontFile.c_str(), 24);
-	Functionality->SetMusicFile(MusicFile.c_str(), 100);
+	Object* AnimatedPlayer = new Object();
+	AnimationComponent* Anim = AnimatedPlayer->AddComponent<AnimationComponent>();
+	std::string FilePath = ASSET_PATH + std::string("Character_Atlas.png");
+	Anim->SetFile(FilePath);
+	std::vector<Frame> IdleAnimation;
+
+	//Frame IdleFrame_1 = Frame()
+	
 
 
 	/* Init Player --------------------------------------------- */

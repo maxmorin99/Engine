@@ -1,38 +1,104 @@
 #include "Components/AnimationComponent.h"
 #include "Object.h"
+#include <iostream>
+#include <sstream>   
+
+// Struct Clip ---------------------------------------------------------- //
+
+Core::Clip::Clip(const std::string& InName, std::vector<Frame> InFrames, float InFrameTime) :
+	Name(InName), Frames(InFrames), FrameTime(InFrameTime)
+{
+}
+
+void Core::Clip::Reset()
+{
+	CurrFrameIndex = 0;
+	CurrFrameTime = 0.f;
+}
+
+void Core::Clip::AddFrame(const Frame& InFrame)
+{
+	Frames.push_back(InFrame);
+}
+
+void Core::Clip::AddFramesByIndex(std::vector<int> Indexes, int W, int H)
+{
+	for (int i = 0; i < Indexes.size(); i++)
+	{
+		std::stringstream Stream;
+		Stream << i;
+		std::string FrameId;
+		Stream >> FrameId;
+		std::string FrameName = Name + FrameId;
+		
+		//Frame F = Frame()
+	}
+}
+
+
+// AnimationComponent --------------------------------------------------- //
 
 Core::AnimationComponent::AnimationComponent(Object* Owner):
-	Component(Owner),
-	mTextureData(TextureData::Empty())
+	AtlasComponent(Owner)
 {
 }
 
 void Core::AnimationComponent::Start()
 {
-	mTextureId = Graphic().LoadTexture(mTextureData.File.c_str());
-	Graphic().GetTextureSize(mTextureId, &mTextureSize.X, &mTextureSize.Y);
+	AtlasComponent::Start();
+}
 
-	mSrc.W = mTextureSize.X / mTextureData.Col;
-	mSrc.H = mTextureSize.Y / mTextureData.Rows;
-	mSrc.Y = mTextureData.Index / mTextureData.Col;
-	mSrc.X = mTextureData.Index - mSrc.Y * mTextureData.Col;
-	mSrc.Y *= (mSrc.H - mTextureData.Padding);
-	mSrc.X *= (mSrc.W - mTextureData.Padding);
+void Core::AnimationComponent::Update(float DeltaTime)
+{
+	if (mCurrentClip.Frames.size() == 0) return;
+
+	// Update the current clip
+	mCurrentClip.CurrFrameTime += DeltaTime;
+	if (mCurrentClip.CurrFrameTime > mCurrentClip.FrameTime)
+	{
+		mCurrentClip.CurrFrameTime = 0.f;
+		mCurrentClip.CurrFrameIndex++;
+		if (mCurrentClip.CurrFrameIndex == mCurrentClip.Frames.size())
+		{
+			mCurrentClip.CurrFrameIndex = 0;
+		}
+	}
+
+	SetFrame(mCurrentClip.Frames[mCurrentClip.CurrFrameIndex]);
 }
 
 void Core::AnimationComponent::Destroy()
 {
+	AtlasComponent::Destroy();
 }
 
 void Core::AnimationComponent::Draw()
 {
-	if (!mOwner) return;
+	AtlasComponent::Draw();
 
-	Vector<float> OwnerSize = mOwner->GetSize();
-	Vector<float> OwnerLoc = mOwner->GetLocation();
-	Rect<int> Dst(static_cast<int>(OwnerLoc.X), static_cast<int>(OwnerLoc.Y), static_cast<int>(OwnerSize.X), static_cast<int>(OwnerSize.Y));
-	mDst = Dst;
-	Graphic().SetDrawColor(mColor);
-	//Graphic().DrawTexture(mTextureId, Dst, mColor);
-	Graphic().DrawTexture(mTextureId, mSrc, mDst, 0, Flip::None, Color::White);
+	if (!mOwner) return;
+}
+
+void Core::AnimationComponent::AddClip(const std::string& InName, Clip& InClip)
+{
+	if (mClips.count(InName) == 0)
+	{
+		mClips[InName] = InClip;
+		InClip.Name = InClip.Name == "" ? InName : InClip.Name;
+		
+		if (mFrames.count(InName) == 0)
+		{
+			for (Frame F : InClip.Frames)
+			{
+				mFrames[F.Name] = F;
+			}
+		}
+	}
+}
+
+void Core::AnimationComponent::SetClip(const std::string& InClipName)
+{
+	if (mClips.count(InClipName) == 0) return;
+	mCurrentClip.Reset();
+	mCurrentClip = mClips[InClipName];
 }

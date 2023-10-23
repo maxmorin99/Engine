@@ -6,6 +6,8 @@
 namespace Core
 {
 	class IInput;
+	class AnimationComponent;
+	class PhysicComponent;
 
 	class PlayerComponent : public Component, public IUpdatable
 	{
@@ -17,6 +19,15 @@ namespace Core
 
 		virtual void Update(float DeltaTime) override;
 
-	
+	private:
+		AnimationComponent* mAnimationComponent = nullptr;
+		PhysicComponent* mPxComponent = nullptr;
+
+		bool mWantToRoll = false;
+		bool mRolling = false;
+
+		void GetMovementInput(Vector<float>& OutMovementInput);
+		void RollEndNotify();
+		bool CheckReferences() const;
 	};
 }

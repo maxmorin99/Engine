@@ -22,10 +22,12 @@ namespace Core
 		Rect<int> mSrc = Rect<int>(0, 0, 0, 0);
 		Rect<int> mDst = Rect<int>(0, 0, 0, 0);
 		Color mColor = Color::White;
+		Flip mFlip = Flip::None;
 
 	public:
 		inline void SetColor(const Color& NewColor) { mColor = NewColor; }
 		inline const Color& getColor() const { return mColor; }
 		void SetFile(const std::string& File);
+		void SetFlip(const Flip& InFlip);
 	};
 }

@@ -5,34 +5,29 @@
 
 // Struct Clip ---------------------------------------------------------- //
 
-Core::Clip::Clip(const std::string& InName, std::vector<Frame> InFrames, float InFrameTime) :
-	Name(InName), Frames(InFrames), FrameTime(InFrameTime)
+Core::Clip::Clip(const std::string& InName, std::vector<Frame>& InFrames, float InFrameTime) :
+	Name(InName), FrameTime(InFrameTime)
 {
+	Frames = InFrames;
+	for (Frame& F : Frames)
+	{
+		F.Rect.X *= F.Rect.W;
+		F.Rect.Y *= F.Rect.H;
+	}
 }
 
 void Core::Clip::Reset()
 {
 	CurrFrameIndex = 0;
 	CurrFrameTime = 0.f;
+	EndCallback = nullptr;
 }
 
-void Core::Clip::AddFrame(const Frame& InFrame)
+void Core::Clip::AddFrame(Frame& InFrame)
 {
+	InFrame.Rect.X *= InFrame.Rect.W;
+	InFrame.Rect.Y *= InFrame.Rect.H;
 	Frames.push_back(InFrame);
-}
-
-void Core::Clip::AddFramesByIndex(std::vector<int> Indexes, int W, int H)
-{
-	for (int i = 0; i < Indexes.size(); i++)
-	{
-		std::stringstream Stream;
-		Stream << i;
-		std::string FrameId;
-		Stream >> FrameId;
-		std::string FrameName = Name + FrameId;
-		
-		//Frame F = Frame()
-	}
 }
 
 
@@ -60,7 +55,20 @@ void Core::AnimationComponent::Update(float DeltaTime)
 		mCurrentClip.CurrFrameIndex++;
 		if (mCurrentClip.CurrFrameIndex == mCurrentClip.Frames.size())
 		{
-			mCurrentClip.CurrFrameIndex = 0;
+			if (mCurrentClip.Loop)
+			{
+				mCurrentClip.CurrFrameIndex = 0;
+			}
+			else
+			{
+				if (mCurrentClip.EndCallback)
+				{
+					mCurrentClip.EndCallback();
+					mCurrentClip.Reset();
+				}
+				
+				mCurrentClip = mDefaultClip;
+			}
 		}
 	}
 
@@ -86,6 +94,7 @@ void Core::AnimationComponent::AddClip(const std::string& InName, Clip& InClip)
 		mClips[InName] = InClip;
 		InClip.Name = InClip.Name == "" ? InName : InClip.Name;
 		
+		// not necessary, to remove later
 		if (mFrames.count(InName) == 0)
 		{
 			for (Frame F : InClip.Frames)
@@ -96,9 +105,18 @@ void Core::AnimationComponent::AddClip(const std::string& InName, Clip& InClip)
 	}
 }
 
-void Core::AnimationComponent::SetClip(const std::string& InClipName)
+void Core::AnimationComponent::SetClip(const std::string& InClipName, bool bLoop, std::function<void()> EndCallback)
 {
-	if (mClips.count(InClipName) == 0) return;
+	if (mClips.count(InClipName) == 0 || mCurrentClip.Name == InClipName) return;
+	
 	mCurrentClip.Reset();
 	mCurrentClip = mClips[InClipName];
+	mCurrentClip.Loop = bLoop;
+	mCurrentClip.EndCallback = EndCallback;
+}
+
+void Core::AnimationComponent::SetDefaultClip(Clip& InClip)
+{
+	AddClip("Default", InClip);
+	mDefaultClip = InClip;
 }

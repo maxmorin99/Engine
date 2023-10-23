@@ -35,9 +35,19 @@ void Core::AtlasComponent::Draw()
 void Core::AtlasComponent::AddFrame(const std::string& Name, int X, int Y, int W, int H)
 {
 	if (mFrames.count(Name) > 0) return;
+	// scale X and Y by texture W and H
 	int FrameX = X * W;
 	int FrameY = Y * H;
 	mFrames[Name] = Frame(FrameX, FrameY, W, H, Name);
+}
+
+void Core::AtlasComponent::AddFrame(Frame& InFrame)
+{
+	if (mFrames.count(InFrame.Name) > 0) return;
+	// scale X and Y by texture W and H
+	InFrame.Rect.X *= InFrame.Rect.W;
+	InFrame.Rect.Y *= InFrame.Rect.H;
+	mFrames[InFrame.Name] = InFrame;
 }
 
 void Core::AtlasComponent::SetFrame(const std::string& Name)

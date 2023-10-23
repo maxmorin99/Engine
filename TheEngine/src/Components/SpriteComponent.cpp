@@ -21,7 +21,7 @@ void Core::SpriteComponent::Draw()
 	Vector<float> OwnerLoc = mOwner->GetLocation();
 	mDst = Rect<int>(static_cast<int>(OwnerLoc.X), static_cast<int>(OwnerLoc.Y), static_cast<int>(OwnerSize.X), static_cast<int>(OwnerSize.Y));
 	Graphic().SetDrawColor(mColor);
-	Graphic().DrawTexture(mTextureId, mSrc, mDst, 0, Flip::None, Color::White);
+	Graphic().DrawTexture(mTextureId, mSrc, mDst, 0, mFlip, Color::White);
 }
 
 void Core::SpriteComponent::SetFile(const std::string& File)
@@ -29,6 +29,11 @@ void Core::SpriteComponent::SetFile(const std::string& File)
 	mFile = File;
 	mTextureId = Graphic().LoadTexture(mFile.c_str());
 	Graphic().GetTextureSize(mTextureId, &mSrc.W, &mSrc.H);
+}
+
+void Core::SpriteComponent::SetFlip(const Flip& InFlip)
+{
+	mFlip = InFlip;
 }
 
 void Core::SpriteComponent::Destroy()

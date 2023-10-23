@@ -26,6 +26,7 @@ namespace Core
 		virtual void Draw() override;
 
 		void AddFrame(const std::string& Name, int X, int Y, int W, int H);
+		void AddFrame(Frame& InFrame);
 		void SetFrame(const std::string& Name);
 
 	protected:

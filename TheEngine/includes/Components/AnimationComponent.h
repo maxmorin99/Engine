@@ -8,10 +8,9 @@ namespace Core
 	struct Clip
 	{
 		Clip() = default;
-		Clip(const std::string& InName, std::vector<Frame> InFrames, float InFrameTime = 0.f);
+		Clip(const std::string& InName, std::vector<Frame>& InFrames, float InFrameTime = 0.f);
 		void Reset();
-		void AddFrame(const Frame& InFrame);
-		void AddFramesByIndex(std::vector<int> Indexes, int W, int H);
+		void AddFrame(Frame& InFrame);
 
 		std::string Name;
 
@@ -26,6 +25,11 @@ namespace Core
 
 		/** Current index of the current frame in the frame list */
 		int CurrFrameIndex = 0;
+
+		bool Loop = false;
+
+		/** if loop is set to false and EndCallback != nullptr, EndCallback will be called when the sprite sequence is done playing */
+		std::function<void()> EndCallback;
 	};
 
 	class AnimationComponent : public AtlasComponent, public IUpdatable
@@ -41,10 +45,14 @@ namespace Core
 		virtual void Draw() override;
 
 		void AddClip(const std::string& InName, Clip& InClip);
-		void SetClip(const std::string& InClipName);
+		void SetClip(const std::string& InClipName, bool bLoop, std::function<void()> FunPtr = nullptr);
+		void SetDefaultClip(Clip& InClip);
 
 	private:
 		std::unordered_map<std::string, Clip> mClips;
 		Clip mCurrentClip;
+
+		/** Default clip. This clip will be selected when a non looping animation ends and no other is requested */
+		Clip mDefaultClip;
 	};
 }

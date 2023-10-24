@@ -8,6 +8,7 @@
 #include "Components/Functionality.h"
 #include "Components/AnimationComponent.h"
 #include "Components/WeaponComponent.h"
+#include "Components/TargetCursorComponent.h"
 
 FirstScene::FirstScene(const char* name) :
 	Scene(name)
@@ -101,12 +102,26 @@ void FirstScene::Load()
 	WeaponComp->SetFile(WeaponFile);
 	WeaponComp->SetInstigator(AnimatedPlayer);
 	WeaponComp->SetColor(Color::Black);
+	WeaponComp->SetOffset(Vector<float>(30.f, 50.f));
 
+
+	/* targetCursor -------------------------------------------- */
+
+	Object* TargetCursorObj = new Object();
+	TargetCursorObj->SetLocation(0.f, 0.f);
+	TargetCursorObj->SetSize(25.f, 25.f);
+	TargetCursorComponent* TargetCursorComp = TargetCursorObj->AddComponent<TargetCursorComponent>();
+	std::string TargetCursorFile = ASSET_PATH + std::string("Weapons/crosshair.png");
+	TargetCursorComp->SetFile(TargetCursorFile);
+	TargetCursorComp->SetColor(Color::Black);
+
+	WeaponObj->GetComponent<WeaponComponent>()->SetTargetCursorObject(TargetCursorObj);
 
 
 	/* Add obj in the world ------------------------------------ */
 
 	Engine::GetWorld().AddObject(AnimatedPlayer);
 	Engine::GetWorld().AddObject(WeaponObj);
+	Engine::GetWorld().AddObject(TargetCursorObj);
 	
 }

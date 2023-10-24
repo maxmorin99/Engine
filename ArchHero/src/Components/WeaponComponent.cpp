@@ -11,46 +11,78 @@ WeaponComponent::WeaponComponent(Object* InOwner) :
 void WeaponComponent::Update(float DeltaTime)
 {
 	if (!mInstigator || !mOwner) return;
-
-
-	Vector<float> InstigatorLoc = mInstigator->GetLocation();
-	Vector<float> InstigatorSize = mInstigator->GetSize();
-	Vector<float> OwnerSize = mOwner->GetSize();
-
-	mFlip = mInstigator->GetComponent<AnimationComponent>()->GetFlip();
-	bool TempFlipH = mFlip.H;
-	mFlip.H = mFlip.V;
-	mFlip.V = TempFlipH;
-	float OffsetX = mFlip.V ? -30 : +30;
-
-	Vector<float> InstigatorCenter = Vector<float>(InstigatorLoc.X + InstigatorSize.X / 2, InstigatorLoc.Y + InstigatorSize.Y / 2);
-	Vector<float> AdjustedPos = Vector<float>(InstigatorCenter.X - OwnerSize.X / 2 + OffsetX, InstigatorCenter.Y + 50);
-
-	mOwner->SetLocation(AdjustedPos);
-	int CurrRot = mOwner->GetRotation();
-	CurrRot += 100 * DeltaTime;
-	CurrRot = CurrRot % 360;
-	mOwner->SetRotation(CurrRot);
-
-	RotationMatrix R;
-	Rect<float> OwnerRect;
-	OwnerRect.X = mOwner->GetLocation().X;
-	OwnerRect.Y = mOwner->GetLocation().Y;
-	OwnerRect.W = mOwner->GetSize().X;
-	OwnerRect.H = mOwner->GetSize().Y;
-	R.RotateRect(CurrRot, OwnerRect, Test);
-	MiddlePoint.X = (Test[1].X + Test[3].X) / 2;
-	MiddlePoint.Y = (Test[1].Y + Test[3].Y) / 2;
+	
+	UpdateFlip();
+	UpdateWeaponLocation();
+	UpdateRotation();
+	
+	
 }
 
 void WeaponComponent::Draw()
 {
 	SpriteComponent::Draw();
 
-	Vector<float> Fwd = mOwner->GetForwardVector();
-	Graphic().DrawLineF(Test[0], Test[1], Color::Red);
-	Graphic().DrawLineF(Test[1], Test[3], Color::Red);
-	Graphic().DrawLineF(Test[3], Test[2], Color::Red);
-	Graphic().DrawLineF(Test[2], Test[0], Color::Red);
-	Graphic().DrawLineF(MiddlePoint, MiddlePoint + mOwner->GetForwardVector() * 100, Color::Red);
+	Graphic().DrawLineF(TestDir[0], TestDir[1], Color::Green);
+}
+
+void WeaponComponent::UpdateFlip()
+{
+	// Flip weapon sprite based on instigator vel and weapon rotation
+	Vector<float> InstigatorVelocity = mInstigator->GetVelocity();
+	if (InstigatorVelocity.X < 0.f)
+	{
+		mFlip.V = mOwner->GetRotation() <= 90.f && mOwner->GetRotation() > 270.f ? false : true;
+		mFlip.H = !mFlip.V;
+	}
+	else
+	{
+		mFlip.H = false;
+		mFlip.V = false;
+	}
+}
+
+void WeaponComponent::UpdateWeaponLocation()
+{
+	Vector<float> InstigatorLoc = mInstigator->GetLocation();
+	Vector<float> InstigatorSize = mInstigator->GetSize();
+	Vector<float> OwnerSize = mOwner->GetSize();
+
+	float OffsetX = mFlip.V || mFlip.H ? -mOffset.X : mOffset.X;
+	Vector<float> InstigatorCenter = Vector<float>(InstigatorLoc.X + InstigatorSize.X / 2, InstigatorLoc.Y + InstigatorSize.Y / 2);
+	Vector<float> AdjustedPos = Vector<float>(InstigatorCenter.X - OwnerSize.X / 2 + OffsetX, InstigatorCenter.Y + mOffset.Y);
+
+	mOwner->SetLocation(AdjustedPos);
+}
+
+void WeaponComponent::UpdateRotation()
+{
+	if (!mTargetCursor) return;
+
+	Vector<float> TargetCenter = Vector<float>(
+		mTargetCursor->GetLocation().X + mTargetCursor->GetSize().X / 2,
+		mTargetCursor->GetLocation().Y + mTargetCursor->GetSize().Y / 2
+	);
+
+	Vector<float> OwnerCenter = Vector<float>(
+		mOwner->GetLocation().X + mOwner->GetSize().X / 2,
+		mOwner->GetLocation().Y + mOwner->GetSize().Y / 2
+	);
+
+	Vector<float> Dir = TargetCenter - OwnerCenter;
+	float Distance = Dir.Length();
+	
+	TestDir[0] = OwnerCenter;
+	TestDir[1] = OwnerCenter + Dir.GetNormalized() * Distance;
+
+	float AngleRad = Dir.GetNormalized().GetRotationFromX();
+	float AngleDeg = AngleRad * 180 / PI;
+
+	Logger().DebugLog(ConsoleColor::Yellow, "AngleDeg: %f\n", AngleDeg);
+	mOwner->SetRotation(AngleDeg);
+}
+
+float WeaponComponent::Dot(const Vector<float>& Vec1, const Vector<float>& Vec2)
+{
+	return (Vec1.X * Vec2.X) + (Vec1.Y * Vec2.Y);
 }

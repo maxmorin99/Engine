@@ -59,6 +59,7 @@ namespace Core
 		float GetRotation() const;
 		void SetRotation(float NewRot);
 		Vector<float> GetForwardVector() const;
+		Vector<float> GetVelocity() const;
 	};
 
 

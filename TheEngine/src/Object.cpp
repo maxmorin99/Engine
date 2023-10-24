@@ -4,6 +4,7 @@
 #include <sstream>
 #include "Components/Component.h"
 #include "Components/TransformComponent.h"
+#include "Components/PhysicComponent.h"
 
 size_t Core::Object::sId = -1;
 std::string Core::Object::sName = "Object_";
@@ -102,6 +103,13 @@ Core::Vector<float> Core::Object::GetForwardVector() const
 {
     if (!mTransform) return Vector<float>::ZeroVector();
     return mTransform->GetForwardVector();
+}
+
+Core::Vector<float> Core::Object::GetVelocity() const
+{
+    PhysicComponent* PxComp = GetComponent<PhysicComponent>();
+    if (!PxComp) return Vector<float>::ZeroVector();
+    return PxComp->GetVelocity();
 }
 
 void Core::Object::Start()

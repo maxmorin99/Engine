@@ -51,6 +51,10 @@ namespace Core
 	public:
 		Vector() : X(0), Y(0) {}
 		Vector(T InX, T InY) : X(InX), Y(InY) {}
+		float GetRotationFromX()
+		{
+			return acos(X / sqrt(pow(X, 2) + pow(Y, 2)));
+		}
 
 		
 		T X;
@@ -69,6 +73,11 @@ namespace Core
 			X += Other.X;
 			Y += Other.Y;
 			return *this;
+		}
+
+		Vector<T>& operator - (const Vector& Other) const
+		{
+			return Vector<T>(X - Other.X, Y - Other.Y);
 		}
 
 		Vector<T>& operator -= (const Vector& Other)

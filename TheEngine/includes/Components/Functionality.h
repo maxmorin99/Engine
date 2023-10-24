@@ -28,7 +28,7 @@ namespace Core
 		size_t mFontId = 0;
 		size_t mSoundId = 0;
 
-		float mPlaySoundDelay = 3.f;
+		float mPlaySoundDelay = 1.f;
 		float mDelay = 0.f;
 		
 		void PlayMusic() const;

@@ -29,5 +29,6 @@ namespace Core
 		inline const Color& getColor() const { return mColor; }
 		void SetFile(const std::string& File);
 		void SetFlip(const Flip& InFlip);
+		inline Flip GetFlip() const { return mFlip; }
 	};
 }

@@ -6,7 +6,8 @@
 #include "Components/PlayerComponent.h"
 #include "Components/PhysicComponent.h"
 #include "Components/Functionality.h"
-#include "Components/AnimationComponent.h";
+#include "Components/AnimationComponent.h"
+#include "Components/WeaponComponent.h"
 
 FirstScene::FirstScene(const char* name) :
 	Scene(name)
@@ -87,10 +88,25 @@ void FirstScene::Load()
 	Anim->AddClip("Roll", RollClip);
 
 	Anim->SetDefaultClip(IdleClip);
-	Anim->SetClip("Walk", true);
+	Anim->SetClip("Idle", true);
+
+
+	/* Weapon -------------------------------------------------- */
+
+	Object* WeaponObj = new Object();
+	WeaponObj->SetLocation(300, 300);
+	WeaponObj->SetSize(60, 30);
+	WeaponComponent* WeaponComp = WeaponObj->AddComponent<WeaponComponent>();
+	std::string WeaponFile = ASSET_PATH + std::string("Weapons/testweapon.png");
+	WeaponComp->SetFile(WeaponFile);
+	WeaponComp->SetInstigator(AnimatedPlayer);
+	WeaponComp->SetColor(Color::Black);
+
 
 
 	/* Add obj in the world ------------------------------------ */
 
 	Engine::GetWorld().AddObject(AnimatedPlayer);
+	Engine::GetWorld().AddObject(WeaponObj);
+	
 }

@@ -98,6 +98,12 @@ void Core::Object::SetRotation(float NewRot)
     mTransform->SetRotation(NewRot);
 }
 
+Core::Vector<float> Core::Object::GetForwardVector() const
+{
+    if (!mTransform) return Vector<float>::ZeroVector();
+    return mTransform->GetForwardVector();
+}
+
 void Core::Object::Start()
 {
     AddComponent<Component>();

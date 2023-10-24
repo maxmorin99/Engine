@@ -32,5 +32,7 @@ namespace Core
 
 		inline float GetRotation() const { return mRotation; }
 		inline void SetRotation(float NewRot) { mRotation = NewRot; }
+
+		Vector<float> GetForwardVector() const;
 	};
 }

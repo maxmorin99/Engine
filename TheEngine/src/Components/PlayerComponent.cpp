@@ -83,17 +83,17 @@ bool Core::PlayerComponent::CheckReferences() const
 {
 	if (!mAnimationComponent)
 	{
-		Logger().DebugLog(ConsoleColor::Red, "Player's AnimationComponent is not valid");
+		//Logger().DebugLog(ConsoleColor::Red, "Player's AnimationComponent is not valid");
 		return false;
 	}
 	if (!mPxComponent)
 	{
-		Logger().DebugLog(ConsoleColor::Red, "Player's PxComponent is not valid");
+		//Logger().DebugLog(ConsoleColor::Red, "Player's PxComponent is not valid");
 		return false;
 	}
 	if (!mOwner)
 	{
-		Logger().DebugLog(ConsoleColor::Red, "Player's Owner is not valid");
+		//Logger().DebugLog(ConsoleColor::Red, "Player's Owner is not valid");
 		return false;
 	}
 	return true;

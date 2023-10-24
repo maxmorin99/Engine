@@ -48,3 +48,15 @@ void Core::TransformComponent::SetSize(float NewW, float NewH)
 	mSize.X = NewW;
 	mSize.Y = NewH;
 }
+
+Core::Vector<float> Core::TransformComponent::GetForwardVector() const
+{
+	// Convert the rotation from degrees to radians
+	float radians = (mRotation * PI) / 180.0f;
+
+	// Calculate the forward vector using trigonometry
+	float x = cos(radians);
+	float y = sin(radians);
+	return Vector<float>(x, y).GetNormalized();
+}
+

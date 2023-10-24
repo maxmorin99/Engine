@@ -48,6 +48,7 @@ void Core::FunctionalityComponent::SetSoundFile(const char* File, int Volume)
 void Core::FunctionalityComponent::PlayMusic() const
 {
 	Audio().PlayMusic(mMusicId, true);
+	Audio().SetMusicVolume(mMusicId, 10);
 }
 
 void Core::FunctionalityComponent::PlaySfx() const

@@ -9,6 +9,8 @@ namespace Core
 {
 #define ASSET_PATH "./Assets/"
 
+#define PI 3.14159265358979323846264338327950288419716939937510582
+
 	/** Enum for debug text color in console or files */
 	enum class ConsoleColor
 	{

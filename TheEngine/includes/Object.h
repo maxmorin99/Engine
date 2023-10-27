@@ -50,6 +50,7 @@ namespace Core
 
 		const Vector<float> GetLocation() const;
 		void GetLocation(float* OutX, float* OutY);
+		Vector<float> GetCenterLocation() const;
 		void SetLocation(const Vector<float>& NewLoc);
 		void SetLocation(float NewX, float NewY);
 		const Vector<float> GetSize() const;
@@ -60,6 +61,8 @@ namespace Core
 		void SetRotation(float NewRot);
 		Vector<float> GetForwardVector() const;
 		Vector<float> GetVelocity() const;
+		void SetFlip(const Flip& InFlip);
+		Flip GetFlip() const;
 	};
 
 

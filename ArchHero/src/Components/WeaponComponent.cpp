@@ -15,35 +15,35 @@ void WeaponComponent::Update(float DeltaTime)
 	UpdateFlip();
 	UpdateWeaponLocation();
 	UpdateRotation();
-	
-	
 }
 
 void WeaponComponent::Draw()
 {
 	SpriteComponent::Draw();
 
-	Graphic().DrawLineF(TestDir[0], TestDir[1], Color::Green);
 }
 
 void WeaponComponent::UpdateFlip()
 {
-	// Flip weapon sprite based on instigator vel and weapon rotation
-	Vector<float> InstigatorVelocity = mInstigator->GetVelocity();
-	if (InstigatorVelocity.X < 0.f)
+	// calculate angle between target and instigator (player)
+	float AngleBetweentargetAndInstigator = mDirFromInstigator.GetNormalized().GetRotationFromX();
+	float AngleDeg = AngleBetweentargetAndInstigator * 180 / PI;
+	if (AngleDeg < 90)
 	{
-		mFlip.V = mOwner->GetRotation() <= 90.f && mOwner->GetRotation() > 270.f ? false : true;
-		mFlip.H = !mFlip.V;
+		mFlip.V = false;
+		mInstigator->SetFlip(Flip(false, false));
 	}
 	else
 	{
-		mFlip.H = false;
-		mFlip.V = false;
+		mFlip.V = true;
+		mInstigator->SetFlip(Flip(true, false));
 	}
 }
 
 void WeaponComponent::UpdateWeaponLocation()
 {
+	// Put the weapon to the left or right of its instigator dependinf on its Flip
+
 	Vector<float> InstigatorLoc = mInstigator->GetLocation();
 	Vector<float> InstigatorSize = mInstigator->GetSize();
 	Vector<float> OwnerSize = mOwner->GetSize();
@@ -69,20 +69,26 @@ void WeaponComponent::UpdateRotation()
 		mOwner->GetLocation().Y + mOwner->GetSize().Y / 2
 	);
 
-	Vector<float> Dir = TargetCenter - OwnerCenter;
-	float Distance = Dir.Length();
-	
-	TestDir[0] = OwnerCenter;
-	TestDir[1] = OwnerCenter + Dir.GetNormalized() * Distance;
+	Vector<float> InstigatorCenter = Vector<float>(
+		mInstigator->GetLocation().X + mInstigator->GetSize().X / 2,
+		mInstigator->GetLocation().Y + mInstigator->GetSize().Y / 2
+	);
 
-	float AngleRad = Dir.GetNormalized().GetRotationFromX();
+	mDirFromOwner = TargetCenter - OwnerCenter;
+	mDirFromInstigator = TargetCenter - InstigatorCenter;
+
+	float AngleRad = mDirFromOwner.GetNormalized().GetRotationFromX();
 	float AngleDeg = AngleRad * 180 / PI;
 
-	Logger().DebugLog(ConsoleColor::Yellow, "AngleDeg: %f\n", AngleDeg);
+	if (TargetCenter.Y < OwnerCenter.Y)
+	{
+		AngleDeg = 360 - AngleDeg;
+	}
+
 	mOwner->SetRotation(AngleDeg);
 }
 
-float WeaponComponent::Dot(const Vector<float>& Vec1, const Vector<float>& Vec2)
+void WeaponComponent::SetMuzzleFlashFrame(const Frame& InFrame)
 {
-	return (Vec1.X * Vec2.X) + (Vec1.Y * Vec2.Y);
+	mMuzzleFlashFrame = InFrame;
 }

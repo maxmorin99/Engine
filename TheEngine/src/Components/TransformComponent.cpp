@@ -1,4 +1,5 @@
 #include "Components/TransformComponent.h"
+#include "Object.h"
 
 Core::TransformComponent::TransformComponent(Object* Owner) :
 	Component(Owner)
@@ -57,6 +58,8 @@ Core::Vector<float> Core::TransformComponent::GetForwardVector() const
 	// Calculate the forward vector using trigonometry
 	float x = cos(radians);
 	float y = sin(radians);
-	return Vector<float>(x, y).GetNormalized();
+	Vector<float> Fwd = Vector<float>(x, y).GetNormalized();
+
+	return mOwner->GetFlip().H ? -Fwd : Fwd;
 }
 

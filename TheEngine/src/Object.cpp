@@ -2,9 +2,9 @@
 #include "Engine/Engine.h"
 #include "Services/World.h"
 #include <sstream>
-#include "Components/Component.h"
 #include "Components/TransformComponent.h"
 #include "Components/PhysicComponent.h"
+#include "Components/AnimationComponent.h"
 
 size_t Core::Object::sId = -1;
 std::string Core::Object::sName = "Object_";
@@ -37,6 +37,13 @@ void Core::Object::GetLocation(float* OutX, float* OutY)
     }
     
     mTransform->GetLocation(OutX, OutY);
+}
+
+Core::Vector<float> Core::Object::GetCenterLocation() const
+{
+    Vector<float> Size = GetSize();
+    Vector<float> Loc = GetLocation();
+    return Vector<float>(Loc.X + Size.X / 2, Loc.Y + Size.Y / 2);
 }
 
 void Core::Object::SetLocation(float NewX, float NewY)
@@ -110,6 +117,47 @@ Core::Vector<float> Core::Object::GetVelocity() const
     PhysicComponent* PxComp = GetComponent<PhysicComponent>();
     if (!PxComp) return Vector<float>::ZeroVector();
     return PxComp->GetVelocity();
+}
+
+void Core::Object::SetFlip(const Flip& InFlip)
+{
+    AnimationComponent* AnimComp = GetComponent<AnimationComponent>();
+    if (AnimComp)
+    {
+        AnimComp->SetFlip(InFlip);
+        return;
+    }
+    AtlasComponent* AtlasComp = GetComponent<AtlasComponent>();
+    if (AtlasComp)
+    {
+        AtlasComp->SetFlip(InFlip);
+        return;
+    }
+    SpriteComponent* SpriteComp = GetComponent<SpriteComponent>();
+    if (SpriteComp)
+    {
+        SpriteComp->SetFlip(InFlip);
+    }
+}
+
+Core::Flip Core::Object::GetFlip() const
+{
+    AnimationComponent* AnimComp = GetComponent<AnimationComponent>();
+    if (AnimComp)
+    {
+        return AnimComp->GetFlip();
+    }
+    AtlasComponent* AtlasComp = GetComponent<AtlasComponent>();
+    if (AtlasComp)
+    {
+        return AtlasComp->GetFlip();
+    }
+    SpriteComponent* SpriteComp = GetComponent<SpriteComponent>();
+    if (SpriteComp)
+    {
+        return SpriteComp->GetFlip();
+    }
+    return Flip::None;
 }
 
 void Core::Object::Start()

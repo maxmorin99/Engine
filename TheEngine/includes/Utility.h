@@ -80,6 +80,11 @@ namespace Core
 			return Vector<T>(X - Other.X, Y - Other.Y);
 		}
 
+		Vector<T>& operator - () const
+		{
+			return Vector<T>(-X, -Y);
+		}
+
 		Vector<T>& operator -= (const Vector& Other)
 		{
 			X -= Other.X;

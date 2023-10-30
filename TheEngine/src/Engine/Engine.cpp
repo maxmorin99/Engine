@@ -14,6 +14,7 @@
 #endif
 #include "Object.h"
 #include "vld.h"
+#include "Services/SdlTileMap.h"
 
 Core::Engine* Core::Engine::mInstance = nullptr;
 
@@ -50,7 +51,10 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 	GetInstance()->mGraphic = new SdlGraphic(Name, Width, Height);
 	if (!GetGraphic().Init(&InitMsg)) return false;
 
-	std::string TilesetPath = ASSET_PATH + std::string("PrisonTileset/test.tmx");
+	// Tilemap
+	std::string TiledFile = ASSET_PATH + std::string("PrisonTileset/test.tmx");
+	GetInstance()->mTileMap = new SdlTileMap(TiledFile);
+	GetInstance()->mTileMap->AddLayer("SecondLayer");
 
 	// Input
 	GetInstance()->mInput = new SdlInput();
@@ -150,4 +154,5 @@ void Core::Engine::Shutdown(void)
 	delete GetInstance()->mGraphic;
 	delete GetInstance()->mTimer;
 	delete GetInstance()->mWorld;
+	delete GetInstance()->mTileMap;
 }

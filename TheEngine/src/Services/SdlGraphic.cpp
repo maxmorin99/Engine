@@ -3,7 +3,6 @@
 #include <SDL_image.h>
 #include <string>
 #include <SDL_ttf.h>
-#include <fstream>
 
 
 Core::SdlGraphic::SdlGraphic(const char* WinName, const int WinW, const int WinH)
@@ -33,6 +32,7 @@ bool Core::SdlGraphic::Init(const char** ErrorMsg)
 		*ErrorMsg = SDL_GetError();
 		return false;
 	}
+
 	*ErrorMsg = "Graphic init was succesful\n";
 	return true;
 }
@@ -322,29 +322,3 @@ SDL_Color Core::SdlGraphic::ConvertToSdlColor(const Color& InColor) const
 	Color.a = InColor.A;
 	return Color;
 }
-
-
-// TileSet ---------------------------------------------------------------------------- //
-
-void Core::SdlGraphic::LoadTileset(const std::string& ImageFile, int FirstId, int TileW, int TileH, int Col, int Count)
-{
-	size_t ImageId = LoadTexture(ImageFile.c_str());
-	if (ImageId == -1) return;
-
-	Tileset T;
-	T.ImageId = ImageId;
-	T.FirstId = FirstId;
-	T.LastId = Count;
-	
-	for (int i = 0; i < Count; i++)
-	{
-		int Y = i / Col;
-		int X = i - Y * Col;
-
-		Rect<int> Tile(X * TileW, Y * TileH, TileW, TileH);
-		T.Sources.push_back(Tile);
-
-		mTilesets.push_back(T);
-	}
-}
-

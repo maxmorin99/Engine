@@ -30,9 +30,6 @@ namespace Core
 		virtual void DrawString(const char* Text, size_t FontId, float X, float Y, float W, float H, const Color& DrawColor) = 0;
 		virtual void GetTextSize(const char* Text, size_t FontId, int* OutW, int* OutH) = 0;
 		virtual void GetWindowSize(int* WinW, int* WinH) = 0;
-
-		virtual void LoadTileset(const std::string& ImageFile, int FirstId, int TileW, int TileH, int Col, int Count) = 0;
-
 		virtual void ShutDown() = 0;
 	};
 

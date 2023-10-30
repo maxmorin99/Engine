@@ -50,6 +50,8 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 	GetInstance()->mGraphic = new SdlGraphic(Name, Width, Height);
 	if (!GetGraphic().Init(&InitMsg)) return false;
 
+	std::string TilesetPath = ASSET_PATH + std::string("PrisonTileset/test.tmx");
+
 	// Input
 	GetInstance()->mInput = new SdlInput();
 

@@ -9,8 +9,20 @@ struct SDL_Color;
 struct SDL_Texture;
 typedef struct _TTF_Font TTF_Font;
 
+typedef std::vector<Core::Rect<int>> TTileset;
+typedef std::vector<std::vector<int>> TLayer;
+typedef std::unordered_map<std::string, TLayer> TTilemap;
+
 namespace Core
 {
+	struct Tileset
+	{
+		int FirstId{ 0 };
+		int LastId{ 0 };
+		size_t ImageId{ 0 };
+		TTileset Sources;
+	};
+
 	class SdlGraphic final : public IGraphic
 	{
 	public:
@@ -43,6 +55,9 @@ namespace Core
 		virtual void GetWindowSize(int* WinW, int* WinH) override;
 		/** End Graphic Interface */
 
+		/** TileMap --------------------------------------------------------------------- */
+		void LoadTileset(const std::string& ImageFile, int FirstId, int TileW, int TileH, int Col, int Count);
+
 	private:
 		SDL_Window* mWindow = nullptr;
 		SDL_Renderer* mRenderer = nullptr;
@@ -52,6 +67,11 @@ namespace Core
 
 		std::unordered_map<size_t, SDL_Texture*> mTextureMap;
 		std::unordered_map<size_t, TTF_Font*> mFontMap;
+
 		SDL_Color ConvertToSdlColor(const Color& InColor) const;
+
+		// tilemap
+		std::vector<Tileset> mTilesets;
+		TTilemap mTileMap;
 	};
 }

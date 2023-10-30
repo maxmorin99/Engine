@@ -7,7 +7,6 @@ project.addProvider = function(proj, isRoot=false){
     proj.addLib("C:/Program Files (x86)/Visual Leak Detector/lib/Win64/vld")
     const sdl2 = true;//process.argv.indexOf("--sdl2") >= 0;
     if(sdl2){
-        
         if(!isRoot){
             fs.copyFileSync("./sdl/lib/SDL2.dll", "./Deployment/SDL2.dll");
             fs.copyFileSync("./sdl/lib/SDL2_image.dll", "./Deployment/SDL2_image.dll");

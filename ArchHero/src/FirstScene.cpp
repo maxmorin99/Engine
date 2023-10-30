@@ -104,9 +104,6 @@ void FirstScene::Load()
 	WeaponComp->SetColor(Color::Black);
 	WeaponComp->SetOffset(Vector<float>(30.f, 50.f));
 
-	std::string MuzzleFlashFile = ASSET_PATH + std::string("Weapons/muzzle.png");
-	WeaponComp->SetMuzzleFlashFrame(Frame(0, 0, 2048, 2048, "MuzzleFlash"));
-
 
 	/* targetCursor -------------------------------------------- */
 

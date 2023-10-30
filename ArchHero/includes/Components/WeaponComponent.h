@@ -42,6 +42,4 @@ public:
 
 	/** Offset from the instigator to put the weapon to the right, to the left, ... */
 	inline void SetOffset(const Vector<float>& InOffset) { mOffset = InOffset; }
-
-	void SetMuzzleFlashFrame(const Frame& InFrame);
 };

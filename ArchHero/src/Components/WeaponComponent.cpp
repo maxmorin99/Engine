@@ -87,8 +87,3 @@ void WeaponComponent::UpdateRotation()
 
 	mOwner->SetRotation(AngleDeg);
 }
-
-void WeaponComponent::SetMuzzleFlashFrame(const Frame& InFrame)
-{
-	mMuzzleFlashFrame = InFrame;
-}

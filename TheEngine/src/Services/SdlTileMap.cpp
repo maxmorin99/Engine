@@ -2,6 +2,7 @@
 #include <SDL_image.h>
 #include <fstream>
 #include "Engine/Engine.h"
+#include "Engine/Core.h"
 
 Core::SdlTileMap::SdlTileMap() :
 	SdlTileMap("")
@@ -12,6 +13,33 @@ Core::SdlTileMap::SdlTileMap(const std::string& TiledFile) :
 	mTiledFile(TiledFile)
 {
 
+}
+
+void Core::SdlTileMap::SetTiledFile(const std::string& File)
+{
+	mTiledFile = File;
+}
+
+void Core::SdlTileMap::Draw()
+{
+	// draw each layer with his corresponding tilset, based on firstid and lastid of the tileset.
+	for (auto& pair : mTilemap)
+	{
+		TLayer Layer = pair.second;
+		for (int y = 0; y < Layer.size(); y++)
+		{
+			for (int x = 0; x < Layer[y].size(); x++)
+			{
+				int TileId = Layer[y][x];
+				Tileset T = GetTilesetBasedOnTileId(TileId);
+				
+				Rect<int> Src = T.Sources[TileId];
+				Rect<int> Dst(x * 32, y * 32, 32, 32);
+
+				//Engine::GetGraphic().DrawTexture(T.ImageId, Src, Dst, 0.0, SDL_FLIP_NONE, Color::White);
+			}
+		}
+	}
 }
 
 void Core::SdlTileMap::AddTileset(const std::string& ImageFile, int FirstId, int TileW, int TileH, int Col, int Count)
@@ -44,6 +72,7 @@ void Core::SdlTileMap::AddLayer(const std::string& Name)
 	bool bInData = false;
 	int LayerW = 0;
 	int LayerH = 0;
+	std::string LayerName;
 
 	std::string Line;
 	while (std::getline(TiledFile, Line))
@@ -51,26 +80,24 @@ void Core::SdlTileMap::AddLayer(const std::string& Name)
 		if (bInData)
 		{
 			// Récupérer le tableau 2d de int
-			
+			TLayer Layer;
+			GetLayerData(TiledFile, Layer, LayerH);
+			mTilemap[LayerName] = Layer;
+			break;
 		}
 
 		if (!bInData && Line.find("<layer") != Line.npos && Line.find("name=") != Line.npos)
 		{
-			std::string LayerName = GetLayerName(Line);
+			LayerName = GetLayerName(Line);
 			if (LayerName == Name)
 			{
 				bInData = true;
-				int LayerW = 0;
-				int LayerH = 0;
 				GetLayerSize(Line, &LayerW, &LayerH);
 			}
 		}
 	}
-}
 
-void Core::SdlTileMap::SetTiledFile(const std::string& File)
-{
-	mTiledFile = File;
+	TiledFile.close();
 }
 
 std::string Core::SdlTileMap::GetLayerName(const std::string& Line) const
@@ -109,20 +136,85 @@ void Core::SdlTileMap::GetLayerSize(const std::string& Line, int* OutW, int* Out
 		}
 		else
 		{
-			GetLayerWidth(Line, WidthValueStartPos, WidthValueEndPos, OutW);
+			GetLayerValue(Line, WidthValueStartPos, WidthValueEndPos, OutW);
 		}
 	}
 
+	// Height
+	size_t HeightFlagStartPos = Line.find("height=\"");
+	if (HeightFlagStartPos == Line.npos)
+	{
+		*OutH = 0;
+	}
+	else
+	{
+		size_t HeightValueStartPos = Line.find("\"", HeightFlagStartPos) + 1;
+		size_t HeightValueEndPos = Line.find("\"", HeightValueStartPos);
+
+		if (HeightValueStartPos == Line.npos || HeightValueEndPos == Line.npos)
+		{
+			*OutH = 0;
+		}
+		else
+		{
+			GetLayerValue(Line, HeightValueStartPos, HeightValueEndPos, OutH);
+		}
+	}
 }
 
-void Core::SdlTileMap::GetLayerWidth(const std::string& Line, const size_t WidthBegin, const size_t WidthEnd, int* OutW) const
+void Core::SdlTileMap::GetLayerValue(const std::string& Line, const size_t Begin, const size_t End, int* OutValue) const
 {
 	std::string WidthStr;
-	for (int i = WidthBegin; i < WidthEnd; i++)
+	for (int i = Begin; i < End; i++)
 	{
 		WidthStr += Line[i];
 	}
 
-	*OutW = std::stoi(WidthStr);
+	*OutValue = std::stoi(WidthStr);
 }
 
+void Core::SdlTileMap::GetLayerData(std::ifstream& TiledFile, TLayer& Out2DArray, int LayerH) const
+{
+	std::string Line;
+
+	for (int y = 0; y < LayerH; y++)
+	{
+		std::getline(TiledFile, Line);
+		Out2DArray.push_back(GetLineData(Line));
+	}
+	int bob = 0;
+}
+
+std::vector<int> Core::SdlTileMap::GetLineData(const std::string& Line) const
+{
+	std::vector<int> LineData;
+
+	std::string TileIdStr;
+	for (int j = 0; j < Line.size(); j++)
+	{
+		char c = Line[j];
+		if (c == ',' || j == Line.size() - 1)
+		{
+			TileIdStr = j == Line.size() - 1 ? TileIdStr + c : TileIdStr;
+			LineData.push_back(std::stoi(TileIdStr));
+			TileIdStr.clear();
+		}
+		else
+		{
+			TileIdStr += c;
+		}
+	}
+	return LineData;
+}
+
+Core::Tileset Core::SdlTileMap::GetTilesetBasedOnTileId(int TileId) const
+{
+	for (Tileset T : mTilesets)
+	{
+		if (TileId >= T.FirstId && TileId <= T.LastId)
+		{
+			return T;
+		}
+	}
+	return Tileset();
+}

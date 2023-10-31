@@ -54,7 +54,10 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 	// Tilemap
 	std::string TiledFile = ASSET_PATH + std::string("PrisonTileset/test.tmx");
 	GetInstance()->mTileMap = new SdlTileMap(TiledFile);
-	GetInstance()->mTileMap->AddLayer("SecondLayer");
+
+	std::string Tileset1 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/Tileset-Terrain-old prison.png");
+	GetInstance()->mTileMap->AddTileset(Tileset1, 1, 32, 32, 65, 4485);
+	GetInstance()->mTileMap->AddLayer("FirstLayer");
 
 	// Input
 	GetInstance()->mInput = new SdlInput();
@@ -137,6 +140,7 @@ void Core::Engine::Render(void)
 {
 	GetGraphic().SetDrawColor(Color::Grey);
 	GetGraphic().Clear();
+	GetInstance()->mTileMap->Draw();
 	GetWorld().Render();
 	GetGraphic().Present();
 }

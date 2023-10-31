@@ -30,6 +30,8 @@ namespace Core
 		virtual void AddTileset(const std::string& ImageFile, int FirstId, int TileW, int TileH, int Col, int Count) override;
 		virtual void AddLayer(const std::string& Name) override;
 		virtual void SetTiledFile(const std::string& File) override;
+		virtual void Draw() override;
+		
 
 	private:
 		std::string mTiledFile;
@@ -40,7 +42,19 @@ namespace Core
 		TTilemap mTilemap;
 
 		std::string GetLayerName(const std::string& Line) const;
+
+		/** Get width and height of the 2d array of int values of the layer */
 		void GetLayerSize(const std::string& Line, int* OutW, int* OutH) const;
-		void GetLayerWidth(const std::string& Line, const size_t WidthBegin, const size_t WidthEnd, int* OutW) const;
+
+		/** Get an integer value of a string from idx Begin to idx End */
+		void GetLayerValue(const std::string& Line, const size_t Begin, const size_t End, int* OutValue) const;
+
+		/** Get the 2d array of int values of the layer */
+		void GetLayerData(std::ifstream& TiledFile, TLayer& Out2DArray, int LayerH) const;
+
+		/** Get list of int values of a single line */
+		std::vector<int> GetLineData(const std::string& Line) const;
+
+		Tileset GetTilesetBasedOnTileId(int TileId) const;
 	};
 }

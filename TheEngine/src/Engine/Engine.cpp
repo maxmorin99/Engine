@@ -55,9 +55,14 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 	std::string TiledFile = ASSET_PATH + std::string("PrisonTileset/test.tmx");
 	GetInstance()->mTileMap = new SdlTileMap(TiledFile);
 
-	std::string Tileset1 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/Tileset-Terrain-old prison.png");
-	GetInstance()->mTileMap->AddTileset(Tileset1, 1, 32, 32, 65, 4485);
-	GetInstance()->mTileMap->AddLayer("FirstLayer");
+	//std::string TilesetWall1 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/wall-1- 3 tiles tall.png");
+	//std::string TilesetWall2 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/wall-2- 3 tiles tall.png");
+	//std::string TilesetPrison = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/Tileset-Terrain-old prison.png");
+	//GetInstance()->mTileMap->AddTileset(TilesetWall1, 1, 32, 32, 16, 368);
+	//GetInstance()->mTileMap->AddTileset(TilesetWall2, 369, 32, 32, 16, 240);
+	//GetInstance()->mTileMap->AddTileset(TilesetPrison, 609, 32, 32, 65, 4485);
+	//GetInstance()->mTileMap->AddLayer("FirstLayer");
+	//GetInstance()->mTileMap->AddLayer("SecondLayer");
 
 	// Input
 	GetInstance()->mInput = new SdlInput();
@@ -152,6 +157,7 @@ void Core::Engine::Shutdown(void)
 	GetInstance()->GetLogger().Shutdown();
 	GetInstance()->GetGraphic().ShutDown();
 	GetInstance()->GetAudio().ShutDown();
+	GetInstance()->mTileMap->Shutdown();
 	delete GetInstance()->mInput;
 	delete GetInstance()->mLogger;
 	delete GetInstance()->mAudio;

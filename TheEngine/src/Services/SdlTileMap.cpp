@@ -22,6 +22,10 @@ void Core::SdlTileMap::SetTiledFile(const std::string& File)
 
 void Core::SdlTileMap::Draw()
 {
+	int WindowW, WindowH = 0;
+	Engine::GetGraphic().GetWindowSize(&WindowW, &WindowH);
+	int TileW = WindowW / TILE_WIDTH_COUNT;
+	int TileH = WindowH / TILE_HEIGHT_COUNT;
 	// draw each layer with his corresponding tilset, based on firstid and lastid of the tileset.
 	for (auto& pair : mTilemap)
 	{
@@ -32,11 +36,15 @@ void Core::SdlTileMap::Draw()
 			{
 				int TileId = Layer[y][x];
 				Tileset T = GetTilesetBasedOnTileId(TileId);
-				
-				Rect<int> Src = T.Sources[TileId];
-				Rect<int> Dst(x * 32, y * 32, 32, 32);
+				if (TileId == 0) continue;
 
-				//Engine::GetGraphic().DrawTexture(T.ImageId, Src, Dst, 0.0, SDL_FLIP_NONE, Color::White);
+				TileId -= T.FirstId - 1;
+				if (TileId >= T.Sources.size()) continue;
+
+				Rect<int> Src = T.Sources[TileId - 1];
+				Rect<int> Dst(x * TileW, y * TileH, TileW, TileH);
+				
+				Engine::GetGraphic().DrawTexture(T.ImageId, Src, Dst, 0.0, Flip::None, Color::White);
 			}
 		}
 	}
@@ -182,7 +190,6 @@ void Core::SdlTileMap::GetLayerData(std::ifstream& TiledFile, TLayer& Out2DArray
 		std::getline(TiledFile, Line);
 		Out2DArray.push_back(GetLineData(Line));
 	}
-	int bob = 0;
 }
 
 std::vector<int> Core::SdlTileMap::GetLineData(const std::string& Line) const
@@ -217,4 +224,32 @@ Core::Tileset Core::SdlTileMap::GetTilesetBasedOnTileId(int TileId) const
 		}
 	}
 	return Tileset();
+}
+
+void Core::SdlTileMap::Shutdown()
+{
+	// récupérer chaque TLayer de la Tilemap
+	// clear le 2d array TLayer
+
+	// clear chaque tileset de mTilesets
+
+	for (auto& Pair : mTilemap)
+	{
+		TLayer L = Pair.second;
+		for (int i = 0; i < L.size(); i++)
+		{
+			L[i].clear();
+		}
+		L.clear();
+	}
+	mTilemap.clear();
+
+	for (auto& Tileset : mTilesets)
+	{
+		TTileset Sources = Tileset.Sources;
+		Sources.clear();
+	}
+	mTilesets.clear();
+
+	mTiledFile.clear();
 }

@@ -5,6 +5,9 @@
 #include <unordered_map>
 #include <utility.h>
 
+#define TILE_WIDTH_COUNT 25
+#define TILE_HEIGHT_COUNT 19
+
 struct SDL_Texture;
 struct SDL_Renderer;
 
@@ -31,6 +34,7 @@ namespace Core
 		virtual void AddLayer(const std::string& Name) override;
 		virtual void SetTiledFile(const std::string& File) override;
 		virtual void Draw() override;
+		virtual void Shutdown() override;
 		
 
 	private:

@@ -105,7 +105,7 @@ void Core::AnimationComponent::AddClip(const std::string& InName, Clip& InClip)
 	}
 }
 
-void Core::AnimationComponent::SetClip(const std::string& InClipName, bool bLoop, std::function<void()> EndCallback)
+void Core::AnimationComponent::SetClip(const std::string& InClipName, bool bLoop, std::function<void(void)> EndCallback)
 {
 	if (mClips.count(InClipName) == 0 || mCurrentClip.Name == InClipName) return;
 	

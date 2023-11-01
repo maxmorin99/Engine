@@ -13,7 +13,7 @@
 #include "Services/SdlFileLogger.h"
 #endif
 #include "Object.h"
-#include "vld.h"
+//#include "vld.h"
 #include "Services/SdlTileMap.h"
 
 Core::Engine* Core::Engine::mInstance = nullptr;
@@ -34,7 +34,7 @@ void Core::Engine::WindowQuitCallback()
 
 bool Core::Engine::Init(const char* Name, int Width, int Height)
 {
-	VLDEnable();
+	//VLDEnable();
 
 	const char* InitMsg = nullptr;
 
@@ -128,7 +128,7 @@ void Core::Engine::Start(void)
 	Shutdown();
 
 	delete mInstance;
-	VLDDisable();
+	//VLDDisable();
 }
 
 void Core::Engine::ProcessInput(void)

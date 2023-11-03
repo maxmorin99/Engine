@@ -19,10 +19,10 @@ namespace Core
 {
 	struct Tileset
 	{
-		int FirstId{ 0 };
-		int LastId{ 0 };
-		size_t ImageId{ 0 };
-		TTileset Sources;
+		int _FirstId{ 0 };
+		int _LastId{ 0 };
+		size_t _ImageId{ 0 };
+		TTileset _Sources;
 	};
 
 	class SdlTileMap : public ITileMap
@@ -30,6 +30,7 @@ namespace Core
 	public:
 		SdlTileMap();
 		SdlTileMap(const std::string& TiledFile);
+		~SdlTileMap() = default;
 		virtual void AddTileset(const std::string& ImageFile, int FirstId, int TileW, int TileH, int Col, int Count) override;
 		virtual void AddLayer(const std::string& Name) override;
 		virtual void SetTiledFile(const std::string& File) override;
@@ -38,12 +39,14 @@ namespace Core
 		
 
 	private:
-		std::string mTiledFile;
+		std::string* mTiledFile = nullptr;
 
 		/** List of all the different tilesets */
-		std::vector<Tileset> mTilesets;
+		std::vector<Tileset>* mTilesets = nullptr;
 
-		TTilemap mTilemap;
+		/** Dict of str -> TLayer */
+		TTilemap* mTilemap = nullptr;
+
 
 		std::string GetLayerName(const std::string& Line) const;
 

@@ -9,6 +9,7 @@
 #include "Components/AnimationComponent.h"
 #include "Components/WeaponComponent.h"
 #include "Components/TargetCursorComponent.h"
+#include "Components/BoxComponent.h"
 
 FirstScene::FirstScene(const char* name) :
 	Scene(name)
@@ -116,6 +117,13 @@ void FirstScene::Load()
 	TargetCursorComp->SetColor(Color::Black);
 
 	WeaponObj->GetComponent<WeaponComponent>()->SetTargetCursorObject(TargetCursorObj);
+
+
+	/* BoxComponent -------------------------------------------- */
+
+	BoxComponent* Box = AnimatedPlayer->AddComponent<BoxComponent>();
+	Box->SetBoxSize(75, 100);
+	Box->SetOffset(85, 120);
 
 
 	/* Add obj in the world ------------------------------------ */

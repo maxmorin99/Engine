@@ -10,14 +10,15 @@ Core::SdlTileMap::SdlTileMap() :
 }
 
 Core::SdlTileMap::SdlTileMap(const std::string& TiledFile) :
-	mTiledFile(TiledFile)
+	mTiledFile(new std::string(TiledFile)),
+	mTilesets(new std::vector<Tileset>),
+	mTilemap(new TTilemap())
 {
-
 }
 
 void Core::SdlTileMap::SetTiledFile(const std::string& File)
 {
-	mTiledFile = File;
+	mTiledFile = new std::string(File);
 }
 
 void Core::SdlTileMap::Draw()
@@ -26,8 +27,10 @@ void Core::SdlTileMap::Draw()
 	Engine::GetGraphic().GetWindowSize(&WindowW, &WindowH);
 	int TileW = WindowW / TILE_WIDTH_COUNT;
 	int TileH = WindowH / TILE_HEIGHT_COUNT;
+
+	size_t bob = 0;
 	// draw each layer with his corresponding tilset, based on firstid and lastid of the tileset.
-	for (auto& pair : mTilemap)
+	for (auto& pair : *mTilemap)
 	{
 		TLayer Layer = pair.second;
 		for (int y = 0; y < Layer.size(); y++)
@@ -35,16 +38,16 @@ void Core::SdlTileMap::Draw()
 			for (int x = 0; x < Layer[y].size(); x++)
 			{
 				int TileId = Layer[y][x];
-				Tileset T = GetTilesetBasedOnTileId(TileId);
 				if (TileId == 0) continue;
 
-				TileId -= T.FirstId - 1;
-				if (TileId >= T.Sources.size()) continue;
+				Tileset T = GetTilesetBasedOnTileId(TileId);
+				TileId -= T._FirstId - 1;
+				if (TileId >= T._Sources.size()) continue;
 
-				Rect<int> Src = T.Sources[TileId - 1];
+				Rect<int> Src = T._Sources[TileId - 1];
 				Rect<int> Dst(x * TileW, y * TileH, TileW, TileH);
 				
-				Engine::GetGraphic().DrawTexture(T.ImageId, Src, Dst, 0.0, Flip::None, Color::White);
+				Engine::GetGraphic().DrawTexture(T._ImageId, Src, Dst, 0.0, Flip::None, Color::White);
 			}
 		}
 	}
@@ -52,13 +55,15 @@ void Core::SdlTileMap::Draw()
 
 void Core::SdlTileMap::AddTileset(const std::string& ImageFile, int FirstId, int TileW, int TileH, int Col, int Count)
 {
+	if (!mTilesets) return;
+
 	size_t ImageId = Engine::GetGraphic().LoadTexture(ImageFile.c_str());
 	if (ImageId == -1) return;
 
 	Tileset T;
-	T.ImageId = ImageId;
-	T.FirstId = FirstId;
-	T.LastId = (FirstId + Count) - 1;
+	T._ImageId = ImageId;
+	T._FirstId = FirstId;
+	T._LastId = (FirstId + Count) - 1;
 	
 	for (int i = 0; i < Count; i++)
 	{
@@ -66,15 +71,15 @@ void Core::SdlTileMap::AddTileset(const std::string& ImageFile, int FirstId, int
 		int X = i - Y * Col;
 
 		Rect<int> Tile(X * TileW, Y * TileH, TileW, TileH);
-		T.Sources.push_back(Tile);
+		T._Sources.push_back(Tile);
 	}
 
-	mTilesets.push_back(T);
+	mTilesets->push_back(T);
 }
 
 void Core::SdlTileMap::AddLayer(const std::string& Name)
 {
-	std::ifstream TiledFile(mTiledFile);
+	std::ifstream TiledFile(*mTiledFile);
 	if (!TiledFile.is_open()) return;
 
 	bool bInData = false;
@@ -90,7 +95,9 @@ void Core::SdlTileMap::AddLayer(const std::string& Name)
 			// Récupérer le tableau 2d de int
 			TLayer Layer;
 			GetLayerData(TiledFile, Layer, LayerH);
-			mTilemap[LayerName] = Layer;
+			
+
+			(*mTilemap)[LayerName] = Layer;
 			break;
 		}
 
@@ -216,13 +223,14 @@ std::vector<int> Core::SdlTileMap::GetLineData(const std::string& Line) const
 
 Core::Tileset Core::SdlTileMap::GetTilesetBasedOnTileId(int TileId) const
 {
-	for (Tileset T : mTilesets)
+	for (Tileset T : *mTilesets)
 	{
-		if (TileId >= T.FirstId && TileId <= T.LastId)
+		if (TileId >= T._FirstId && TileId <= T._LastId)
 		{
 			return T;
 		}
 	}
+
 	return Tileset();
 }
 
@@ -233,7 +241,7 @@ void Core::SdlTileMap::Shutdown()
 
 	// clear chaque tileset de mTilesets
 
-	for (auto& Pair : mTilemap)
+	for (auto& Pair : *mTilemap)
 	{
 		TLayer L = Pair.second;
 		for (int i = 0; i < L.size(); i++)
@@ -242,14 +250,16 @@ void Core::SdlTileMap::Shutdown()
 		}
 		L.clear();
 	}
-	mTilemap.clear();
+	mTilemap->clear();
 
-	for (auto& Tileset : mTilesets)
+	for (auto& Tileset : *mTilesets)
 	{
-		TTileset Sources = Tileset.Sources;
+		TTileset Sources = Tileset._Sources;
 		Sources.clear();
 	}
-	mTilesets.clear();
+	mTilesets->clear();
 
-	mTiledFile.clear();
+	delete mTiledFile;
+	delete mTilesets;
+	delete mTilemap;
 }

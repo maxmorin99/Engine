@@ -33,6 +33,7 @@ namespace Core
 		~SdlTileMap() = default;
 		virtual void AddTileset(const std::string& ImageFile, int FirstId, int TileW, int TileH, int Col, int Count) override;
 		virtual void AddLayer(const std::string& Name) override;
+		virtual void AddObjectLayer(const std::string& Name) override;
 		virtual void SetTiledFile(const std::string& File) override;
 		virtual void Draw() override;
 		virtual void Shutdown() override;
@@ -47,20 +48,36 @@ namespace Core
 		/** Dict of str -> TLayer */
 		TTilemap* mTilemap = nullptr;
 
+		/** Collision rects */
+		std::vector<Rect<float>>* mObjectsRect = nullptr;
 
-		std::string GetLayerName(const std::string& Line) const;
+
+		std::string GetNameAttributeFromLine(const std::string& Line) const;
+
+		// TileLayer -------------------------------------------------------- //
+
 
 		/** Get width and height of the 2d array of int values of the layer */
 		void GetLayerSize(const std::string& Line, int* OutW, int* OutH) const;
 
 		/** Get an integer value of a string from idx Begin to idx End */
-		void GetLayerValue(const std::string& Line, const size_t Begin, const size_t End, int* OutValue) const;
+		std::string GetLayerValue(const std::string& Line, const size_t Begin, const size_t End) const;
 
 		/** Get the 2d array of int values of the layer */
 		void GetLayerData(std::ifstream& TiledFile, TLayer& Out2DArray, int LayerH) const;
 
 		/** Get list of int values of a single line */
 		std::vector<int> GetLineData(const std::string& Line) const;
+
+
+		// ObjectLayer ------------------------------------------------------ //
+
+		void GetObjectData(const std::string& Line, float* X, float* Y, float* W, float* H) const;
+
+		std::string GetStringValueFromFlag(const std::string& Line, const std::string& Flag) const;
+
+		// Get all rect from object layer (for collisions)
+		void GetRectsFromObjectLayer(std::ifstream& TiledFile, const std::string& FirstLine, std::vector<Rect<float>>& OutRects);
 
 		Tileset GetTilesetBasedOnTileId(int TileId) const;
 	};

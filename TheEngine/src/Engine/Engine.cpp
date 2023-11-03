@@ -63,6 +63,7 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 	GetInstance()->mTileMap->AddTileset(TilesetPrison, 609, 32, 32, 65, 4485);
 	GetInstance()->mTileMap->AddLayer("FloorLayer");
 	GetInstance()->mTileMap->AddLayer("BackgroundLayer");
+	GetInstance()->mTileMap->AddObjectLayer("CollisionLayer");
 
 	// Input
 	GetInstance()->mInput = new SdlInput();

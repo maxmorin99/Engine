@@ -12,7 +12,8 @@ Core::SdlTileMap::SdlTileMap() :
 Core::SdlTileMap::SdlTileMap(const std::string& TiledFile) :
 	mTiledFile(new std::string(TiledFile)),
 	mTilesets(new std::vector<Tileset>),
-	mTilemap(new TTilemap())
+	mTilemap(new TTilemap()),
+	mObjectsRect(new std::vector<Rect<float>>())
 {
 }
 
@@ -50,6 +51,11 @@ void Core::SdlTileMap::Draw()
 				Engine::GetGraphic().DrawTexture(T._ImageId, Src, Dst, 0.0, Flip::None, Color::White);
 			}
 		}
+	}
+
+	for (auto& Rect : *mObjectsRect)
+	{
+		Engine::GetGraphic().DrawRectF(false, &Rect, Color::Green);
 	}
 }
 
@@ -95,7 +101,6 @@ void Core::SdlTileMap::AddLayer(const std::string& Name)
 			// Récupérer le tableau 2d de int
 			TLayer Layer;
 			GetLayerData(TiledFile, Layer, LayerH);
-			
 
 			(*mTilemap)[LayerName] = Layer;
 			break;
@@ -103,7 +108,7 @@ void Core::SdlTileMap::AddLayer(const std::string& Name)
 
 		if (!bInData && Line.find("<layer") != Line.npos && Line.find("name=") != Line.npos)
 		{
-			LayerName = GetLayerName(Line);
+			LayerName = GetNameAttributeFromLine(Line);
 			if (LayerName == Name)
 			{
 				bInData = true;
@@ -115,7 +120,7 @@ void Core::SdlTileMap::AddLayer(const std::string& Name)
 	TiledFile.close();
 }
 
-std::string Core::SdlTileMap::GetLayerName(const std::string& Line) const
+std::string Core::SdlTileMap::GetNameAttributeFromLine(const std::string& Line) const
 {
 	size_t NameFlagStartPos = Line.find("name=\"");
 	size_t NameStartPos = Line.find("\"", NameFlagStartPos) + 1;
@@ -151,7 +156,8 @@ void Core::SdlTileMap::GetLayerSize(const std::string& Line, int* OutW, int* Out
 		}
 		else
 		{
-			GetLayerValue(Line, WidthValueStartPos, WidthValueEndPos, OutW);
+			std::string ValueStr = GetLayerValue(Line, WidthValueStartPos, WidthValueEndPos);
+			*OutW = std::stoi(ValueStr);
 		}
 	}
 
@@ -172,12 +178,13 @@ void Core::SdlTileMap::GetLayerSize(const std::string& Line, int* OutW, int* Out
 		}
 		else
 		{
-			GetLayerValue(Line, HeightValueStartPos, HeightValueEndPos, OutH);
+			std::string ValueStr = GetLayerValue(Line, HeightValueStartPos, HeightValueEndPos);
+			*OutH = std::stoi(ValueStr);
 		}
 	}
 }
 
-void Core::SdlTileMap::GetLayerValue(const std::string& Line, const size_t Begin, const size_t End, int* OutValue) const
+std::string Core::SdlTileMap::GetLayerValue(const std::string& Line, const size_t Begin, const size_t End) const
 {
 	std::string WidthStr;
 	for (int i = Begin; i < End; i++)
@@ -185,7 +192,7 @@ void Core::SdlTileMap::GetLayerValue(const std::string& Line, const size_t Begin
 		WidthStr += Line[i];
 	}
 
-	*OutValue = std::stoi(WidthStr);
+	return WidthStr;
 }
 
 void Core::SdlTileMap::GetLayerData(std::ifstream& TiledFile, TLayer& Out2DArray, int LayerH) const
@@ -234,6 +241,84 @@ Core::Tileset Core::SdlTileMap::GetTilesetBasedOnTileId(int TileId) const
 	return Tileset();
 }
 
+void Core::SdlTileMap::AddObjectLayer(const std::string& Name)
+{
+	std::ifstream TiledFile(*mTiledFile);
+	if (!TiledFile.is_open()) return;
+
+	bool bInData = false;
+	std::string LayerName;
+	std::string Line;
+
+	while (std::getline(TiledFile, Line))
+	{
+		if (bInData)
+		{
+			std::vector<Rect<float>> mRects;
+			GetRectsFromObjectLayer(TiledFile, Line, mRects);
+			break;
+		}
+		if (!bInData && Line.find("<objectgroup") != Line.npos && Line.find("name=") != Line.npos)
+		{
+			LayerName = GetNameAttributeFromLine(Line);
+
+			if (LayerName == Name)
+			{
+				bInData = true;
+			}
+		}
+	}
+
+	TiledFile.close();
+}
+
+void Core::SdlTileMap::GetObjectData(const std::string& Line, float* X, float* Y, float* W, float* H) const
+{
+	if (!X || !Y || !W || !H) return;
+
+	*X = (int)std::stof(GetStringValueFromFlag(Line, "x="));
+	*Y = (int)std::stof(GetStringValueFromFlag(Line, "y="));
+	*W = std::stof(GetStringValueFromFlag(Line, "width="));
+	*H = std::stof(GetStringValueFromFlag(Line, "height="));
+}
+
+std::string Core::SdlTileMap::GetStringValueFromFlag(const std::string& Line, const std::string& Flag) const
+{
+	size_t FlagStartPos = Line.find(Flag);
+	if (FlagStartPos == Line.npos)
+	{
+		return std::string("0");
+	}
+
+	size_t DataStartPos = Line.find("\"", FlagStartPos) + 1;
+	size_t DataEndPos = Line.find("\"", DataStartPos);
+
+	if (DataStartPos == Line.npos || DataEndPos == Line.npos)
+	{
+		return std::string("0");
+	}
+	else
+	{
+		return GetLayerValue(Line, DataStartPos, DataEndPos);
+	}
+}
+
+void Core::SdlTileMap::GetRectsFromObjectLayer(std::ifstream& TiledFile, const std::string& FirstLine, std::vector<Rect<float>>& OutRects)
+{
+	std::string Line = FirstLine;
+
+	while (Line.find("</objectgroup>") == Line.npos)
+	{
+		Rect<float> ObjectRect;
+		GetObjectData(Line, &ObjectRect.X, &ObjectRect.Y, &ObjectRect.W, &ObjectRect.H);
+		if (ObjectRect.W != 0 || ObjectRect.H != 0)
+		{
+			mObjectsRect->push_back(ObjectRect);
+		}
+		std::getline(TiledFile, Line);
+	}
+}
+
 void Core::SdlTileMap::Shutdown()
 {
 	// récupérer chaque TLayer de la Tilemap
@@ -259,7 +344,10 @@ void Core::SdlTileMap::Shutdown()
 	}
 	mTilesets->clear();
 
+	mObjectsRect->clear();
+
 	delete mTiledFile;
 	delete mTilesets;
 	delete mTilemap;
+	delete mObjectsRect;
 }

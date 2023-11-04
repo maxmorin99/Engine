@@ -53,7 +53,7 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 
 	// Tilemap
 	std::string TiledFile = ASSET_PATH + std::string("PrisonTileset/test.tmx");
-	GetInstance()->mTileMap = new SdlTileMap(TiledFile);
+	GetInstance()->mTileMap = new SdlTileMap(TiledFile, 32, 32, 25, 19);
 
 	std::string TilesetWall1 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/wall-1- 3 tiles tall.png");
 	std::string TilesetWall2 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/wall-2- 3 tiles tall.png");

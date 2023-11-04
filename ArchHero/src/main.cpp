@@ -12,11 +12,6 @@ using namespace Core;
 
 void InitGameplay()
 {
-	// Init base scene
-	/*IScene* S = new Scene("Scene01");
-	Engine::GetWorld().Register("Scene01", S);
-	Engine::GetWorld().Load("Scene01");*/
-
 	IScene* Default = new DefaultScene("DefaultScene");
 	IScene* First = new FirstScene("FirstScene");
 	Engine::GetWorld().Register("DefaultScene", Default);
@@ -27,7 +22,7 @@ void InitGameplay()
 
 INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT)
 {
-	if (Engine::Init("TestGame", 1000, 850))
+	if (Engine::Init("TestGame", 2000, 1500))
 	{
 		InitGameplay();
 		Engine::Start();

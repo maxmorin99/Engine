@@ -152,6 +152,14 @@ namespace Core
 		{
 			*this = Vector<T>::ZeroVector();
 		}
+
+		/* Distance between Point1 and Point2 */
+		static float Dist(const Vector<T>& Point1, const Vector<T>& Point2)
+		{
+			float DistX = abs(Point1.X - Point2.X);
+			float DistY = abs(Point1.Y - Point2.Y);
+			return sqrt(pow(DistX, 2) + pow(DistY, 2));
+		}
 	};
 
 	/** 

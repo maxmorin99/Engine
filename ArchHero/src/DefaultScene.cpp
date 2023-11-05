@@ -7,8 +7,8 @@
 #include "Components/PhysicComponent.h"
 #include "Components/Functionality.h"
 
-DefaultScene::DefaultScene(const char* name) :
-	Scene(name)
+DefaultScene::DefaultScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH) :
+	Scene(name, tilemapFile, srcTileW, srcTileH, tileCountW, tileCountH)
 {
 }
 

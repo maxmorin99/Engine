@@ -7,5 +7,6 @@ namespace Core
 	public:
 		virtual ~IScene() = default;
 		virtual void Load() = 0;
+		virtual void Destroy() = 0;
 	};
 }

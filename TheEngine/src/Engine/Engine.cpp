@@ -14,7 +14,7 @@
 #endif
 #include "Object.h"
 #include "vld.h"
-#include "Services/SdlTileMap.h"
+//#include "Services/SdlTileMap.h"
 
 Core::Engine* Core::Engine::mInstance = nullptr;
 
@@ -52,7 +52,7 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 	if (!GetGraphic().Init(&InitMsg)) return false;
 
 	// Tilemap
-	std::string TiledFile = ASSET_PATH + std::string("PrisonTileset/test.tmx");
+	/*std::string TiledFile = ASSET_PATH + std::string("PrisonTileset/test.tmx");
 	GetInstance()->mTileMap = new SdlTileMap(TiledFile, 32, 32, 25, 19);
 
 	std::string TilesetWall1 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/wall-1- 3 tiles tall.png");
@@ -63,7 +63,7 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 	GetInstance()->mTileMap->AddTileset(TilesetPrison, 609, 32, 32, 65, 4485);
 	GetInstance()->mTileMap->AddLayer("FloorLayer");
 	GetInstance()->mTileMap->AddLayer("BackgroundLayer");
-	GetInstance()->mTileMap->AddObjectLayer("CollisionLayer");
+	GetInstance()->mTileMap->AddObjectLayer("CollisionLayer");*/
 
 	// Input
 	GetInstance()->mInput = new SdlInput();
@@ -146,7 +146,7 @@ void Core::Engine::Render(void)
 {
 	GetGraphic().SetDrawColor(Color::Grey);
 	GetGraphic().Clear();
-	GetInstance()->mTileMap->Draw();
+	//GetInstance()->mTileMap->Draw();
 	GetWorld().Render();
 	GetGraphic().Present();
 }
@@ -158,12 +158,12 @@ void Core::Engine::Shutdown(void)
 	GetInstance()->GetLogger().Shutdown();
 	GetInstance()->GetGraphic().ShutDown();
 	GetInstance()->GetAudio().ShutDown();
-	GetInstance()->mTileMap->Shutdown();
+	//GetInstance()->mTileMap->Shutdown();
 	delete GetInstance()->mInput;
 	delete GetInstance()->mLogger;
 	delete GetInstance()->mAudio;
 	delete GetInstance()->mGraphic;
 	delete GetInstance()->mTimer;
 	delete GetInstance()->mWorld;
-	delete GetInstance()->mTileMap;
+	//delete GetInstance()->mTileMap;
 }

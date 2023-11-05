@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Component.h"
+#include "CollisionComponent.h"
 #include "Utility.h"
 #include "Interfaces/IUpdatable.h"
 #include "Interfaces/IDrawable.h"
 
 namespace Core
 {
-	class BoxComponent : public Component, public IUpdatable, public IDrawable
+	class BoxComponent : public CollisionComponent, public IUpdatable, public IDrawable
 	{
 	public:
 		BoxComponent(Object* Owner);

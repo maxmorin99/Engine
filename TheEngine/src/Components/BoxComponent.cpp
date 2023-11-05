@@ -2,8 +2,9 @@
 #include "Object.h"
 
 Core::BoxComponent::BoxComponent(Object* Owner) :
-	Component(Owner)
+	CollisionComponent(Owner)
 {
+	mCollisionType = ECollisionShape::Rectangle;
 }
 
 void Core::BoxComponent::Update(float DeltaTime)

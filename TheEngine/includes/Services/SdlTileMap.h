@@ -25,6 +25,16 @@ namespace Core
 		TTileset _Sources;
 	};
 
+	/** Object representing a collision in the tilemap */
+	struct TilemapObject
+	{
+		TilemapObject(const std::string& Id, Rect<float>& Rect) :
+			_Rect(Rect), _Id(Id) {};
+
+		Rect<float> _Rect;
+		std::string _Id;
+	};
+
 	class SdlTileMap : public ITileMap
 	{
 	public:
@@ -47,8 +57,8 @@ namespace Core
 		/** Dict of str -> TLayer */
 		TTilemap* mTilemap = nullptr;
 
-		/** Collision rects */
-		std::vector<Rect<float>>* mObjectsRect = nullptr;
+		/** List of collision objects of the tilemap */
+		std::vector<TilemapObject>* mTilemapObjects = nullptr;
 
 		/** Size of tile scaled on screen */
 		Vector<float> mScaledTileSize = Vector<float>::ZeroVector();
@@ -77,15 +87,18 @@ namespace Core
 		std::vector<int> GetLayerSingleArray(const std::string& Line) const;
 
 		/** Get all object properties(x, y, width, height) from a str line */
-		void GetObjectData(const std::string& Line, float* X, float* Y, float* W, float* H) const;
+		void GetObjectData(const std::string& Line, std::string& OutId, float* X, float* Y, float* W, float* H) const;
 
 		/** Get the value (str) associated to the flag. Ex: Flag = "width", returned value = "32" */
 		std::string GetStringValueFromFlag(const std::string& Line, const std::string& Flag) const;
 
 		/** Construct all rect from object layer (for collisions) */
-		void ConstructRectsFromObjectLayer(std::ifstream& TiledFile, const std::string& FirstLine, std::vector<Rect<float>>& OutRects);
+		void ConstructRectsFromObjectLayer(std::ifstream& TiledFile, const std::string& FirstLine);
 
 		std::string GetNameAttributeFromLine(const std::string& Line) const;
 		Tileset GetTilesetBasedOnTileId(int TileId) const;
+
+	public:
+		std::vector<TilemapObject> GetTilemapObjects() const;
 	};
 }

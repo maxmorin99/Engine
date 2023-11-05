@@ -8,8 +8,8 @@ Core::SdlTileMap::SdlTileMap(const std::string& TiledFile, float SrcTileW, float
 	mTiledFile(new std::string(TiledFile)),
 	mTilesets(new std::vector<Tileset>),
 	mTilemap(new TTilemap()),
-	mObjectsRect(new std::vector<Rect<float>>()),
-	mTileCount(TileCountW, TileCountH)
+	mTileCount(TileCountW, TileCountH),
+	mTilemapObjects(new std::vector<TilemapObject>())
 {
 	int WindowW, WindowH = 0;
 	Engine::GetGraphic().GetWindowSize(&WindowW, &WindowH);
@@ -191,8 +191,7 @@ void Core::SdlTileMap::AddObjectLayer(const std::string& Name)
 	{
 		if (bInData)
 		{
-			std::vector<Rect<float>> mRects;
-			ConstructRectsFromObjectLayer(TiledFile, Line, mRects);
+			ConstructRectsFromObjectLayer(TiledFile, Line);
 			break;
 		}
 		if (!bInData && Line.find("<objectgroup") != Line.npos && Line.find("name=") != Line.npos)
@@ -209,12 +208,13 @@ void Core::SdlTileMap::AddObjectLayer(const std::string& Name)
 	TiledFile.close();
 }
 
-void Core::SdlTileMap::GetObjectData(const std::string& Line, float* X, float* Y, float* W, float* H) const
+void Core::SdlTileMap::GetObjectData(const std::string& Line, std::string& OutId, float* X, float* Y, float* W, float* H) const
 {
 	if (!X || !Y || !W || !H) return;
 
-	*X = (int)std::stof(GetStringValueFromFlag(Line, "x="));
-	*Y = (int)std::stof(GetStringValueFromFlag(Line, "y="));
+	OutId = GetStringValueFromFlag(Line, "id=");
+	*X = (float)std::stof(GetStringValueFromFlag(Line, "x="));
+	*Y = (float)std::stof(GetStringValueFromFlag(Line, "y="));
 	*W = std::stof(GetStringValueFromFlag(Line, "width="));
 	*H = std::stof(GetStringValueFromFlag(Line, "height="));
 
@@ -227,19 +227,18 @@ void Core::SdlTileMap::GetObjectData(const std::string& Line, float* X, float* Y
 	*H *= ScaledRatioTiledY;
 }
 
-void Core::SdlTileMap::ConstructRectsFromObjectLayer(std::ifstream& TiledFile, const std::string& FirstLine, std::vector<Rect<float>>& OutRects)
+void Core::SdlTileMap::ConstructRectsFromObjectLayer(std::ifstream& TiledFile, const std::string& FirstLine)
 {
 	std::string Line = FirstLine;
 
 	while (Line.find("</objectgroup>") == Line.npos)
 	{
 		Rect<float> ObjectRect;
-		GetObjectData(Line, &ObjectRect.X, &ObjectRect.Y, &ObjectRect.W, &ObjectRect.H);
-		
-		if (ObjectRect.W != 0 || ObjectRect.H != 0)
-		{
-			mObjectsRect->push_back(ObjectRect);
-		}
+		std::string ObjectId;
+		GetObjectData(Line, ObjectId, &ObjectRect.X, &ObjectRect.Y, &ObjectRect.W, &ObjectRect.H);
+
+		TilemapObject Obj(ObjectId, ObjectRect);
+		mTilemapObjects->push_back(Obj);
 		std::getline(TiledFile, Line);
 	}
 }
@@ -269,8 +268,9 @@ void Core::SdlTileMap::Draw()
 		}
 	}
 
-	for (auto& R : *mObjectsRect)
+	for (auto& Obj : *mTilemapObjects)
 	{
+		Rect<float> R = Obj._Rect;
 		Engine::GetGraphic().DrawRectF(false, &R, Color::Green);
 	}
 }
@@ -286,6 +286,12 @@ Core::Tileset Core::SdlTileMap::GetTilesetBasedOnTileId(int TileId) const
 	}
 
 	return Tileset();
+}
+
+std::vector<Core::TilemapObject> Core::SdlTileMap::GetTilemapObjects() const
+{
+	if(!mTilemapObjects) return std::vector<TilemapObject>();
+	return *mTilemapObjects;
 }
 
 void Core::SdlTileMap::Shutdown()
@@ -313,10 +319,10 @@ void Core::SdlTileMap::Shutdown()
 	}
 	mTilesets->clear();
 
-	mObjectsRect->clear();
+	mTilemapObjects->clear();
 
 	delete mTiledFile;
 	delete mTilesets;
 	delete mTilemap;
-	delete mObjectsRect;
+	delete mTilemapObjects;
 }

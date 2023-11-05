@@ -10,9 +10,10 @@
 #include "Components/WeaponComponent.h"
 #include "Components/TargetCursorComponent.h"
 #include "Components/BoxComponent.h"
+#include "Services/SdlTileMap.h"
 
-FirstScene::FirstScene(const char* name) :
-	Scene(name)
+FirstScene::FirstScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH) :
+	Scene(name, tilemapFile, srcTileW, srcTileH, tileCountW, tileCountH)
 {
 }
 
@@ -20,9 +21,36 @@ void FirstScene::Load()
 {
 	Scene::Load();
 
+	// tilemap
+	std::string TilesetWall1 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/wall-1- 3 tiles tall.png");
+	std::string TilesetWall2 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/wall-2- 3 tiles tall.png");
+	std::string TilesetPrison = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/Tileset-Terrain-old prison.png");
+	mTileMap->AddTileset(TilesetWall1, 1, 32, 32, 16, 368);
+	mTileMap->AddTileset(TilesetWall2, 369, 32, 32, 16, 240);
+	mTileMap->AddTileset(TilesetPrison, 609, 32, 32, 65, 4485);
+	mTileMap->AddLayer("FloorLayer");
+	mTileMap->AddLayer("BackgroundLayer");
+	mTileMap->AddObjectLayer("CollisionLayer");
+	std::vector<TilemapObject> TilemapObjects = mTileMap->GetTilemapObjects();
+	// todo create a TilemapComponent to allow the tilemap to draw and so specific stuff
+	for (TilemapObject TilemapObj : TilemapObjects)
+	{
+		Object* Obj = new Object();
+		mObjectsToAddToWorld.push_back(Obj);
+		Obj->SetLocation(TilemapObj._Rect.X, TilemapObj._Rect.Y);
+		BoxComponent* Box = Obj->AddComponent<BoxComponent>();
+		mCollisionComponentsToAddToWorld.push_back(Box);
+		Box->SetBoxSize(TilemapObj._Rect.W, TilemapObj._Rect.H);
+		Box->SetCollisionType(ECollisionShape::Rectangle);
+		Box->AddCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Block);
+		Box->AddCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Block);
+		Box->AddCollisionResponseToChannel(ECollisionChannel::Projectile, ECollisionResponse::Block);
+	}
+
 	/* Init Animated Player ---------------------------------- */
 
 	Object* AnimatedPlayer = new Object();
+	mObjectsToAddToWorld.push_back(AnimatedPlayer);
 	AnimatedPlayer->AddComponent<PlayerComponent>();
 	AnimatedPlayer->SetLocation(200.f, 200.f);
 	AnimatedPlayer->SetSize(250, 250);
@@ -96,6 +124,7 @@ void FirstScene::Load()
 	/* Weapon -------------------------------------------------- */
 
 	Object* WeaponObj = new Object();
+	mObjectsToAddToWorld.push_back(WeaponObj);
 	WeaponObj->SetLocation(300, 300);
 	WeaponObj->SetSize(60, 30);
 	WeaponComponent* WeaponComp = WeaponObj->AddComponent<WeaponComponent>();
@@ -109,6 +138,7 @@ void FirstScene::Load()
 	/* targetCursor -------------------------------------------- */
 
 	Object* TargetCursorObj = new Object();
+	mObjectsToAddToWorld.push_back(TargetCursorObj);
 	TargetCursorObj->SetLocation(0.f, 0.f);
 	TargetCursorObj->SetSize(25.f, 25.f);
 	TargetCursorComponent* TargetCursorComp = TargetCursorObj->AddComponent<TargetCursorComponent>();
@@ -122,14 +152,22 @@ void FirstScene::Load()
 	/* BoxComponent -------------------------------------------- */
 
 	BoxComponent* Box = AnimatedPlayer->AddComponent<BoxComponent>();
+	mCollisionComponentsToAddToWorld.push_back(Box);
+	Box->SetCollisionChannel(ECollisionChannel::Player);
 	Box->SetBoxSize(75, 100);
 	Box->SetOffset(85, 120);
 
 
 	/* Add obj in the world ------------------------------------ */
 
-	Engine::GetWorld().AddObject(AnimatedPlayer);
-	Engine::GetWorld().AddObject(WeaponObj);
-	Engine::GetWorld().AddObject(TargetCursorObj);
-	
+	for (Object* Obj : mObjectsToAddToWorld)
+	{
+		Engine::GetWorld().AddObject(Obj);
+	}
+
+	/* Add collision comp in the world ------------------------- */
+	for (CollisionComponent* Comp : mCollisionComponentsToAddToWorld)
+	{
+		Engine::GetWorld().AddCollisionComponent(Comp);
+	}
 }

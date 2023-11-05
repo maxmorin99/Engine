@@ -2,6 +2,7 @@
 #include <sstream>
 #include "Object.h"
 #include "Interfaces/IScene.h"
+#include "Components/CollisionComponent.h"
 
 Core::World::World(ILogger& Logger) :
 	mLogger(Logger)
@@ -38,6 +39,7 @@ void Core::World::Start()
 void Core::World::Update(float DeltaTime)
 {
 	UpdateObjects(DeltaTime);
+
 	DeleteObjects();
 	CheckObjectsForStart();
 }
@@ -91,6 +93,11 @@ void Core::World::CheckObjectsForStart()
 		}
 		bChangeSceneRequested = false;
 	}
+}
+
+void Core::World::CheckWorldCollision()
+{
+	
 }
 
 void Core::World::Render()
@@ -169,9 +176,29 @@ void Core::World::AddObject(Object* Obj)
 
 void Core::World::ShutDown()
 {
-	for (auto& S : mSceneMap)
+	for (auto& pair : mSceneMap)
 	{
-		delete S.second;
+		IScene* S = pair.second;
+		S->Destroy();
+		delete S;
 	}
 	mSceneMap.clear();
+}
+
+void Core::World::AddCollisionComponent(CollisionComponent* Comp)
+{
+	if (!Comp) return;
+
+	ECollisionChannel Channel = Comp->GetCollisionChannel();
+	if (mCollisionComponents.count(Channel) == 0)
+	{
+		std::vector<CollisionComponent*> CompList;
+		CompList.push_back(Comp);
+		mCollisionComponents[Channel] = CompList;
+	}
+	else
+	{
+		std::vector<CollisionComponent*> CompList = mCollisionComponents.at(Channel);
+		CompList.push_back(Comp);
+	}
 }

@@ -226,4 +226,34 @@ namespace Core
 			return TextureData("", 0, 0, 0, 0);
 		}
 	};
+
+	// Collision
+
+	enum class ECollisionShape : uint8_t
+	{
+		Circle = 0,
+		Rectangle = 1,
+		Line = 2,
+
+		MAX
+	};
+
+	enum class ECollisionChannel : uint8_t
+	{
+		Player,
+		Enemy,
+		Projectile,
+		World,
+
+		MAX
+	};
+
+	enum class ECollisionResponse : uint8_t
+	{
+		Block,
+		Overlap,
+		Ignore,
+
+		MAX
+	};
 }

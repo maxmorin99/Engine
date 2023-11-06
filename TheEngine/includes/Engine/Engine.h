@@ -8,7 +8,6 @@ namespace Core
 	class ITimer;
 	class IWorld;
 	class IAudio;
-	//class ITileMap;
 
 	class Engine final
 	{
@@ -41,7 +40,6 @@ namespace Core
 		ITimer* mTimer = nullptr;
 		IWorld* mWorld = nullptr;
 		IAudio* mAudio = nullptr;
-		//ITileMap* mTileMap = nullptr;
 
 	public:
 		inline static IInput& GetInput() { return *GetInstance()->mInput; }

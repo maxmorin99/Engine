@@ -22,5 +22,8 @@ namespace Core
 		IAudio& Audio() const;
 		ILogger& Logger() const;
 		IWorld& World() const;
+
+	public:
+		Object* GetOwner() const { return mOwner; }
 	};
 }

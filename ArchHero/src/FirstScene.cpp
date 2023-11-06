@@ -10,49 +10,66 @@
 #include "Components/WeaponComponent.h"
 #include "Components/TargetCursorComponent.h"
 #include "Components/BoxComponent.h"
-#include "Services/SdlTileMap.h"
+//#include "Services/SdlTileMap.h"
+#include "Components/TilemapComponent.h"
 
 FirstScene::FirstScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH) :
 	Scene(name, tilemapFile, srcTileW, srcTileH, tileCountW, tileCountH)
 {
+	mTiledFile = tilemapFile;
 }
 
 void FirstScene::Load()
 {
 	Scene::Load();
 
-	// tilemap
+
+	/* Tilemap ----------------------------------------------- */
+
+
+	Object* TilemapObj = new Object();
+	mObjectsToAddToWorld.push_back(TilemapObj);
+	TilemapComponent* TmComp = TilemapObj->AddComponent<TilemapComponent>();
+	TmComp->SetTilemapData(mTiledFile, mSrcTileW, mSrcTileH, mTileCountW, mTileCountH);
+
 	std::string TilesetWall1 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/wall-1- 3 tiles tall.png");
 	std::string TilesetWall2 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/wall-2- 3 tiles tall.png");
 	std::string TilesetPrison = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/Tileset-Terrain-old prison.png");
-	mTileMap->AddTileset(TilesetWall1, 1, 32, 32, 16, 368);
-	mTileMap->AddTileset(TilesetWall2, 369, 32, 32, 16, 240);
-	mTileMap->AddTileset(TilesetPrison, 609, 32, 32, 65, 4485);
-	mTileMap->AddLayer("FloorLayer");
-	mTileMap->AddLayer("BackgroundLayer");
-	mTileMap->AddObjectLayer("CollisionLayer");
-	std::vector<TilemapObject> TilemapObjects = mTileMap->GetTilemapObjects();
-	// todo create a TilemapComponent to allow the tilemap to draw and so specific stuff
+	TmComp->AddTileset(TilesetWall1, 1, 32, 32, 16, 368);
+	TmComp->AddTileset(TilesetWall2, 369, 32, 32, 16, 240);
+	TmComp->AddTileset(TilesetPrison, 609, 32, 32, 65, 4485);
+	TmComp->AddLayer("FloorLayer");
+	TmComp->AddLayer("BackgroundLayer");
+	TmComp->AddObjectLayer("CollisionLayer");
+
+	std::vector<TilemapObject> TilemapObjects = TmComp->GetTilemapObjects();
 	for (TilemapObject TilemapObj : TilemapObjects)
 	{
 		Object* Obj = new Object();
 		mObjectsToAddToWorld.push_back(Obj);
+		Obj->AddTag("World");
 		Obj->SetLocation(TilemapObj._Rect.X, TilemapObj._Rect.Y);
+
 		BoxComponent* Box = Obj->AddComponent<BoxComponent>();
 		mCollisionComponentsToAddToWorld.push_back(Box);
+		Box->SetCollisionChannel(ECollisionChannel::World);
 		Box->SetBoxSize(TilemapObj._Rect.W, TilemapObj._Rect.H);
 		Box->SetCollisionType(ECollisionShape::Rectangle);
 		Box->AddCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Block);
 		Box->AddCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Block);
 		Box->AddCollisionResponseToChannel(ECollisionChannel::Projectile, ECollisionResponse::Block);
+		Box->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Ignore);
 	}
+	
 
 	/* Init Animated Player ---------------------------------- */
 
+
 	Object* AnimatedPlayer = new Object();
 	mObjectsToAddToWorld.push_back(AnimatedPlayer);
+	AnimatedPlayer->AddTag("Player");
 	AnimatedPlayer->AddComponent<PlayerComponent>();
-	AnimatedPlayer->SetLocation(200.f, 200.f);
+	AnimatedPlayer->SetLocation(250.f, 250.f);
 	AnimatedPlayer->SetSize(250, 250);
 
 	// Physic
@@ -123,6 +140,7 @@ void FirstScene::Load()
 
 	/* Weapon -------------------------------------------------- */
 
+
 	Object* WeaponObj = new Object();
 	mObjectsToAddToWorld.push_back(WeaponObj);
 	WeaponObj->SetLocation(300, 300);
@@ -136,6 +154,7 @@ void FirstScene::Load()
 
 
 	/* targetCursor -------------------------------------------- */
+
 
 	Object* TargetCursorObj = new Object();
 	mObjectsToAddToWorld.push_back(TargetCursorObj);
@@ -151,9 +170,11 @@ void FirstScene::Load()
 
 	/* BoxComponent -------------------------------------------- */
 
+
 	BoxComponent* Box = AnimatedPlayer->AddComponent<BoxComponent>();
 	mCollisionComponentsToAddToWorld.push_back(Box);
 	Box->SetCollisionChannel(ECollisionChannel::Player);
+	Box->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Overlap);
 	Box->SetBoxSize(75, 100);
 	Box->SetOffset(85, 120);
 
@@ -166,6 +187,7 @@ void FirstScene::Load()
 	}
 
 	/* Add collision comp in the world ------------------------- */
+
 	for (CollisionComponent* Comp : mCollisionComponentsToAddToWorld)
 	{
 		Engine::GetWorld().AddCollisionComponent(Comp);

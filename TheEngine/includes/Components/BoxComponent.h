@@ -21,5 +21,6 @@ namespace Core
 	public:
 		void SetOffset(float OffsetX, float OffsetY);
 		void SetBoxSize(float SizeX, float SizeY);
+		inline Rect<float> GetRect() const { return mRect; }
 	};
 }

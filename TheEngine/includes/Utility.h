@@ -3,6 +3,7 @@
 #include <math.h>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 
 namespace Core
@@ -11,6 +12,7 @@ namespace Core
 
 #define PI 3.14159265358979323846264338327950288419716939937510582
 
+	
 	/** Enum for debug text color in console or files */
 	enum class ConsoleColor
 	{
@@ -40,6 +42,18 @@ namespace Core
 		T W;
 		T H;
 	};
+
+
+	/** typedefs tilemap ------------------------------------------ */
+
+	/** List of sources rect of a tileset image */
+	typedef std::vector<Rect<int>> TTileset;
+
+	/** 2D list of int representing a tile layer */
+	typedef std::vector<std::vector<int>> TLayer;
+
+	/** Map of all the tile layers */
+	typedef std::unordered_map<std::string, TLayer> TTilemap;
 
 
 
@@ -162,22 +176,10 @@ namespace Core
 		}
 	};
 
-	/** 
-	*	Flip data for a texture. 
-	*	H = Wether or not the texture flips horizontally 
-	*	V = Wether or not the texture flips vertically 
-	*/
-	struct Flip
-	{
-		Flip(bool InH, bool InV) : H(InH), V(InV) {}
-			
-		bool H;
-		bool V;
 
-		static const Flip None;
-	};
+	/** Color  ---------------------------------------------------- */
 
-	
+
 	/** Color for SDL objects (rect, lines, textures, ...) */
 	struct Color
 	{
@@ -199,6 +201,24 @@ namespace Core
 		static const Color Yellow;
 		static const Color White;
 		static const Color Grey;
+	};
+
+
+	/** Texture --------------------------------------------------- */
+
+	/**
+	*	Flip data for a texture.
+	*	H = Wether or not the texture flips horizontally
+	*	V = Wether or not the texture flips vertically
+	*/
+	struct Flip
+	{
+		Flip(bool InH, bool InV) : H(InH), V(InV) {}
+
+		bool H;
+		bool V;
+
+		static const Flip None;
 	};
 
 	struct TextureData
@@ -227,7 +247,8 @@ namespace Core
 		}
 	};
 
-	// Collision
+
+	/** Collision ------------------------------------------------- */
 
 	enum class ECollisionShape : uint8_t
 	{
@@ -240,19 +261,19 @@ namespace Core
 
 	enum class ECollisionChannel : uint8_t
 	{
-		Player,
-		Enemy,
-		Projectile,
-		World,
+		Player = 0,
+		Enemy = 1,
+		Projectile = 2,
+		World = 3,
 
 		MAX
 	};
 
 	enum class ECollisionResponse : uint8_t
 	{
-		Block,
-		Overlap,
-		Ignore,
+		Block = 0,
+		Overlap = 1,
+		Ignore = 2,
 
 		MAX
 	};

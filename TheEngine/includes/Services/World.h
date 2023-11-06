@@ -56,6 +56,27 @@ namespace Core
 		void UpdateObjects(float DeltaTime);
 		void DeleteObjects();
 		void CheckObjectsForStart();
+
+
+		/** Collisions ------------------------------------------------------------------------------------------------------------------  */
+
 		void CheckWorldCollision();
+
+		/** Get the least severe CollisionResponse between 2 CollisionComponents
+		*	For exemple, if Comp1 has a response Block and Comp2 has a response Ignore, Ignore will be returned.
+		*	Refer to this order: Ignore, Overlap, Block
+		*/
+		ECollisionResponse GetLeastSevereCollisionResponse(CollisionComponent* Comp1, CollisionComponent* Comp2);
+
+		/** Determine if both components are colliding */
+		void ProcessCollision(const ECollisionResponse& Response, CollisionComponent* Comp1, CollisionComponent* Comp2);
+
+		/** Get a list of CollisionChannels that a certain component can collide with.
+		*	A component can collide with a channel if the CollisionResponse is not set to Ignore.
+		*/
+		std::vector<ECollisionChannel> GetListOfChannelsThatCanCollide(CollisionComponent* Comp) const;
+
+		/** Get a list of all the CollisionComponent* in mCollisionComponents under a channel from ChannelList */
+		std::vector<CollisionComponent*> GetAllCollisionComponentOfChannels(const std::vector<ECollisionChannel>& ChannelList);
 	};
 }

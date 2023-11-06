@@ -1,19 +1,19 @@
 #include "Services/Collision.h"
 
-bool Core::Collision::PointWithCircle(const Vector<float>& InPointLoc, const Vector<float>& InCircleLoc, const float InCircleRadius) const
+bool Core::Collision::PointWithCircle(const Vector<float>& InPointLoc, const Vector<float>& InCircleLoc, const float InCircleRadius)
 {
 	float DistanceTotal = Vector<float>::Dist(InPointLoc, InCircleLoc);
 	return DistanceTotal < InCircleRadius;
 }
 
-bool Core::Collision::CircleWithCircle(const Vector<float>& InCircleLoc_1, const float InCircleRadius_1, const Vector<float>& InCircleLoc_2, const float InCircleRadius_2) const
+bool Core::Collision::CircleWithCircle(const Vector<float>& InCircleLoc_1, const float InCircleRadius_1, const Vector<float>& InCircleLoc_2, const float InCircleRadius_2)
 {
 	float DistanceTotal = Vector<float>::Dist(InCircleLoc_1, InCircleLoc_2);
 	float RadiusSum = InCircleRadius_1 + InCircleRadius_2;
 	return DistanceTotal < RadiusSum;
 }
 
-bool Core::Collision::PointWithRect(const Vector<float>& InPointLoc, const Rect<float>& InRect) const
+bool Core::Collision::PointWithRect(const Vector<float>& InPointLoc, const Rect<float>& InRect)
 {
 	if (InPointLoc.X < InRect.X) return false;
 	if (InPointLoc.Y < InRect.Y) return false;
@@ -22,7 +22,7 @@ bool Core::Collision::PointWithRect(const Vector<float>& InPointLoc, const Rect<
 	return true;
 }
 
-bool Core::Collision::RectWithRect(const Rect<float>& InRect_1, const Rect<float>& InRect_2) const
+bool Core::Collision::RectWithRect(const Rect<float>& InRect_1, const Rect<float>& InRect_2)
 {
 	if (InRect_1.X > InRect_2.X + InRect_2.W) return false;
 	if (InRect_1.X + InRect_1.W < InRect_2.X) return false;
@@ -31,7 +31,7 @@ bool Core::Collision::RectWithRect(const Rect<float>& InRect_1, const Rect<float
 	return true;
 }
 
-bool Core::Collision::RectWithCircle(const Rect<float>& InRect, const Vector<float>& InCircleLoc, const float InCircleRadius) const
+bool Core::Collision::RectWithCircle(const Rect<float>& InRect, const Vector<float>& InCircleLoc, const float InCircleRadius)
 {
 	if (InCircleLoc.X >= InRect.X && InCircleLoc.X <= InRect.X + InRect.W)
 	{
@@ -41,7 +41,7 @@ bool Core::Collision::RectWithCircle(const Rect<float>& InRect, const Vector<flo
 	return PointWithCircle(NearestPoint, InCircleLoc, InCircleRadius);
 }
 
-Core::Vector<float> Core::Collision::GetNearestPointFromCircleAndRect(const Rect<float>& InRect, const Vector<float>& InCircleLoc) const
+Core::Vector<float> Core::Collision::GetNearestPointFromCircleAndRect(const Rect<float>& InRect, const Vector<float>& InCircleLoc)
 {
 	Vector<float> NearestPoint = InCircleLoc;
 	NearestPoint.X = NearestPoint.X < InRect.X ? InRect.X : InRect.X + InRect.W;
@@ -49,7 +49,7 @@ Core::Vector<float> Core::Collision::GetNearestPointFromCircleAndRect(const Rect
 	return NearestPoint;
 }
 
-bool Core::Collision::PointWithLine(const Vector<float>& InPointLoc, const Vector<float>& LinePoint_1, const Vector<float>& LinePoint_2, const float Acceptance) const
+bool Core::Collision::PointWithLine(const Vector<float>& InPointLoc, const Vector<float>& LinePoint_1, const Vector<float>& LinePoint_2, const float Acceptance)
 {
 	float LineDistance = Vector<float>::Dist(LinePoint_1, LinePoint_2);
 	float HalfDistanceFromPoint1 = Vector<float>::Dist(LinePoint_1, InPointLoc);

@@ -28,8 +28,12 @@ namespace Core
 		template<typename T>
 		T* GetComponent() const;
 
+		CollisionComponent* GetCollisionComponent() const;
+
 	private:
 		std::string mId = "\0";
+
+		std::vector<std::string> mTags;
 
 		/* Components --------------------------------------------- */
 
@@ -63,6 +67,9 @@ namespace Core
 		Vector<float> GetVelocity() const;
 		void SetFlip(const Flip& InFlip);
 		Flip GetFlip() const;
+		void AddTag(const std::string& Tag);
+		bool HasTag(const std::string& Tag) const;
+		inline std::vector<std::string> GetTags() const { return mTags; }
 	};
 
 

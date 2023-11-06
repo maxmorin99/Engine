@@ -5,6 +5,7 @@
 #include "Components/TransformComponent.h"
 #include "Components/PhysicComponent.h"
 #include "Components/AnimationComponent.h"
+#include "Components/BoxComponent.h"
 
 size_t Core::Object::sId = -1;
 std::string Core::Object::sName = "Object_";
@@ -160,6 +161,23 @@ Core::Flip Core::Object::GetFlip() const
     return Flip::None;
 }
 
+void Core::Object::AddTag(const std::string& Tag)
+{
+    if (!HasTag(Tag))
+    {
+        mTags.push_back(Tag);
+    }
+}
+
+bool Core::Object::HasTag(const std::string& Tag) const
+{
+    for (int i = 0; i < mTags.size(); i++)
+    {
+        if (mTags[i] == Tag) return true;
+    }
+    return false;
+}
+
 void Core::Object::Start()
 {
     AddComponent<Component>();
@@ -197,4 +215,15 @@ void Core::Object::Destroy()
     mDrawable.clear();
     mUpdatable.clear();
     mComponentsByType.clear();
+}
+
+Core::CollisionComponent* Core::Object::GetCollisionComponent() const
+{
+    BoxComponent* BoxComp = GetComponent<BoxComponent>();
+    if (BoxComp)
+    {
+        return BoxComp;
+    }
+    // TODO make the same logic with circle
+    return nullptr;
 }

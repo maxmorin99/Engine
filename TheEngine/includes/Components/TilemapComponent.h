@@ -1,23 +1,24 @@
 #pragma once
 
-#include "Interfaces/ITileMap.h"
-#include <vector>
-#include <unordered_map>
-#include <utility.h>
+#include "Component.h"
+#include "Interfaces/IDrawable.h"
+#include "Utility.h"
 
 #define TILE_WIDTH_COUNT 25
 #define TILE_HEIGHT_COUNT 19
 
-struct SDL_Texture;
-struct SDL_Renderer;
-
 namespace Core
 {
+	/** Data that represents a tileset */
 	struct Tileset
 	{
+		/** The minimal id valid for this tileset */
 		int _FirstId{ 0 };
+		/** The maximal id valid for this tileset */
 		int _LastId{ 0 };
+		/** Id of the image loaded by graphic service */
 		size_t _ImageId{ 0 };
+		/** List of source rect for this tileset image */
 		TTileset _Sources;
 	};
 
@@ -27,21 +28,23 @@ namespace Core
 		TilemapObject(const std::string& Id, Rect<float>& Rect) :
 			_Rect(Rect), _Id(Id) {};
 
+		/** Rectangle representinf the object position and dimension */
 		Rect<float> _Rect;
+		/** Id of the object */
 		std::string _Id;
 	};
 
-	class SdlTileMap : public ITileMap
+	class TilemapComponent : public Component, public IDrawable
 	{
 	public:
-		SdlTileMap(const std::string& TiledFile, float SrcTileW, float SrcTileH, int TileCountW, int TileCountH);
-		~SdlTileMap() = default;
-		virtual void AddTileset(const std::string& ImageFile, int FirstId, int TileW, int TileH, int Col, int Count) override;
-		virtual void AddLayer(const std::string& Name) override;
-		virtual void AddObjectLayer(const std::string& Name) override;
-		virtual void SetTiledFile(const std::string& File) override;
+		TilemapComponent(Object* Owner);
 		virtual void Draw() override;
-		virtual void Shutdown() override;
+		void SetTilemapData(const std::string& TiledFile, float SrcTileW, float SrcTileH, int TileCountW, int TileCountH);
+		void AddTileset(const std::string& ImageFile, int FirstId, int TileW, int TileH, int Col, int Count);
+		void AddLayer(const std::string& Name);
+		void AddObjectLayer(const std::string& Name);
+		void SetTiledFile(const std::string& File);
+		virtual void Destroy() override;
 
 	private:
 
@@ -67,7 +70,7 @@ namespace Core
 		*	y represents the number of tile from top to bottom
 		*/
 		Vector<int> mTileCount = Vector<int>::ZeroVector();
-		
+
 
 
 		/** Get width and height of the 2d array of int values of the layer */

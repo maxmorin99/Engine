@@ -3,9 +3,9 @@
 
 Core::CollisionComponent::CollisionComponent(Object* InOwner) :
 	Component(InOwner),
-	mSubjectOnCollisionOverlapBegin(new SubjectThreeParams<Object*, CollisionComponent*, const Vector<float>&>()),
-	mSubjectOnCollisionOverlapEnd(new SubjectThreeParams<Object*, CollisionComponent*, const Vector<float>&>()),
-	mSubjectOnCollisionHit(new SubjectThreeParams<Object*, CollisionComponent*, const Vector<float>&>()),
+	mSubjectOnCollisionOverlapBegin(new Subject<std::unordered_map<std::string, void*>>()),
+	mSubjectOnCollisionOverlapEnd(new Subject<std::unordered_map<std::string, void*>>()),
+	mSubjectOnCollisionHit(new Subject<std::unordered_map<std::string, void*>>()),
 	mCollisionChannel(ECollisionChannel::World)
 {
 	uint8_t ChannelMAX = static_cast<uint8_t>(ECollisionChannel::MAX);
@@ -43,24 +43,35 @@ void Core::CollisionComponent::AddOverlappingObject(Object* Obj)
 	mOverlappingObjects.push_back(Obj);
 }
 
-void Core::CollisionComponent::OnCollisionOverlapBegin(Object* OtherObject, CollisionComponent* OtherComp, const Vector<float>& CollisionPoint)
+void Core::CollisionComponent::OnCollisionOverlapBegin(Object* OtherObject, CollisionComponent* OtherComp, Vector<float>& CollisionPoint)
 {
 	if (!mSubjectOnCollisionOverlapBegin) return;
-	mSubjectOnCollisionOverlapBegin->Invoke(OtherObject, OtherComp, CollisionPoint);
+	std::unordered_map<std::string, void*> Params;
+	Params["OtherObject"] = OtherObject;
+	Params["OtherComponent"] = OtherComp;
+	Params["CollisionPoint"] = &(CollisionPoint);
+	mSubjectOnCollisionOverlapBegin->Invoke(Params);
 }
 
 void Core::CollisionComponent::OnCollisionOverlapEnd(Object* OtherObject, CollisionComponent* OtherComp)
 {
 	if (!mSubjectOnCollisionOverlapEnd) return;
-	mSubjectOnCollisionOverlapEnd->Invoke(OtherObject, OtherComp, Vector<float>::ZeroVector());
+	std::unordered_map<std::string, void*> Params;
+	Params["OtherObject"] = OtherObject;
+	Params["OtherComponent"] = OtherComp;
+	mSubjectOnCollisionOverlapEnd->Invoke(Params);
 }
 
-void Core::CollisionComponent::OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp, const Vector<float>& CollisionPoint)
+void Core::CollisionComponent::OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp, Vector<float>& CollisionPoint)
 {
 	mCollisionPoint = CollisionPoint;
 
 	if (!mSubjectOnCollisionHit) return;
-	mSubjectOnCollisionHit->Invoke(OtherObject, OtherComp, CollisionPoint);
+	std::unordered_map<std::string, void*> Params;
+	Params["OtherObject"] = OtherObject;
+	Params["OtherComponent"] = OtherComp;
+	Params["CollisionPoint"] = &(CollisionPoint);
+	mSubjectOnCollisionHit->Invoke(Params);
 }
 
 bool Core::CollisionComponent::IsOverlappingWith(Object* OtherObject) const
@@ -72,37 +83,37 @@ bool Core::CollisionComponent::IsOverlappingWith(Object* OtherObject) const
 	return false;
 }
 
-void Core::CollisionComponent::BindOnCollisionOverlapBegin(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O)
+void Core::CollisionComponent::BindOnCollisionOverlapBegin(IObserver<std::unordered_map<std::string, void*>>* O)
 {
 	if (!mSubjectOnCollisionOverlapBegin) return;
 	mSubjectOnCollisionOverlapBegin->AddListener(O);
 }
 
-void Core::CollisionComponent::BindOnCollisionOverlapEnd(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O)
+void Core::CollisionComponent::BindOnCollisionOverlapEnd(IObserver<std::unordered_map<std::string, void*>>* O)
 {
 	if (!mSubjectOnCollisionOverlapEnd) return;
 	mSubjectOnCollisionOverlapEnd->AddListener(O);
 }
 
-void Core::CollisionComponent::BindOnCollisionHit(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O)
+void Core::CollisionComponent::BindOnCollisionHit(IObserver<std::unordered_map<std::string, void*>>* O)
 {
 	if (!mSubjectOnCollisionHit) return;
 	mSubjectOnCollisionHit->AddListener(O);
 }
 
-void Core::CollisionComponent::UnBindOnCollisionOverlapBegin(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O)
+void Core::CollisionComponent::UnBindOnCollisionOverlapBegin(IObserver<std::unordered_map<std::string, void*>>* O)
 {
 	if (!mSubjectOnCollisionOverlapBegin) return;
 	mSubjectOnCollisionOverlapBegin->RemoveListener(O);
 }
 
-void Core::CollisionComponent::UnBindOnCollisionOverlapEnd(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O)
+void Core::CollisionComponent::UnBindOnCollisionOverlapEnd(IObserver<std::unordered_map<std::string, void*>>* O)
 {
 	if (!mSubjectOnCollisionOverlapEnd) return;
 	mSubjectOnCollisionOverlapEnd->RemoveListener(O);
 }
 
-void Core::CollisionComponent::UnBindOnCollisionHit(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O)
+void Core::CollisionComponent::UnBindOnCollisionHit(IObserver<std::unordered_map<std::string, void*>>* O)
 {
 	if (!mSubjectOnCollisionHit) return;
 	mSubjectOnCollisionHit->RemoveListener(O);

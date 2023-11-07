@@ -179,6 +179,11 @@ namespace Core
 			float DistY = abs(Point1.Y - Point2.Y);
 			return sqrt(pow(DistX, 2) + pow(DistY, 2));
 		}
+
+		T Dot(const Vector<T>& Other) const
+		{
+			return X * Other.X + Y * Other.Y;
+		}
 	};
 
 

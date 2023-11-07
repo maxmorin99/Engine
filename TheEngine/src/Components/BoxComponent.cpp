@@ -50,7 +50,7 @@ void Core::BoxComponent::SetCollisionLocation(const Vector<float>& NewLoc)
 	mRect.Y = NewLoc.Y + mOwnerOffset.Y;
 }
 
-void Core::BoxComponent::OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp, const Vector<float>& CollisionPoint)
+void Core::BoxComponent::OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp, Vector<float>& CollisionPoint)
 {
 	CollisionComponent::OnCollisionHit(OtherObject, OtherComp, CollisionPoint);
 

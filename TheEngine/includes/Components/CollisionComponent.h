@@ -3,15 +3,16 @@
 #include "Component.h"
 #include <vector>
 #include <functional>
+#include <string>
 
 
 namespace Core
 {
-	template <typename T1, typename T2, typename T3>
-	class SubjectThreeParams;
+	template <typename T>
+	class Subject;
 
-	template <typename T1, typename T2, typename T3>
-	class IObserverThreeParams;
+	template <typename T>
+	class IObserver;
 
 	enum class ECollisionEvent : uint8_t
 	{
@@ -40,22 +41,22 @@ namespace Core
 		virtual void SetCollisionLocation(const Vector<float>& NewLoc);
 
 		/** Called when this component begins overlapping with another component */
-		virtual void OnCollisionOverlapBegin(Object* OtherObject, CollisionComponent* OtherComp, const Vector<float>& CollisionPoint);
+		virtual void OnCollisionOverlapBegin(Object* OtherObject, CollisionComponent* OtherComp, Vector<float>& CollisionPoint);
 
 		/** Called when this component ends overlapping with another component */
 		virtual void OnCollisionOverlapEnd(Object* OtherObject, CollisionComponent* OtherComp);
 
 		/** Called when this component gets blocked by another component */
-		virtual void OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp, const Vector<float>& CollisionPoint);
+		virtual void OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp, Vector<float>& CollisionPoint);
 
 		bool IsOverlappingWith(Object* OtherObject) const;
 
-		void BindOnCollisionOverlapBegin(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O);
-		void BindOnCollisionOverlapEnd(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O);
-		void BindOnCollisionHit(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O);
-		void UnBindOnCollisionOverlapBegin(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O);
-		void UnBindOnCollisionOverlapEnd(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O);
-		void UnBindOnCollisionHit(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O);
+		void BindOnCollisionOverlapBegin(IObserver<std::unordered_map<std::string, void*>>* O);
+		void BindOnCollisionOverlapEnd(IObserver<std::unordered_map<std::string, void*>>* O);
+		void BindOnCollisionHit(IObserver<std::unordered_map<std::string, void*>>* O);
+		void UnBindOnCollisionOverlapBegin(IObserver<std::unordered_map<std::string, void*>>* O);
+		void UnBindOnCollisionOverlapEnd(IObserver<std::unordered_map<std::string, void*>>* O);
+		void UnBindOnCollisionHit(IObserver<std::unordered_map<std::string, void*>>* O);
 		
 
 	protected:
@@ -73,9 +74,9 @@ namespace Core
 		/** List of the current overlapping objects with this component */
 		std::vector<Object*> mOverlappingObjects;
 
-		SubjectThreeParams<Object*, CollisionComponent*, const Vector<float>&>* mSubjectOnCollisionOverlapBegin = nullptr;
-		SubjectThreeParams<Object*, CollisionComponent*, const Vector<float>&>* mSubjectOnCollisionOverlapEnd = nullptr;
-		SubjectThreeParams<Object*, CollisionComponent*, const Vector<float>&>* mSubjectOnCollisionHit = nullptr;
+		Subject<std::unordered_map<std::string, void*>>* mSubjectOnCollisionOverlapBegin = nullptr;
+		Subject<std::unordered_map<std::string, void*>>* mSubjectOnCollisionOverlapEnd = nullptr;
+		Subject<std::unordered_map<std::string, void*>>* mSubjectOnCollisionHit = nullptr;
 
 		Vector<float> mCollisionPoint = Vector<float>::ZeroVector();
 

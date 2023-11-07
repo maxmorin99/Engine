@@ -4,6 +4,7 @@
 #include "Interfaces/IUpdatable.h"
 #include "Utility.h"
 #include "Interfaces/IObserver.h"
+#include <unordered_map>
 
 namespace Core
 {
@@ -20,13 +21,9 @@ namespace Core
 		MAX
 	};
 
-	class PhysicComponent : public Component, public IUpdatable, public IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>
+	class PhysicComponent : public Component, public IUpdatable, public IObserver<std::unordered_map<std::string, void*>>
 	{
 	public:
-		using T1 = Object*;
-		using T2 = CollisionComponent*;
-		using T3 = const Vector<float>&;
-
 		PhysicComponent(Object* Owner);
 		virtual ~PhysicComponent() = default;
 		virtual void Start();
@@ -72,9 +69,8 @@ namespace Core
 		inline float GetMass() const { return mMass; }
 		inline Vector<float> GetVelocity() const { return mVelocity; }
 
-
-		// Hérité via IObserverThreeParams
-		virtual void OnNotify(const T1& Value1, const T2& Value2, const T3& Value3) override;
+		// Hérité via IObserver
+		void OnNotify(const std::unordered_map<std::string, void*>& Value) override;
 
 	};
 }

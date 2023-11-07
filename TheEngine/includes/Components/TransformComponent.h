@@ -16,12 +16,15 @@ namespace Core
 
 	private:
 		Vector<float> mLocation = Vector<float>::ZeroVector();
+		Vector<float> mOldLocation = Vector<float>::ZeroVector();
 		Vector<float> mSize = Vector<float>::ZeroVector();
 		float mRotation = 0.f;
 
 	public:
 		inline const Vector<float> GetLocation() const { return mLocation; }
 		void GetLocation(float* OutX, float* OutY);
+		inline const Vector<float> GetOldLocation() const { return mOldLocation; }
+		inline void SetOldLocation(const Vector<float>& OldLoc) { mOldLocation = OldLoc; }
 		inline void SetLocation(const Vector<float>& NewLoc) { mLocation = NewLoc; }
 		void SetLocation(float NewX, float NewY);
 

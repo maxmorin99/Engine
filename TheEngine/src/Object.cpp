@@ -190,6 +190,10 @@ void Core::Object::Start()
 
 void Core::Object::Update(float DeltaTime)
 {
+    if (mTransform)
+    {
+        mTransform->SetOldLocation(mTransform->GetLocation());
+    }
     for (IUpdatable* Updatable : mUpdatable)
     {
         Updatable->Update(DeltaTime);
@@ -215,6 +219,13 @@ void Core::Object::Destroy()
     mDrawable.clear();
     mUpdatable.clear();
     mComponentsByType.clear();
+}
+
+void Core::Object::UseOldLocation()
+{
+    if (!mTransform) return;
+    Vector<float> OldLoc = mTransform->GetOldLocation();
+    mTransform->SetLocation(OldLoc);
 }
 
 Core::CollisionComponent* Core::Object::GetCollisionComponent() const

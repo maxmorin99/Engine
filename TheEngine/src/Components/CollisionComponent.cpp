@@ -3,9 +3,9 @@
 
 Core::CollisionComponent::CollisionComponent(Object* InOwner) :
 	Component(InOwner),
-	mSubjectOnCollisionOverlapBegin(new SubjectTwoParams<Object*, CollisionComponent*>()),
-	mSubjectOnCollisionOverlapEnd(new SubjectTwoParams<Object*, CollisionComponent*>()),
-	mSubjectOnCollisionHit(new SubjectTwoParams<Object*, CollisionComponent*>()),
+	mSubjectOnCollisionOverlapBegin(new SubjectThreeParams<Object*, CollisionComponent*, const Vector<float>&>()),
+	mSubjectOnCollisionOverlapEnd(new SubjectThreeParams<Object*, CollisionComponent*, const Vector<float>&>()),
+	mSubjectOnCollisionHit(new SubjectThreeParams<Object*, CollisionComponent*, const Vector<float>&>()),
 	mCollisionChannel(ECollisionChannel::World)
 {
 	uint8_t ChannelMAX = static_cast<uint8_t>(ECollisionChannel::MAX);
@@ -14,6 +14,10 @@ Core::CollisionComponent::CollisionComponent(Object* InOwner) :
 		ECollisionChannel Channel = static_cast<ECollisionChannel>(i);
 		mCollisionResponseToChannels[Channel] = ECollisionResponse::Ignore;
 	}
+}
+
+void Core::CollisionComponent::Start()
+{
 }
 
 Core::ECollisionResponse Core::CollisionComponent::GetCollisionResponseToChannel(const ECollisionChannel& Channel)
@@ -39,22 +43,24 @@ void Core::CollisionComponent::AddOverlappingObject(Object* Obj)
 	mOverlappingObjects.push_back(Obj);
 }
 
-void Core::CollisionComponent::OnCollisionOverlapBegin(Object* OtherObject, CollisionComponent* OtherComp)
+void Core::CollisionComponent::OnCollisionOverlapBegin(Object* OtherObject, CollisionComponent* OtherComp, const Vector<float>& CollisionPoint)
 {
 	if (!mSubjectOnCollisionOverlapBegin) return;
-	mSubjectOnCollisionOverlapBegin->Invoke(OtherObject, OtherComp);
+	mSubjectOnCollisionOverlapBegin->Invoke(OtherObject, OtherComp, CollisionPoint);
 }
 
 void Core::CollisionComponent::OnCollisionOverlapEnd(Object* OtherObject, CollisionComponent* OtherComp)
 {
 	if (!mSubjectOnCollisionOverlapEnd) return;
-	mSubjectOnCollisionOverlapEnd->Invoke(OtherObject, OtherComp);
+	mSubjectOnCollisionOverlapEnd->Invoke(OtherObject, OtherComp, Vector<float>::ZeroVector());
 }
 
-void Core::CollisionComponent::OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp)
+void Core::CollisionComponent::OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp, const Vector<float>& CollisionPoint)
 {
+	mCollisionPoint = CollisionPoint;
+
 	if (!mSubjectOnCollisionHit) return;
-	mSubjectOnCollisionHit->Invoke(OtherObject, OtherComp);
+	mSubjectOnCollisionHit->Invoke(OtherObject, OtherComp, CollisionPoint);
 }
 
 bool Core::CollisionComponent::IsOverlappingWith(Object* OtherObject) const
@@ -66,37 +72,37 @@ bool Core::CollisionComponent::IsOverlappingWith(Object* OtherObject) const
 	return false;
 }
 
-void Core::CollisionComponent::BindOnCollisionOverlapBegin(IObserverTwoParams<Object*, CollisionComponent*>* O)
+void Core::CollisionComponent::BindOnCollisionOverlapBegin(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O)
 {
 	if (!mSubjectOnCollisionOverlapBegin) return;
 	mSubjectOnCollisionOverlapBegin->AddListener(O);
 }
 
-void Core::CollisionComponent::BindOnCollisionOverlapEnd(IObserverTwoParams<Object*, CollisionComponent*>* O)
+void Core::CollisionComponent::BindOnCollisionOverlapEnd(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O)
 {
 	if (!mSubjectOnCollisionOverlapEnd) return;
 	mSubjectOnCollisionOverlapEnd->AddListener(O);
 }
 
-void Core::CollisionComponent::BindOnCollisionHit(IObserverTwoParams<Object*, CollisionComponent*>* O)
+void Core::CollisionComponent::BindOnCollisionHit(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O)
 {
 	if (!mSubjectOnCollisionHit) return;
 	mSubjectOnCollisionHit->AddListener(O);
 }
 
-void Core::CollisionComponent::UnBindOnCollisionOverlapBegin(IObserverTwoParams<Object*, CollisionComponent*>* O)
+void Core::CollisionComponent::UnBindOnCollisionOverlapBegin(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O)
 {
 	if (!mSubjectOnCollisionOverlapBegin) return;
 	mSubjectOnCollisionOverlapBegin->RemoveListener(O);
 }
 
-void Core::CollisionComponent::UnBindOnCollisionOverlapEnd(IObserverTwoParams<Object*, CollisionComponent*>* O)
+void Core::CollisionComponent::UnBindOnCollisionOverlapEnd(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O)
 {
 	if (!mSubjectOnCollisionOverlapEnd) return;
 	mSubjectOnCollisionOverlapEnd->RemoveListener(O);
 }
 
-void Core::CollisionComponent::UnBindOnCollisionHit(IObserverTwoParams<Object*, CollisionComponent*>* O)
+void Core::CollisionComponent::UnBindOnCollisionHit(IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>* O)
 {
 	if (!mSubjectOnCollisionHit) return;
 	mSubjectOnCollisionHit->RemoveListener(O);
@@ -112,4 +118,8 @@ void Core::CollisionComponent::Destroy()
 	delete mSubjectOnCollisionOverlapBegin;
 	delete mSubjectOnCollisionOverlapEnd;
 	delete mSubjectOnCollisionHit;
+}
+
+void Core::CollisionComponent::SetCollisionLocation(const Vector<float>& NewLoc)
+{
 }

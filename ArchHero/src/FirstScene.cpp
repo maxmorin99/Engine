@@ -174,7 +174,7 @@ void FirstScene::Load()
 	BoxComponent* Box = AnimatedPlayer->AddComponent<BoxComponent>();
 	mCollisionComponentsToAddToWorld.push_back(Box);
 	Box->SetCollisionChannel(ECollisionChannel::Player);
-	Box->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Overlap);
+	Box->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
 	Box->SetBoxSize(75, 100);
 	Box->SetOffset(85, 120);
 

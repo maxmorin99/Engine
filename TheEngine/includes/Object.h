@@ -21,6 +21,7 @@ namespace Core
 		void Update(float DeltaTime);
 		void Render();
 		void Destroy();
+		void UseOldLocation();
 
 		template<typename T>
 		T* AddComponent();

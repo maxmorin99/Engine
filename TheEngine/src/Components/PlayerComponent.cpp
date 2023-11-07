@@ -16,11 +16,6 @@ void Core::PlayerComponent::Start()
 	if (!mOwner) return;
 	mAnimationComponent = mOwner->GetComponent<AnimationComponent>();
 	mPxComponent = mOwner->GetComponent<PhysicComponent>();
-	CollisionComponent* ColComp = mOwner->GetCollisionComponent();
-	if (ColComp)
-	{
-		ColComp->BindOnCollisionOverlapBegin(this);
-	}
 }
 
 void Core::PlayerComponent::Update(float DeltaTime)
@@ -103,11 +98,6 @@ bool Core::PlayerComponent::CheckReferences() const
 		return false;
 	}
 	return true;
-}
-
-void Core::PlayerComponent::OnNotify(const T1& Value1, const T2& Value2)
-{
-	Logger().DebugLog(ConsoleColor::Yellow, "Notify\n");
 }
 
 void Core::PlayerComponent::Destroy()

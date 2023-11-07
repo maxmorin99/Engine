@@ -22,12 +22,24 @@ bool Core::Collision::PointWithRect(const Vector<float>& InPointLoc, const Rect<
 	return true;
 }
 
-bool Core::Collision::RectWithRect(const Rect<float>& InRect_1, const Rect<float>& InRect_2)
+bool Core::Collision::RectWithRect(const Rect<float>& InRect_1, const Rect<float>& InRect_2, Vector<float>& OutCollisionPoint)
 {
+	OutCollisionPoint = Vector<float>::ZeroVector();
+
 	if (InRect_1.X > InRect_2.X + InRect_2.W) return false;
 	if (InRect_1.X + InRect_1.W < InRect_2.X) return false;
 	if (InRect_1.Y > InRect_2.Y + InRect_2.H) return false;
 	if (InRect_1.Y + InRect_1.H < InRect_2.Y) return false;
+
+	float Left = std::max(InRect_1.X, InRect_2.X);
+	float Top = std::max(InRect_1.Y, InRect_2.Y);
+	float Right = std::min(InRect_1.X + InRect_1.W, InRect_2.X + InRect_2.W);
+	float Bottom = std::min(InRect_1.Y + InRect_1.H, InRect_2.Y + InRect_2.H);
+
+	float W = abs(Left - Right);
+	float H = abs(Top - Bottom);
+
+	OutCollisionPoint = Vector<float>(Left + W / 2, Top + H / 2);
 	return true;
 }
 

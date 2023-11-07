@@ -118,6 +118,11 @@ namespace Core
 			return this->X == Other.X && this->Y == Other.Y;
 		}
 
+		bool operator != (const Vector& Other) const
+		{
+			return this->X != Other.X || this->Y != Other.Y;
+		}
+
 		Vector<T>& operator = (const Vector& Other)
 		{
 			this->X = Other.X;

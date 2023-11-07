@@ -11,8 +11,11 @@ namespace Core
 	{
 	public:
 		BoxComponent(Object* Owner);
+		virtual void Start() override;
 		virtual void Update(float DeltaTime) override;
 		virtual void Draw() override;
+		virtual void SetCollisionLocation(const Vector<float>& NewLoc);
+		virtual void OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp, const Vector<float>& CollisionPoint) override;
 
 	private:
 		Rect<float> mRect;

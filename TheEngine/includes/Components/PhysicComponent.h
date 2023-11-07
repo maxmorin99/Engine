@@ -3,12 +3,30 @@
 #include "Component.h"
 #include "Interfaces/IUpdatable.h"
 #include "Utility.h"
+#include "Interfaces/IObserver.h"
 
 namespace Core
 {
-	class PhysicComponent : public Component, public IUpdatable
+	class CollisionComponent;
+
+	/** represents the side of a rect. */
+	enum class ECollisionSide
+	{
+		Left = 0,
+		Right = 1,
+		Top = 2,
+		Bot = 3,
+
+		MAX
+	};
+
+	class PhysicComponent : public Component, public IUpdatable, public IObserverThreeParams<Object*, CollisionComponent*, const Vector<float>&>
 	{
 	public:
+		using T1 = Object*;
+		using T2 = CollisionComponent*;
+		using T3 = const Vector<float>&;
+
 		PhysicComponent(Object* Owner);
 		virtual ~PhysicComponent() = default;
 		virtual void Start();
@@ -29,7 +47,17 @@ namespace Core
 		float mMass = 0.f;
 		float mSlideFactor = 0.f;
 		Vector<float> mVelocity = Vector<float>::ZeroVector();
+		Vector<float> mDesiredMoveThisFrame = Vector<float>::ZeroVector();
 		Vector<float> mPendingMove = Vector<float>::ZeroVector();
+		Vector<float> mOldLocation = Vector<float>::ZeroVector();
+
+		CollisionComponent* mCollisionComponent = nullptr;
+		bool bCollisionOccured = false;
+		Vector<float> mCollisionPoint = Vector<float>::ZeroVector();
+
+		ECollisionSide GetCollisionNearestSide();
+		float DistancePointToLine(Vector<float> Line[2]);
+
 
 	public:
 		inline void SetAccelerationSpeed(float NewSpeed) { mAccelerationSpeed = NewSpeed; }
@@ -43,5 +71,10 @@ namespace Core
 		void SetMass(float Mass);
 		inline float GetMass() const { return mMass; }
 		inline Vector<float> GetVelocity() const { return mVelocity; }
+
+
+		// Hérité via IObserverThreeParams
+		virtual void OnNotify(const T1& Value1, const T2& Value2, const T3& Value3) override;
+
 	};
 }

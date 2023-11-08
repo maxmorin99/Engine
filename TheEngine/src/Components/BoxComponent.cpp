@@ -13,11 +13,6 @@ void Core::BoxComponent::Start()
 
 	if (!mOwner) return;
 
-	if (mOwner->HasTag("Player"))
-	{
-		int bob = 0;
-	}
-
 	Vector<float> OwnerLoc = mOwner->GetLocation();
 	mRect.X = OwnerLoc.X + mOwnerOffset.X;
 	mRect.Y = OwnerLoc.Y + mOwnerOffset.Y;
@@ -26,20 +21,12 @@ void Core::BoxComponent::Start()
 
 void Core::BoxComponent::Update(float DeltaTime)
 {
-	/*if (!mOwner) return;
-
-	Vector<float> OwnerLoc = mOwner->GetLocation();
-	mRect.X = OwnerLoc.X + mOwnerOffset.X;
-	mRect.Y = OwnerLoc.Y + mOwnerOffset.Y;*/
+	CollisionComponent::Update(DeltaTime);
 }
 
 void Core::BoxComponent::Draw()
 {
 	Graphic().DrawRectF(false, &mRect, Color::Red);
-	if (mOwner->HasTag("Player"))
-	{
-		Graphic().DrawLineF(Vector<float>::ZeroVector(), mCollisionPoint, Color::Green);
-	}
 }
 
 void Core::BoxComponent::SetCollisionLocation(const Vector<float>& NewLoc)
@@ -50,14 +37,21 @@ void Core::BoxComponent::SetCollisionLocation(const Vector<float>& NewLoc)
 	mRect.Y = NewLoc.Y + mOwnerOffset.Y;
 }
 
-void Core::BoxComponent::OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp, Vector<float>& CollisionPoint)
+Core::Vector<float> Core::BoxComponent::GetCollisionLocation() const
 {
-	CollisionComponent::OnCollisionHit(OtherObject, OtherComp, CollisionPoint);
+	return Vector<float>(mRect.X - mOwnerOffset.X, mRect.Y - mOwnerOffset.Y);
+}
 
-	// replace owner where it was
-	if (!mOwner) return;
+void Core::BoxComponent::OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp)
+{
+	CollisionComponent::OnCollisionHit(OtherObject, OtherComp);
 
-	//mOwner->UseOldLocation();
+	if (mOwner->HasTag("Player"))
+	{
+		std::string IdStr = OtherObject->GetId();
+		const char* Id = IdStr.c_str();
+		Logger().DebugLog(ConsoleColor::Yellow, "OtherObject Id: %s\n", OtherObject->GetId().c_str());
+	}
 }
 
 void Core::BoxComponent::SetOffset(float OffsetX, float OffsetY)

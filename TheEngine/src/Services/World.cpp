@@ -39,8 +39,8 @@ void Core::World::Start()
 
 void Core::World::Update(float DeltaTime)
 {
-	CheckWorldCollision();
 	UpdateObjects(DeltaTime);
+	CheckWorldCollision();
 	DeleteObjects();
 	CheckObjectsForStart();
 }
@@ -155,7 +155,7 @@ void Core::World::ProcessCollision(const ECollisionResponse& Response, Collision
 
 	ECollisionShape Shape1 = Comp1->GetCollisionType();
 	ECollisionShape Shape2 = Comp2->GetCollisionType();
-	Vector<float> CollisionPoint = Vector<float>::ZeroVector();
+	ECollisionSide Side{ ECollisionSide::Undefined };
 
 	if (Shape1 == Shape2)
 	{
@@ -170,7 +170,7 @@ void Core::World::ProcessCollision(const ECollisionResponse& Response, Collision
 			Box2 = dynamic_cast<BoxComponent*>(Comp2);
 			if (!Box1 || !Box2) return;
 			
-			bCollision = Collision::RectWithRect(Box1->GetRect(), Box2->GetRect(), CollisionPoint);
+			bCollision = Collision::RectWithRect(Box1->GetRect(), Box2->GetRect(), Side);
 			if (bCollision)
 			{
 				Object* Obj1 = Comp1->GetOwner();
@@ -179,24 +179,39 @@ void Core::World::ProcessCollision(const ECollisionResponse& Response, Collision
 				switch (Response)
 				{
 				case ECollisionResponse::Block:
-					Comp1->OnCollisionHit(Obj2, Comp2, CollisionPoint);
-					Comp2->OnCollisionHit(Obj1, Comp1, CollisionPoint);
+					Comp1->OnCollisionHit(Obj2, Comp2);
+					Comp2->OnCollisionHit(Obj1, Comp1);
+					
 					break;
 				case ECollisionResponse::Overlap:
 					if (!Comp1->IsOverlappingWith(Obj2))
 					{
-						Comp1->OnCollisionOverlapBegin(Obj2, Comp2, CollisionPoint);
+						Comp1->OnCollisionOverlapBegin(Obj2, Comp2);
 						Comp1->AddOverlappingObject(Obj2);
 					}
 					if (!Comp2->IsOverlappingWith(Obj1))
 					{
-						Comp2->OnCollisionOverlapBegin(Obj1, Comp1, CollisionPoint);
+						Comp2->OnCollisionOverlapBegin(Obj1, Comp1);
 						Comp2->AddOverlappingObject(Obj1);
 					}
 					
 					break;
 				default:
 					break;
+				}
+			}
+			else
+			{
+				Object* Obj1 = Comp1->GetOwner();
+				Object* Obj2 = Comp2->GetOwner();
+
+				if (Comp1->IsOverlappingWith(Obj2))
+				{
+					Comp1->RemoveOverlappingObject(Obj2);
+				}
+				if (Comp2->IsOverlappingWith(Obj1))
+				{
+					Comp2->RemoveOverlappingObject(Obj1);
 				}
 			}
 			break;

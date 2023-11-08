@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 #include <string>
+#include "Interfaces/IUpdatable.h"
 
 
 namespace Core
@@ -21,33 +22,26 @@ namespace Core
 
 		MAX
 	};
+	
 
-	enum class ECollisionDirection : uint8_t
-	{
-		Up = 0,
-		Down = 1,
-		Left = 2,
-		Right = 3,
-
-		MAX
-	};
-
-	class CollisionComponent : public Component
+	class CollisionComponent : public Component, public IUpdatable
 	{
 	public:
 		CollisionComponent(Object* InOwner);
 		virtual void Start() override;
+		virtual void Update(float DeltaTime) override;
 		virtual void Destroy() override;
 		virtual void SetCollisionLocation(const Vector<float>& NewLoc);
+		virtual Vector<float> GetCollisionLocation() const;
 
 		/** Called when this component begins overlapping with another component */
-		virtual void OnCollisionOverlapBegin(Object* OtherObject, CollisionComponent* OtherComp, Vector<float>& CollisionPoint);
+		virtual void OnCollisionOverlapBegin(Object* OtherObject, CollisionComponent* OtherComp);
 
 		/** Called when this component ends overlapping with another component */
 		virtual void OnCollisionOverlapEnd(Object* OtherObject, CollisionComponent* OtherComp);
 
 		/** Called when this component gets blocked by another component */
-		virtual void OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp, Vector<float>& CollisionPoint);
+		virtual void OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp);
 
 		bool IsOverlappingWith(Object* OtherObject) const;
 
@@ -71,14 +65,15 @@ namespace Core
 		*/
 		std::unordered_map<ECollisionChannel, ECollisionResponse> mCollisionResponseToChannels;
 
-		/** List of the current overlapping objects with this component */
+		/** List of the last frame overlapping objects with this component */
 		std::vector<Object*> mOverlappingObjects;
+
+		/** List of the current overlapping objects with this component */
+		std::vector<Object*> mCurrentlyOverlappingObjects;
 
 		Subject<std::unordered_map<std::string, void*>>* mSubjectOnCollisionOverlapBegin = nullptr;
 		Subject<std::unordered_map<std::string, void*>>* mSubjectOnCollisionOverlapEnd = nullptr;
 		Subject<std::unordered_map<std::string, void*>>* mSubjectOnCollisionHit = nullptr;
-
-		Vector<float> mCollisionPoint = Vector<float>::ZeroVector();
 
 	public:
 		inline void SetCollisionType(const ECollisionShape& Type) { mCollisionType = Type; }
@@ -88,7 +83,8 @@ namespace Core
 		inline void SetCollisionChannel(const ECollisionChannel& Channel) { mCollisionChannel = Channel; }
 		inline ECollisionChannel GetCollisionChannel() const { return mCollisionChannel; }
 		void AddOverlappingObject(Object* Obj);
+		void RemoveOverlappingObject(Object* Obj);
 		inline std::vector<Object*> GetOverlappingObjects() const { return mOverlappingObjects; }
-		inline std::unordered_map<ECollisionChannel, ECollisionResponse> GetCollisionResponseToChannels() const { return mCollisionResponseToChannels; }
+		inline std::unordered_map<ECollisionChannel, ECollisionResponse> GetCollisionResponseToChannels() const { return mCollisionResponseToChannels; }		
 	};
 }

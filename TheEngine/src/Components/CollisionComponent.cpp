@@ -20,6 +20,10 @@ void Core::CollisionComponent::Start()
 {
 }
 
+void Core::CollisionComponent::Update(float DeltaTime)
+{
+}
+
 Core::ECollisionResponse Core::CollisionComponent::GetCollisionResponseToChannel(const ECollisionChannel& Channel)
 {
 	if (mCollisionResponseToChannels.count(Channel) == 1)
@@ -43,13 +47,23 @@ void Core::CollisionComponent::AddOverlappingObject(Object* Obj)
 	mOverlappingObjects.push_back(Obj);
 }
 
-void Core::CollisionComponent::OnCollisionOverlapBegin(Object* OtherObject, CollisionComponent* OtherComp, Vector<float>& CollisionPoint)
+void Core::CollisionComponent::RemoveOverlappingObject(Object* Obj)
+{
+	for (int i = 0; i < mOverlappingObjects.size(); i++)
+	{
+		if (Obj == mOverlappingObjects[i])
+		{
+			mOverlappingObjects.erase(mOverlappingObjects.begin() + i);
+		}
+	}
+}
+
+void Core::CollisionComponent::OnCollisionOverlapBegin(Object* OtherObject, CollisionComponent* OtherComp)
 {
 	if (!mSubjectOnCollisionOverlapBegin) return;
 	std::unordered_map<std::string, void*> Params;
 	Params["OtherObject"] = OtherObject;
 	Params["OtherComponent"] = OtherComp;
-	Params["CollisionPoint"] = &(CollisionPoint);
 	mSubjectOnCollisionOverlapBegin->Invoke(Params);
 }
 
@@ -62,15 +76,12 @@ void Core::CollisionComponent::OnCollisionOverlapEnd(Object* OtherObject, Collis
 	mSubjectOnCollisionOverlapEnd->Invoke(Params);
 }
 
-void Core::CollisionComponent::OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp, Vector<float>& CollisionPoint)
+void Core::CollisionComponent::OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp)
 {
-	mCollisionPoint = CollisionPoint;
-
 	if (!mSubjectOnCollisionHit) return;
 	std::unordered_map<std::string, void*> Params;
 	Params["OtherObject"] = OtherObject;
 	Params["OtherComponent"] = OtherComp;
-	Params["CollisionPoint"] = &(CollisionPoint);
 	mSubjectOnCollisionHit->Invoke(Params);
 }
 
@@ -80,6 +91,7 @@ bool Core::CollisionComponent::IsOverlappingWith(Object* OtherObject) const
 	{
 		if (Obj == OtherObject) return true;
 	}
+	
 	return false;
 }
 
@@ -133,4 +145,9 @@ void Core::CollisionComponent::Destroy()
 
 void Core::CollisionComponent::SetCollisionLocation(const Vector<float>& NewLoc)
 {
+}
+
+Core::Vector<float> Core::CollisionComponent::GetCollisionLocation() const
+{
+	return Vector<float>();
 }

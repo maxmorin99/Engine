@@ -7,7 +7,7 @@
 
 namespace Core
 {
-	class BoxComponent : public CollisionComponent, public IUpdatable, public IDrawable
+	class BoxComponent : public CollisionComponent, public IDrawable
 	{
 	public:
 		BoxComponent(Object* Owner);
@@ -15,7 +15,8 @@ namespace Core
 		virtual void Update(float DeltaTime) override;
 		virtual void Draw() override;
 		virtual void SetCollisionLocation(const Vector<float>& NewLoc);
-		virtual void OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp, Vector<float>& CollisionPoint) override;
+		virtual Vector<float> GetCollisionLocation() const override;
+		virtual void OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp) override;
 
 	private:
 		Rect<float> mRect;

@@ -10,17 +10,6 @@ namespace Core
 {
 	class CollisionComponent;
 
-	/** represents the side of a rect. */
-	enum class ECollisionSide
-	{
-		Left = 0,
-		Right = 1,
-		Top = 2,
-		Bot = 3,
-
-		MAX
-	};
-
 	class PhysicComponent : public Component, public IUpdatable, public IObserver<std::unordered_map<std::string, void*>>
 	{
 	public:
@@ -50,10 +39,10 @@ namespace Core
 
 		CollisionComponent* mCollisionComponent = nullptr;
 		bool bCollisionOccured = false;
-		Vector<float> mCollisionPoint = Vector<float>::ZeroVector();
+		
+		ECollisionSide mCollisionSides[2]{ ECollisionSide::Undefined };
 
-		ECollisionSide GetCollisionNearestSide();
-		float DistancePointToLine(Vector<float> Line[2]);
+		ECollisionSide GetCollisionSideFromOtherComponent(CollisionComponent* CollisionComp);
 
 
 	public:

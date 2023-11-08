@@ -22,9 +22,9 @@ bool Core::Collision::PointWithRect(const Vector<float>& InPointLoc, const Rect<
 	return true;
 }
 
-bool Core::Collision::RectWithRect(const Rect<float>& InRect_1, const Rect<float>& InRect_2, Vector<float>& OutCollisionPoint)
+bool Core::Collision::RectWithRect(const Rect<float>& InRect_1, const Rect<float>& InRect_2, ECollisionSide& OutCollisionSide)
 {
-	OutCollisionPoint = Vector<float>::ZeroVector();
+	/*OutCollisionPoint = Vector<float>::ZeroVector();
 
 	if (InRect_1.X > InRect_2.X + InRect_2.W) return false;
 	if (InRect_1.X + InRect_1.W < InRect_2.X) return false;
@@ -40,6 +40,94 @@ bool Core::Collision::RectWithRect(const Rect<float>& InRect_1, const Rect<float
 	float H = abs(Top - Bottom);
 
 	OutCollisionPoint = Vector<float>(Left + W / 2, Top + H / 2);
+	
+	return true;*/
+
+	//OutCollisionSide = ECollisionSide::Undefined;
+
+	//if (InRect_1.X > InRect_2.X + InRect_2.W) return false;
+	//if (InRect_1.X + InRect_1.W < InRect_2.X) return false;
+	//if (InRect_1.Y > InRect_2.Y + InRect_2.H) return false;
+	//if (InRect_1.Y + InRect_1.H < InRect_2.Y) return false;
+
+	//Vector<float> CenterRect1{InRect_1.X + InRect_1.W / 2, InRect_1.Y + InRect_1.H / 2};
+	//Vector<float> CenterRect2{InRect_2.X + InRect_2.W / 2, InRect_2.Y + InRect_2.H / 2};
+	//Vector<float> Dir{CenterRect2.X - CenterRect1.X, CenterRect2.Y - CenterRect2.Y};
+
+	//if (std::abs(Dir.X) > std::abs(Dir.Y))
+	//{
+	//	if (Dir.X > 0.f)
+	//	{
+	//		// collision a droite du joueur
+	//		OutCollisionSide = ECollisionSide::Right;
+	//	}
+	//	else
+	//	{
+	//		// Collision a gauche du joueur
+	//		OutCollisionSide = ECollisionSide::Left;
+	//	}
+	//}
+	//else
+	//{
+	//	if (Dir.Y > 0)
+	//	{
+	//		// Collision en dessous
+	//		OutCollisionSide = ECollisionSide::Bot;
+	//	}
+	//	else
+	//	{
+	//		// Collision au dessus
+	//		OutCollisionSide = ECollisionSide::Top;
+	//	}
+	//}
+
+	//return true;
+
+	OutCollisionSide = ECollisionSide::Undefined;
+
+	if (InRect_1.X > InRect_2.X + InRect_2.W) return false;
+	if (InRect_1.X + InRect_1.W < InRect_2.X) return false;
+	if (InRect_1.Y > InRect_2.Y + InRect_2.H) return false;
+	if (InRect_1.Y + InRect_1.H < InRect_2.Y) return false;
+
+	Vector<float> CenterRect1{ InRect_1.X + InRect_1.W / 2, InRect_1.Y + InRect_1.H / 2 };
+	Vector<float> CenterRect2{ InRect_2.X + InRect_2.W / 2, InRect_2.Y + InRect_2.H / 2 };
+
+	// Calcul de la différence entre les coordonnées x et y des centres des objets.
+	Vector<float> Dir{ CenterRect2.X - CenterRect1.X, CenterRect2.Y - CenterRect1.Y };
+
+	// Calcul de la moitié de la hauteur de l'objet du joueur.
+	float halfHeight = InRect_1.H / 2;
+
+	if (std::abs(Dir.X) > std::abs(Dir.Y))
+	{
+		if (Dir.X > 0.f)
+		{
+			// Collision à droite du joueur
+			OutCollisionSide = ECollisionSide::Right;
+		}
+		else
+		{
+			// Collision à gauche du joueur
+			OutCollisionSide = ECollisionSide::Left;
+		}
+	}
+	else
+	{
+		if (Dir.Y > 0)
+		{
+			if (CenterRect1.Y + halfHeight < InRect_2.Y)
+			{
+				// Collision en dessous
+				OutCollisionSide = ECollisionSide::Bot;
+			}
+			else
+			{
+				// Collision au-dessus
+				OutCollisionSide = ECollisionSide::Top;
+			}
+		}
+	}
 	return true;
 }
 

@@ -287,4 +287,15 @@ namespace Core
 
 		MAX
 	};
+
+	enum class ECollisionSide
+	{
+		Undefined = 0,
+		Left,
+		Right,
+		Top,
+		Bot,
+
+		MAX
+	};
 }

@@ -73,6 +73,30 @@ void Core::PhysicComponent::Update(float DeltaTime)
 			}
 		}
 
+		// test fix bug
+
+		float T = 3.f;
+		if (mCollisionSides[0] != ECollisionSide::Undefined && mCollisionSides[1] != ECollisionSide::Undefined)
+		{
+			if (mCollisionSides[0] == ECollisionSide::Top || mCollisionSides[0] == ECollisionSide::Bot)
+			{
+				if (mCollisionSides[1] == ECollisionSide::Right && std::abs(mCollisionRects[1].X - mCollisionRects[0].X) <= T)
+				{
+					// allow Y move
+					CorrectedMove.Y = mPendingMove.Y;
+				}
+				else if (mCollisionSides[1] == ECollisionSide::Left)
+				{
+					int bob = 0;
+					if (std::abs(mCollisionRects[1].X - mCollisionRects[0].X) <= T /*mCollisionRects[1].X >= mCollisionRects[0].X*/)
+					{
+						// allow Y move
+						CorrectedMove.Y = mPendingMove.Y;
+					}
+				}
+			}
+		}
+
 		mOwner->SetLocation(mOwner->GetLocation() + CorrectedMove);
 		//mCollisionComponent->SetCollisionLocation(mOwner->GetLocation());
 
@@ -200,6 +224,8 @@ Core::ECollisionSide Core::PhysicComponent::GetCollisionSideFromOtherComponent(C
 			{
 				// premiere collision détectée cette frame-ci
 
+				mCollisionRects[0] = OtherRect;
+
 				float T = 10.f;
 
 				if (OwnerRect.Y < (OtherRect.Y + OtherRect.H) && OwnerRect.Y + T > (OtherRect.Y + OtherRect.H) || OwnerRect.Y + OwnerRect.H > OtherRect.Y && OwnerRect.Y + OwnerRect.H - T < OtherRect.Y)
@@ -248,10 +274,13 @@ Core::ECollisionSide Core::PhysicComponent::GetCollisionSideFromOtherComponent(C
 						return ECollisionSide::Left;
 					}
 				}
+						
 			}
 			else
 			{
 				// deuxieme collision détectée cette frame-ci
+
+				mCollisionRects[1] = OtherRect;
 
 				if (mCollisionSides[0] == ECollisionSide::Left || mCollisionSides[0] == ECollisionSide::Right)
 				{
@@ -302,6 +331,7 @@ Core::ECollisionSide Core::PhysicComponent::GetCollisionSideFromOtherComponent(C
 			}
 		}
 
+		
 
 		if (mPendingMove.X > 0 && Dir.X > 0)
 		{

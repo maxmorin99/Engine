@@ -23,7 +23,7 @@ void InitGameplay()
 
 INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT)
 {
-	if (Engine::Init("TestGame", 2000, 1500))
+	if (Engine::Init("TestGame", 1200, 1200))
 	{
 		InitGameplay();
 		Engine::Start();

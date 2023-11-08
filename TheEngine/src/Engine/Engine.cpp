@@ -13,7 +13,7 @@
 #include "Services/SdlFileLogger.h"
 #endif
 #include "Object.h"
-#include "vld.h"
+//#include "vld.h"
 
 Core::Engine* Core::Engine::mInstance = nullptr;
 
@@ -114,7 +114,7 @@ void Core::Engine::Start(void)
 	Shutdown();
 
 	delete mInstance;
-	VLDDisable();
+	//VLDDisable();
 }
 
 void Core::Engine::ProcessInput(void)

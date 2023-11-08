@@ -41,6 +41,7 @@ namespace Core
 		bool bCollisionOccured = false;
 		
 		ECollisionSide mCollisionSides[2]{ ECollisionSide::Undefined };
+		Rect<float> mCollisionRects[2]{ Rect<float>(0, 0, 0, 0) };
 
 		ECollisionSide GetCollisionSideFromOtherComponent(CollisionComponent* CollisionComp);
 

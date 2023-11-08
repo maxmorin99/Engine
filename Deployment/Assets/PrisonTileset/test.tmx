@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="40">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="49">
  <editorsettings>
   <export target="test.csv" format="csv"/>
  </editorsettings>
@@ -35,9 +35,9 @@
 1397,1270,1269,1397,1266,1266,1398,1331,1397,1270,1397,1398,1397,1335,1395,1395,1267,1266,1269,1398,1268,1397,1397,1398,1269
 </data>
  </layer>
- <objectgroup id="3" name="CollisionLayer">
-  <object id="16" x="453" y="186.5" width="346.5" height="8.5"/>
-  <object id="17" x="704.36" y="256.09" width="95.7216" height="9.5"/>
+ <objectgroup id="3" name="CollisionLayer" offsetx="-1.75" offsety="1.5">
+  <object id="16" x="449.92" y="182.5" width="351.773" height="8.5"/>
+  <object id="17" x="705" y="256.09" width="95.7216" height="9.5"/>
   <object id="18" x="704.364" y="256.091" width="6.5" height="64.16"/>
   <object id="19" x="511.88" y="320.25" width="199" height="7.5"/>
   <object id="20" x="511.875" y="320.25" width="11" height="31.94"/>
@@ -50,8 +50,11 @@
   <object id="27" x="18" y="184.55" width="64" height="7.15761"/>
   <object id="28" x="82" y="159.91" width="13.9531" height="31.8043"/>
   <object id="29" x="83" y="148.5" width="34.5" height="11.41"/>
+  <object id="37" x="117.5" y="57.25" width="247.25" height="7.5"/>
   <object id="31" x="117.5" y="59.25" width="10.5" height="100.664"/>
-  <object id="37" x="117.5" y="56.5" width="245.205" height="7.5"/>
+  <object id="40" x="354.125" y="57.25" width="10.75" height="37"/>
+  <object id="41" x="354.13" y="90.5" width="98.5" height="5.5"/>
+  <object id="44" x="449.916" y="92.5642" width="5.09091" height="97.8182"/>
  </objectgroup>
  <layer id="2" name="FloorLayer" width="25" height="19">
   <data encoding="csv">

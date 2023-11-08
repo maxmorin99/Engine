@@ -73,28 +73,92 @@ void Core::PhysicComponent::Update(float DeltaTime)
 			}
 		}
 
-		// test fix bug
 
-		float T = 3.f;
+		/////////////// test fix bug ///////////////////////////
+
+		float Tolerance = 3.f;
 		if (mCollisionSides[0] != ECollisionSide::Undefined && mCollisionSides[1] != ECollisionSide::Undefined)
 		{
+			// 2 collisions enregistrées
+
 			if (mCollisionSides[0] == ECollisionSide::Top || mCollisionSides[0] == ECollisionSide::Bot)
 			{
-				if (mCollisionSides[1] == ECollisionSide::Right && std::abs(mCollisionRects[1].X - mCollisionRects[0].X) <= T)
+				// Première collision == Top ou Bot
+
+				if (mCollisionSides[1] == ECollisionSide::Right)
 				{
-					// allow Y move
-					CorrectedMove.Y = mPendingMove.Y;
+					// Dexième collision == Right
+
+					if (std::abs(mCollisionRects[1].X - mCollisionRects[0].X) <= Tolerance)
+					{
+						// allow Y move
+						CorrectedMove.Y = mPendingMove.Y;
+					}
 				}
 				else if (mCollisionSides[1] == ECollisionSide::Left)
 				{
-					int bob = 0;
-					if (std::abs(mCollisionRects[1].X - mCollisionRects[0].X) <= T /*mCollisionRects[1].X >= mCollisionRects[0].X*/)
+					// Dexième collision == Left
+
+					if (std::abs((mCollisionRects[1].X + mCollisionRects[1].W) - (mCollisionRects[0].X + mCollisionRects[0].W)) <= Tolerance)
 					{
 						// allow Y move
 						CorrectedMove.Y = mPendingMove.Y;
 					}
 				}
 			}
+			else
+			{
+				// Première collision == Left ou Right
+
+				if (mCollisionSides[1] == ECollisionSide::Top)
+				{
+					// Dexième collision == Top 
+
+					if (mCollisionSides[0] == ECollisionSide::Left)
+					{
+						// Première collision == Left
+
+						if (std::abs((mCollisionRects[0].X + mCollisionRects[0].W) - (mCollisionRects[1].X + mCollisionRects[1].W)) <= Tolerance)
+						{
+							CorrectedMove.Y = mPendingMove.Y;
+						}
+					}
+					else
+					{
+						// Première collision == Right
+
+						if (std::abs(mCollisionRects[0].X - mCollisionRects[1].X) <= Tolerance)
+						{
+							CorrectedMove.Y = mPendingMove.Y;
+						}
+					}
+					
+				}
+				else if (mCollisionSides[1] == ECollisionSide::Bot)
+				{
+					// Dexième collision == Bot
+
+					if (mCollisionSides[0] == ECollisionSide::Left)
+					{
+						// Première collision == Left
+
+						if (std::abs((mCollisionRects[0].X + mCollisionRects[0].W) - (mCollisionRects[1].X + mCollisionRects[1].W)) <= Tolerance)
+						{
+							CorrectedMove.Y = mPendingMove.Y;
+						}
+					}
+					else
+					{
+						// Première collision == Right
+
+						if (std::abs(mCollisionRects[0].X - mCollisionRects[1].X) <= Tolerance)
+						{
+							CorrectedMove.Y = mPendingMove.Y;
+						}
+					}
+				}
+			}
+			
 		}
 
 		mOwner->SetLocation(mOwner->GetLocation() + CorrectedMove);
@@ -213,7 +277,6 @@ Core::ECollisionSide Core::PhysicComponent::GetCollisionSideFromOtherComponent(C
 		Vector<float> OwnerBoxCenter{OwnerBox->GetRect().X + OwnerBox->GetRect().W / 2, OwnerBox->GetRect().Y + OwnerBox->GetRect().H / 2};
 		Vector<float> BoxCenter{Box->GetRect().X + Box->GetRect().W / 2, Box->GetRect().Y + Box->GetRect().H / 2};
 		Vector<float> Dir{BoxCenter.X - OwnerBoxCenter.X, BoxCenter.Y - OwnerBoxCenter.Y};
-		
 		Rect<float> OwnerRect = OwnerBox->GetRect();
 		Rect<float> OtherRect = Box->GetRect();
 
@@ -331,7 +394,14 @@ Core::ECollisionSide Core::PhysicComponent::GetCollisionSideFromOtherComponent(C
 			}
 		}
 
-		
+		if (mCollisionSides[0] == ECollisionSide::Undefined)
+		{
+			mCollisionRects[0] = OtherRect;
+		}
+		else
+		{
+			mCollisionRects[1] = OtherRect;
+		}
 
 		if (mPendingMove.X > 0 && Dir.X > 0)
 		{

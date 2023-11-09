@@ -26,204 +26,39 @@ void Core::PhysicComponent::Update(float DeltaTime)
 {
 	if (!mOwner) return;
 
-	// Si aucune collision, bouger le joueur à l'endroit de sa collision
+	/////////////////// Process movement based on registered collisions //////////////////////////////////////
+	
 	if (!bCollisionOccured)
 	{
+		// No collision: move player with pending move
+
 		Vector<float> OwnerCurrentLoc = mOwner->GetLocation();
 		mOwner->SetLocation(OwnerCurrentLoc + mPendingMove);
 	}
-	else // sinon, remettre sa collision ou elle était avant
+	else 
 	{
+		// Move the player with a corrected move to simulate blocking collision
+
 		Vector<float> CorrectedMove = Vector<float>::ZeroVector();
-
-		if (mCollisionSides[0] != ECollisionSide::Undefined)
-		{
-			switch (mCollisionSides[0])
-			{
-			case ECollisionSide::Left:
-				CorrectedMove = Vector<float>(CorrectedMove.X, mPendingMove.Y);
-				break;
-			case ECollisionSide::Right:
-				CorrectedMove = Vector<float>(CorrectedMove.X, mPendingMove.Y);
-				break;
-			case ECollisionSide::Top:
-				CorrectedMove = Vector<float>(mPendingMove.X, CorrectedMove.Y);
-				break;
-			case ECollisionSide::Bot:
-				CorrectedMove = Vector<float>(mPendingMove.X, CorrectedMove.Y);
-				break;
-			}
-		}
-		if (mCollisionSides[1] != ECollisionSide::Undefined)
-		{
-			switch (mCollisionSides[1])
-			{
-			case ECollisionSide::Left:
-				CorrectedMove = Vector<float>(0, CorrectedMove.Y);
-				break;
-			case ECollisionSide::Right:
-				CorrectedMove = Vector<float>(0, CorrectedMove.Y);
-				break;
-			case ECollisionSide::Top:
-				CorrectedMove = Vector<float>(CorrectedMove.X, 0);
-				break;
-			case ECollisionSide::Bot:
-				CorrectedMove = Vector<float>(CorrectedMove.X, 0);
-				break;
-			}
-		}
-
-
-		/////////////// test fix bug ///////////////////////////
-
-		float Tolerance = 3.f;
-		if (mCollisionSides[0] != ECollisionSide::Undefined && mCollisionSides[1] != ECollisionSide::Undefined)
-		{
-			// 2 collisions enregistrées
-
-			if (mCollisionSides[0] == ECollisionSide::Top || mCollisionSides[0] == ECollisionSide::Bot)
-			{
-				// Première collision == Top ou Bot
-
-				if (mCollisionSides[1] == ECollisionSide::Right)
-				{
-					// Dexième collision == Right
-
-					if (std::abs(mCollisionRects[1].X - mCollisionRects[0].X) <= Tolerance)
-					{
-						// allow Y move
-						CorrectedMove.Y = mPendingMove.Y;
-					}
-				}
-				else if (mCollisionSides[1] == ECollisionSide::Left)
-				{
-					// Dexième collision == Left
-
-					if (std::abs((mCollisionRects[1].X + mCollisionRects[1].W) - (mCollisionRects[0].X + mCollisionRects[0].W)) <= Tolerance)
-					{
-						// allow Y move
-						CorrectedMove.Y = mPendingMove.Y;
-					}
-				}
-			}
-			else
-			{
-				// Première collision == Left ou Right
-
-				if (mCollisionSides[1] == ECollisionSide::Top)
-				{
-					// Dexième collision == Top 
-
-					if (mCollisionSides[0] == ECollisionSide::Left)
-					{
-						// Première collision == Left
-
-						if (std::abs((mCollisionRects[0].X + mCollisionRects[0].W) - (mCollisionRects[1].X + mCollisionRects[1].W)) <= Tolerance)
-						{
-							CorrectedMove.Y = mPendingMove.Y;
-						}
-					}
-					else
-					{
-						// Première collision == Right
-
-						if (std::abs(mCollisionRects[0].X - mCollisionRects[1].X) <= Tolerance)
-						{
-							CorrectedMove.Y = mPendingMove.Y;
-						}
-					}
-					
-				}
-				else if (mCollisionSides[1] == ECollisionSide::Bot)
-				{
-					// Dexième collision == Bot
-
-					if (mCollisionSides[0] == ECollisionSide::Left)
-					{
-						// Première collision == Left
-
-						if (std::abs((mCollisionRects[0].X + mCollisionRects[0].W) - (mCollisionRects[1].X + mCollisionRects[1].W)) <= Tolerance)
-						{
-							CorrectedMove.Y = mPendingMove.Y;
-						}
-					}
-					else
-					{
-						// Première collision == Right
-
-						if (std::abs(mCollisionRects[0].X - mCollisionRects[1].X) <= Tolerance)
-						{
-							CorrectedMove.Y = mPendingMove.Y;
-						}
-					}
-				}
-			}
-			
-		}
-
+		MovementCorrection(CorrectedMove);
 		mOwner->SetLocation(mOwner->GetLocation() + CorrectedMove);
-		//mCollisionComponent->SetCollisionLocation(mOwner->GetLocation());
 
 		bCollisionOccured = false;
 		mCollisionSides[0] = ECollisionSide::Undefined;
 		mCollisionSides[1] = ECollisionSide::Undefined;
 	}
-	
 
 
 	///////// Calculate pending move ///////////////////////////////
 
-	mVelocity.X += mDesiredMoveThisFrame.X * DeltaTime;
-	mVelocity.Y -= mDesiredMoveThisFrame.Y * DeltaTime;
-
-	// keep the velocity <= max movement speed
-	if (mVelocity.Length() > mMaxMovementSpeed)
-	{
-		mVelocity = mVelocity.GetNormalized() * mMaxMovementSpeed;
-	}
+	UpdateVelocity(DeltaTime);
 
 	Vector<float> OwnerPos = mOwner->GetLocation();
-	//Vector<float> NewPos = OwnerPos + mVelocity * DeltaTime;
 	mPendingMove = mVelocity * DeltaTime;
 	
-	if (mCollisionComponent)
-	{
-		if (mPendingMove != Vector<float>::ZeroVector())
-		{
-			// Add pending move to the collision to calculate collision
-			mCollisionComponent->SetCollisionLocation(OwnerPos + mPendingMove);
-		}
-	}
+	ApplyPendingMoveToCollisionComponent();
 
-	//mOwner->SetLocation(NewPos);
-
-	// Deceleration
-	if (mDesiredMoveThisFrame.X == 0.f)
-	{
-		if (mVelocity.X < 0.f)
-		{
-			mVelocity.X += mDecelerationSpeed * DeltaTime / mSlideFactor;
-			mVelocity.X = std::clamp(mVelocity.X, -10000.f, 0.f);
-		}
-		else if (mVelocity.X > 0.f)
-		{
-			mVelocity.X -= mDecelerationSpeed * DeltaTime / mSlideFactor;
-			mVelocity.X = std::clamp(mVelocity.X, 0.f, 100000.f);
-		}
-	}
-	if (mDesiredMoveThisFrame.Y == 0.f)
-	{
-		if (mVelocity.Y < 0.f)
-		{
-			mVelocity.Y += mDecelerationSpeed * DeltaTime / mSlideFactor;
-			mVelocity.Y = std::clamp(mVelocity.Y, -10000.f, 0.f);
-		}
-		else if (mVelocity.Y > 0.f)
-		{
-			mVelocity.Y -= mDecelerationSpeed * DeltaTime / mSlideFactor;
-			mVelocity.Y = std::clamp(mVelocity.Y, 0.f, 10000.f);
-		}
-	}
+	ApplyDeceleration(DeltaTime);
 
 	mDesiredMoveThisFrame = Vector<float>::ZeroVector();
 }
@@ -267,6 +102,63 @@ void Core::PhysicComponent::OnNotify(const std::unordered_map<std::string, void*
 	}
 }
 
+void Core::PhysicComponent::UpdateVelocity(float DeltaTime)
+{
+	mVelocity.X += mDesiredMoveThisFrame.X * DeltaTime;
+	mVelocity.Y -= mDesiredMoveThisFrame.Y * DeltaTime;
+
+	// keep the velocity <= max movement speed
+	if (mVelocity.Length() > mMaxMovementSpeed)
+	{
+		mVelocity = mVelocity.GetNormalized() * mMaxMovementSpeed;
+	}
+}
+
+void Core::PhysicComponent::ApplyDeceleration(float DeltaTime)
+{
+	// Deceleration
+	if (mDesiredMoveThisFrame.X == 0.f)
+	{
+		if (mVelocity.X < 0.f)
+		{
+			mVelocity.X += mDecelerationSpeed * DeltaTime / mSlideFactor;
+			mVelocity.X = std::clamp(mVelocity.X, -10000.f, 0.f);
+		}
+		else if (mVelocity.X > 0.f)
+		{
+			mVelocity.X -= mDecelerationSpeed * DeltaTime / mSlideFactor;
+			mVelocity.X = std::clamp(mVelocity.X, 0.f, 100000.f);
+		}
+	}
+	if (mDesiredMoveThisFrame.Y == 0.f)
+	{
+		if (mVelocity.Y < 0.f)
+		{
+			mVelocity.Y += mDecelerationSpeed * DeltaTime / mSlideFactor;
+			mVelocity.Y = std::clamp(mVelocity.Y, -10000.f, 0.f);
+		}
+		else if (mVelocity.Y > 0.f)
+		{
+			mVelocity.Y -= mDecelerationSpeed * DeltaTime / mSlideFactor;
+			mVelocity.Y = std::clamp(mVelocity.Y, 0.f, 10000.f);
+		}
+	}
+}
+
+void Core::PhysicComponent::ApplyPendingMoveToCollisionComponent()
+{
+	Vector<float> OwnerPos = mOwner->GetLocation();
+
+	if (mCollisionComponent)
+	{
+		if (mPendingMove != Vector<float>::ZeroVector())
+		{
+			// Add pending move to the collision to calculate collision
+			mCollisionComponent->SetCollisionLocation(OwnerPos + mPendingMove);
+		}
+	}
+}
+
 Core::ECollisionSide Core::PhysicComponent::GetCollisionSideFromOtherComponent(CollisionComponent* CollisionComp)
 {
 	BoxComponent* OwnerBox = dynamic_cast<BoxComponent*>(mCollisionComponent);
@@ -279,118 +171,15 @@ Core::ECollisionSide Core::PhysicComponent::GetCollisionSideFromOtherComponent(C
 		Vector<float> Dir{BoxCenter.X - OwnerBoxCenter.X, BoxCenter.Y - OwnerBoxCenter.Y};
 		Rect<float> OwnerRect = OwnerBox->GetRect();
 		Rect<float> OtherRect = Box->GetRect();
-
-		// movement dans deux axes
+		ECollisionSide OutCollisionSide;
+		
 		if (mPendingMove.X != 0 && mPendingMove.Y != 0)
 		{
-			if (mCollisionSides[0] == ECollisionSide::Undefined)
+			// movement dans deux axes
+
+			if (HandleTwoAxesInput(Dir, OwnerRect, OtherRect, OutCollisionSide))
 			{
-				// premiere collision détectée cette frame-ci
-
-				mCollisionRects[0] = OtherRect;
-
-				float T = 10.f;
-
-				if (OwnerRect.Y < (OtherRect.Y + OtherRect.H) && OwnerRect.Y + T > (OtherRect.Y + OtherRect.H) || OwnerRect.Y + OwnerRect.H > OtherRect.Y && OwnerRect.Y + OwnerRect.H - T < OtherRect.Y)
-				{
-					// gérer top bot en premier
-
-					if (mPendingMove.Y < 0 && Dir.Y < 0)
-					{
-						// top
-						Vector<float> OwnerLoc = mOwner->GetLocation();
-						Vector<float> CollisionLoc = OwnerBox->GetCollisionLocation();
-						OwnerBox->SetCollisionLocation(Vector<float>(CollisionLoc.X, OwnerLoc.Y));
-
-						return ECollisionSide::Top;
-					}
-					else if (mPendingMove.Y > 0 && Dir.Y > 0)
-					{
-						// bot
-						Vector<float> OwnerLoc = mOwner->GetLocation();
-						Vector<float> CollisionLoc = OwnerBox->GetCollisionLocation();
-						OwnerBox->SetCollisionLocation(Vector<float>(CollisionLoc.X, OwnerLoc.Y));
-
-						return ECollisionSide::Bot;
-					}
-				}
-				else
-				{
-					// gérer left right en premier
-
-					if (mPendingMove.X > 0 && Dir.X > 0)
-					{
-						// droite
-						Vector<float> OwnerLoc = mOwner->GetLocation();
-						Vector<float> CollisionLoc = OwnerBox->GetCollisionLocation();
-						OwnerBox->SetCollisionLocation(Vector<float>(OwnerLoc.X, CollisionLoc.Y));
-
-						return ECollisionSide::Right;
-					}
-					else if (mPendingMove.X < 0 && Dir.X < 0)
-					{
-						// gauche
-						Vector<float> OwnerLoc = mOwner->GetLocation();
-						Vector<float> CollisionLoc = OwnerBox->GetCollisionLocation();
-						OwnerBox->SetCollisionLocation(Vector<float>(OwnerLoc.X, CollisionLoc.Y));
-
-						return ECollisionSide::Left;
-					}
-				}
-						
-			}
-			else
-			{
-				// deuxieme collision détectée cette frame-ci
-
-				mCollisionRects[1] = OtherRect;
-
-				if (mCollisionSides[0] == ECollisionSide::Left || mCollisionSides[0] == ECollisionSide::Right)
-				{
-					// collision gauche droite déja géré
-
-					if (mPendingMove.Y < 0 && Dir.Y < 0)
-					{
-						// top
-						Vector<float> OwnerLoc = mOwner->GetLocation();
-						Vector<float> CollisionLoc = OwnerBox->GetCollisionLocation();
-						OwnerBox->SetCollisionLocation(Vector<float>(CollisionLoc.X, OwnerLoc.Y));
-
-						return ECollisionSide::Top;
-					}
-					else if (mPendingMove.Y > 0 && Dir.Y > 0)
-					{
-						// bot
-						Vector<float> OwnerLoc = mOwner->GetLocation();
-						Vector<float> CollisionLoc = OwnerBox->GetCollisionLocation();
-						OwnerBox->SetCollisionLocation(Vector<float>(CollisionLoc.X, OwnerLoc.Y));
-
-						return ECollisionSide::Bot;
-					}
-				}
-				else if(mCollisionSides[0] == ECollisionSide::Top || mCollisionSides[0] == ECollisionSide::Bot)
-				{
-					// Collision top bot déja géré
-
-					if (mPendingMove.X > 0 && Dir.X > 0)
-					{
-						// droite
-						Vector<float> OwnerLoc = mOwner->GetLocation();
-						Vector<float> CollisionLoc = OwnerBox->GetCollisionLocation();
-						OwnerBox->SetCollisionLocation(Vector<float>(OwnerLoc.X, CollisionLoc.Y));
-
-						return ECollisionSide::Right;
-					}
-					else if (mPendingMove.X < 0 && Dir.X < 0)
-					{
-						// gauche
-						Vector<float> OwnerLoc = mOwner->GetLocation();
-						Vector<float> CollisionLoc = OwnerBox->GetCollisionLocation();
-						OwnerBox->SetCollisionLocation(Vector<float>(OwnerLoc.X, CollisionLoc.Y));
-
-						return ECollisionSide::Left;
-					}
-				}
+				return OutCollisionSide;
 			}
 		}
 
@@ -403,30 +192,312 @@ Core::ECollisionSide Core::PhysicComponent::GetCollisionSideFromOtherComponent(C
 			mCollisionRects[1] = OtherRect;
 		}
 
-		if (mPendingMove.X > 0 && Dir.X > 0)
-		{
-			// droite
-			return ECollisionSide::Right;
-		}
-		else if (mPendingMove.X < 0 && Dir.X < 0)
-		{
-			// gauche
-			return ECollisionSide::Left;
-		}
+		// movement sur un axe
 
-		if (mPendingMove.Y < 0 && Dir.Y < 0)
+		if (HandleOneAxisInput(Dir, OtherRect, OutCollisionSide))
 		{
-			// top
-			return ECollisionSide::Top;
+			return OutCollisionSide;
 		}
-		else if (mPendingMove.Y > 0 && Dir.Y > 0)
+	}
+
+	return ECollisionSide::Undefined;
+}
+
+bool Core::PhysicComponent::ShouldProcessTopBotCollisionFirst(float Threshold, const Rect<float>& OwnerRect, const Rect<float>& OtherRect) const
+{
+	if (OwnerRect.Y < (OtherRect.Y + OtherRect.H) && OwnerRect.Y + Threshold >(OtherRect.Y + OtherRect.H) ||
+		OwnerRect.Y + OwnerRect.H > OtherRect.Y && OwnerRect.Y + OwnerRect.H - Threshold < OtherRect.Y)
+	{
+		return true;
+	}
+	return false;
+}
+
+void Core::PhysicComponent::ReAdjustOwnerCollisionLocation(const ECollisionSide& CollisionSide)
+{
+	// A collision has been processed. Replace the collision 
+	Vector<float> OwnerLoc = mOwner->GetLocation();
+	BoxComponent* Box = dynamic_cast<BoxComponent*>(mCollisionComponent);
+	if (Box)
+	{
+		if (CollisionSide == ECollisionSide::Top || CollisionSide == ECollisionSide::Bot)
 		{
-			// bot
-			return ECollisionSide::Bot;
+			Vector<float> CollisionLoc = Box->GetCollisionLocation();
+			Box->SetCollisionLocation(Vector<float>(CollisionLoc.X, OwnerLoc.Y));
+		}
+		else
+		{
+			Vector<float> CollisionLoc = Box->GetCollisionLocation();
+			Box->SetCollisionLocation(Vector<float>(OwnerLoc.X, CollisionLoc.Y));
+		}
+	}
+}
+
+bool Core::PhysicComponent::HandleTwoAxesInput(const Vector<float>& Dir, const Rect<float>& OwnerRect, const Rect<float>& OtherRect, ECollisionSide& OutCollisionSide)
+{
+	if (mCollisionSides[0] == ECollisionSide::Undefined)
+	{
+		// premiere collision détectée cette frame-ci
+
+		mCollisionRects[0] = OtherRect;
+		float Threshold = 10.f;
+
+		if (ShouldProcessTopBotCollisionFirst(Threshold, OwnerRect, OtherRect))
+		{
+			// gérer top bot en premier
+
+			if (mPendingMove.Y < 0 && Dir.Y < 0)
+			{
+				// top
+				ReAdjustOwnerCollisionLocation(ECollisionSide::Top);
+
+				OutCollisionSide = ECollisionSide::Top;
+				return true;
+			}
+			else if (mPendingMove.Y > 0 && Dir.Y > 0)
+			{
+				// bot
+				ReAdjustOwnerCollisionLocation(ECollisionSide::Bot);
+
+				OutCollisionSide = ECollisionSide::Bot;
+				return true;
+			}
+		}
+		else
+		{
+			// gérer left right en premier
+
+			if (mPendingMove.X > 0 && Dir.X > 0)
+			{
+				// droite
+				ReAdjustOwnerCollisionLocation(ECollisionSide::Right);
+
+				OutCollisionSide = ECollisionSide::Right;
+				return true;
+			}
+			else if (mPendingMove.X < 0 && Dir.X < 0)
+			{
+				// gauche
+				ReAdjustOwnerCollisionLocation(ECollisionSide::Left);
+
+				OutCollisionSide = ECollisionSide::Left;
+				return true;
+			}
+		}
+	}
+	else
+	{
+		// deuxieme collision détectée cette frame-ci
+
+		mCollisionRects[1] = OtherRect;
+
+		if (mCollisionSides[0] == ECollisionSide::Left || mCollisionSides[0] == ECollisionSide::Right)
+		{
+			// collision gauche droite déja géré
+
+			if (mPendingMove.Y < 0 && Dir.Y < 0)
+			{
+				// top
+				ReAdjustOwnerCollisionLocation(ECollisionSide::Top);
+
+				OutCollisionSide = ECollisionSide::Top;
+				return true;
+			}
+			else if (mPendingMove.Y > 0 && Dir.Y > 0)
+			{
+				// bot
+				ReAdjustOwnerCollisionLocation(ECollisionSide::Bot);
+
+				OutCollisionSide = ECollisionSide::Bot;
+				return true;
+			}
+		}
+		else if (mCollisionSides[0] == ECollisionSide::Top || mCollisionSides[0] == ECollisionSide::Bot)
+		{
+			// Collision top bot déja géré
+
+			if (mPendingMove.X > 0 && Dir.X > 0)
+			{
+				// droite
+				ReAdjustOwnerCollisionLocation(ECollisionSide::Right);
+
+				OutCollisionSide = ECollisionSide::Right;
+				return true;
+			}
+			else if (mPendingMove.X < 0 && Dir.X < 0)
+			{
+				// gauche
+				ReAdjustOwnerCollisionLocation(ECollisionSide::Left);
+
+				OutCollisionSide = ECollisionSide::Left;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool Core::PhysicComponent::HandleOneAxisInput(const Vector<float>& Dir, const Rect<float>& OtherRect, ECollisionSide& OutCollisionSide)
+{
+	if (mPendingMove.X > 0 && Dir.X > 0)
+	{
+		// droite
+		OutCollisionSide = ECollisionSide::Right;
+		return true;
+	}
+	else if (mPendingMove.X < 0 && Dir.X < 0)
+	{
+		// gauche
+		OutCollisionSide = ECollisionSide::Left;
+		return true;
+	}
+
+	if (mPendingMove.Y < 0 && Dir.Y < 0)
+	{
+		// top
+		OutCollisionSide = ECollisionSide::Top;
+		return true;
+	}
+	else if (mPendingMove.Y > 0 && Dir.Y > 0)
+	{
+		// bot
+		OutCollisionSide = ECollisionSide::Bot;
+		return true;
+	}
+
+	OutCollisionSide = ECollisionSide::Undefined;
+	return false;
+}
+
+void Core::PhysicComponent::MovementCorrection(Vector<float>& CorrectedMove)
+{
+	if (mCollisionSides[0] != ECollisionSide::Undefined)
+	{
+		switch (mCollisionSides[0])
+		{
+		case ECollisionSide::Left:
+			CorrectedMove = Vector<float>(CorrectedMove.X, mPendingMove.Y);
+			break;
+		case ECollisionSide::Right:
+			CorrectedMove = Vector<float>(CorrectedMove.X, mPendingMove.Y);
+			break;
+		case ECollisionSide::Top:
+			CorrectedMove = Vector<float>(mPendingMove.X, CorrectedMove.Y);
+			break;
+		case ECollisionSide::Bot:
+			CorrectedMove = Vector<float>(mPendingMove.X, CorrectedMove.Y);
+			break;
+		}
+	}
+	if (mCollisionSides[1] != ECollisionSide::Undefined)
+	{
+		switch (mCollisionSides[1])
+		{
+		case ECollisionSide::Left:
+			CorrectedMove = Vector<float>(0, CorrectedMove.Y);
+			break;
+		case ECollisionSide::Right:
+			CorrectedMove = Vector<float>(0, CorrectedMove.Y);
+			break;
+		case ECollisionSide::Top:
+			CorrectedMove = Vector<float>(CorrectedMove.X, 0);
+			break;
+		case ECollisionSide::Bot:
+			CorrectedMove = Vector<float>(CorrectedMove.X, 0);
+			break;
+		}
+	}
+
+	VerifyVerticalCollision(CorrectedMove);
+}
+
+void Core::PhysicComponent::VerifyVerticalCollision(Vector<float>& CorrectedMove)
+{
+	float Tolerance = 3.f;
+
+	if (mCollisionSides[0] != ECollisionSide::Undefined && mCollisionSides[1] != ECollisionSide::Undefined)
+	{
+		// 2 collisions enregistrées
+
+		if (mCollisionSides[0] == ECollisionSide::Top || mCollisionSides[0] == ECollisionSide::Bot)
+		{
+			// Première collision == Top ou Bot
+
+			if (mCollisionSides[1] == ECollisionSide::Right)
+			{
+				// Dexième collision == Right
+
+				if (std::abs(mCollisionRects[1].X - mCollisionRects[0].X) <= Tolerance)
+				{
+					// allow Y move
+					CorrectedMove.Y = mPendingMove.Y;
+				}
+			}
+			else if (mCollisionSides[1] == ECollisionSide::Left)
+			{
+				// Dexième collision == Left
+
+				if (std::abs((mCollisionRects[1].X + mCollisionRects[1].W) - (mCollisionRects[0].X + mCollisionRects[0].W)) <= Tolerance)
+				{
+					// allow Y move
+					CorrectedMove.Y = mPendingMove.Y;
+				}
+			}
+		}
+		else
+		{
+			// Première collision == Left ou Right
+
+			if (mCollisionSides[1] == ECollisionSide::Top)
+			{
+				// Dexième collision == Top 
+
+				if (mCollisionSides[0] == ECollisionSide::Left)
+				{
+					// Première collision == Left
+
+					if (std::abs((mCollisionRects[0].X + mCollisionRects[0].W) - (mCollisionRects[1].X + mCollisionRects[1].W)) <= Tolerance)
+					{
+						CorrectedMove.Y = mPendingMove.Y;
+					}
+				}
+				else
+				{
+					// Première collision == Right
+
+					if (std::abs(mCollisionRects[0].X - mCollisionRects[1].X) <= Tolerance)
+					{
+						CorrectedMove.Y = mPendingMove.Y;
+					}
+				}
+
+			}
+			else if (mCollisionSides[1] == ECollisionSide::Bot)
+			{
+				// Dexième collision == Bot
+
+				if (mCollisionSides[0] == ECollisionSide::Left)
+				{
+					// Première collision == Left
+
+					if (std::abs((mCollisionRects[0].X + mCollisionRects[0].W) - (mCollisionRects[1].X + mCollisionRects[1].W)) <= Tolerance)
+					{
+						CorrectedMove.Y = mPendingMove.Y;
+					}
+				}
+				else
+				{
+					// Première collision == Right
+
+					if (std::abs(mCollisionRects[0].X - mCollisionRects[1].X) <= Tolerance)
+					{
+						CorrectedMove.Y = mPendingMove.Y;
+					}
+				}
+			}
 		}
 
 	}
-	return ECollisionSide::Undefined;
 }
 
 void Core::PhysicComponent::Destroy()

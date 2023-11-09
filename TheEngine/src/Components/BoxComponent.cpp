@@ -26,7 +26,7 @@ void Core::BoxComponent::Update(float DeltaTime)
 
 void Core::BoxComponent::Draw()
 {
-	Graphic().DrawRectF(false, &mRect, Color::Red);
+	//Graphic().DrawRectF(false, &mRect, Color::Red);
 }
 
 void Core::BoxComponent::SetCollisionLocation(const Vector<float>& NewLoc)
@@ -45,13 +45,6 @@ Core::Vector<float> Core::BoxComponent::GetCollisionLocation() const
 void Core::BoxComponent::OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp)
 {
 	CollisionComponent::OnCollisionHit(OtherObject, OtherComp);
-
-	if (mOwner->HasTag("Player"))
-	{
-		std::string IdStr = OtherObject->GetId();
-		const char* Id = IdStr.c_str();
-		Logger().DebugLog(ConsoleColor::Yellow, "OtherObject Id: %s\n", OtherObject->GetId().c_str());
-	}
 }
 
 void Core::BoxComponent::SetOffset(float OffsetX, float OffsetY)

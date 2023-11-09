@@ -43,7 +43,22 @@ namespace Core
 		ECollisionSide mCollisionSides[2]{ ECollisionSide::Undefined };
 		Rect<float> mCollisionRects[2]{ Rect<float>(0, 0, 0, 0) };
 
+		void UpdateVelocity(float DeltaTime);
+		void ApplyDeceleration(float DeltaTime);
+		void ApplyPendingMoveToCollisionComponent();
+
 		ECollisionSide GetCollisionSideFromOtherComponent(CollisionComponent* CollisionComp);
+
+		bool ShouldProcessTopBotCollisionFirst(float Threshold, const Rect<float>& OwnerRect, const Rect<float>& OtherRect) const;
+		void ReAdjustOwnerCollisionLocation(const ECollisionSide& CollisionSide);
+		bool HandleTwoAxesInput(const Vector<float>& Dir, const Rect<float>& OwnerRect, const Rect<float>& OtherRect, ECollisionSide& OutCollisionSide);
+		bool HandleOneAxisInput(const Vector<float>& Dir, const Rect<float>& OtherRect, ECollisionSide& OutCollisionSide);
+
+		/** Build a move vector based on detected collision. This move is applied to the player and prevents him to get through colliding objects */
+		void MovementCorrection(Vector<float>& CorrectedMove);
+
+		/** Verify collision from top/bot and allow vertical movement if the collision is inside a wall. Prevent the character to get stuck in a wall */
+		void VerifyVerticalCollision(Vector<float>& CorrectedMove);
 
 
 	public:

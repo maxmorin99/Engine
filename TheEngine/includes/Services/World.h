@@ -40,27 +40,49 @@ namespace Core
 		/** Map of scenes <Scene name, scene ref> */
 		std::unordered_map <std::string, IScene*> mSceneMap;
 
-		IScene* mCurrentScene = nullptr;
-
 		/** Collision components of different category (ennemy, player, bullets, etc) */
 		std::unordered_map<ECollisionChannel, std::vector<CollisionComponent*>> mCollisionComponents;
 
+		/** Map of CollisionComponent* to add to mCollisionComponents */
 		std::unordered_map<ECollisionChannel, std::vector<CollisionComponent*>> mCollisionComponentsToAdd;
 
+		/** Map of CollisionComponent* to remove from mCollisionComponents */
 		std::unordered_map<ECollisionChannel, std::vector<CollisionComponent*>> mCollisionComponentsToDel;
 
+		IScene* mCurrentScene = nullptr;
 		ILogger& mLogger;
 
 		/** Wheter or not a scene change was requested (false if it is the first scene loaded) */
 		bool bChangeSceneRequested = false;
 
+
 		/** Get object Iterator */
 		std::vector<Object*>::const_iterator GetObjectIt(const Object* InObj) const;
 
+		/** Update Objects */
 		void UpdateObjects(float DeltaTime);
+
+		/** Delete Objects that are il Delete list */
 		void DeleteObjects();
+
+		/** Remove Object from mObjectMap */
+		void DeleteObjectFromObjectMap(Object* Obj);
+
+		/** Remove Object from mObjectList */
+		void DeleteObjectFromObjectList(Object* Obj);
+
+		/** If there are new Objects (dynamically instanciated objects or by changing scene) call Start on these Objects */
 		void CheckObjectsForStart();
+
+		/** Verify if there is Objects to add thi frame */
 		void CheckObjectsToAdd();
+
+		/** Add Objects to the mObjectList and mObjectMap */
+		void AddPendingObjects();
+
+		/** Add Collision Components to the mCollisionComponents map */
+		void AddPendingCollisionComponent();
+
 		void RemoveCollisionComponentsFromMap();
 
 
@@ -69,13 +91,13 @@ namespace Core
 		/** Register collision component in the world for collision */
 		virtual void AddCollisionComponent(CollisionComponent* Comp) override;
 
-		void CheckWorldCollision();
-
 		/** Get the least severe CollisionResponse between 2 CollisionComponents
 		*	For exemple, if Comp1 has a response Block and Comp2 has a response Ignore, Ignore will be returned.
 		*	Refer to this order: Ignore, Overlap, Block
 		*/
 		ECollisionResponse GetLeastSevereCollisionResponse(CollisionComponent* Comp1, CollisionComponent* Comp2);
+
+		void CheckWorldCollision();
 
 		/** Determine if both components are colliding */
 		void ProcessCollision(const ECollisionResponse& Response, CollisionComponent* Comp1, CollisionComponent* Comp2);

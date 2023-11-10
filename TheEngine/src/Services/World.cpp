@@ -27,8 +27,10 @@ std::vector<Core::Object*>::const_iterator Core::World::GetObjectIt(const Object
 
 void Core::World::Start()
 {
+	// CurrentScene will have objects to add
 	CheckObjectsToAdd();
 
+	// Call Start on all registered objects
 	for (int i = 0; i < mObjectList.size(); i++)
 	{
 		Object* Obj = mObjectList[i];
@@ -41,10 +43,19 @@ void Core::World::Start()
 
 void Core::World::Update(float DeltaTime)
 {
+	// Check if there is Objects to add to the world this frame
 	CheckObjectsToAdd();
+
+	// Update all objects
 	UpdateObjects(DeltaTime);
+
+	// Check and process collisions
 	CheckWorldCollision();
+
+	// If there is pending kill objects, delete them
 	DeleteObjects();
+	
+	// If we changed scene, call start on objects newly added
 	CheckObjectsForStart();
 }
 
@@ -68,18 +79,10 @@ void Core::World::DeleteObjects()
 	for (Object* Obj : mToDestroyList)
 	{
 		// earse from map
-		std::string ObjId = Obj->GetId();
-		if (mObjectMap.count(ObjId) > 0)
-		{
-			mObjectMap.erase(ObjId);
-		}
+		DeleteObjectFromObjectMap(Obj);
 
 		// erase from object list
-		std::vector<Object*>::const_iterator It = GetObjectIt(Obj);
-		if (mObjectList.size() > 0 && It != mObjectList.end())
-		{
-			mObjectList.erase(It);
-		}
+		DeleteObjectFromObjectList(Obj);
 
 		Obj->Destroy();
 		delete Obj;
@@ -90,10 +93,30 @@ void Core::World::DeleteObjects()
 	RemoveCollisionComponentsFromMap();
 }
 
+void Core::World::DeleteObjectFromObjectMap(Object* Obj)
+{
+	// earse from map
+	std::string ObjId = Obj->GetId();
+	if (mObjectMap.count(ObjId) > 0)
+	{
+		mObjectMap.erase(ObjId);
+	}
+}
+
+void Core::World::DeleteObjectFromObjectList(Object* Obj)
+{
+	std::vector<Object*>::const_iterator It = GetObjectIt(Obj);
+	if (mObjectList.size() > 0 && It != mObjectList.end())
+	{
+		mObjectList.erase(It);
+	}
+}
+
 void Core::World::CheckObjectsForStart()
 {
 	if (bChangeSceneRequested)
 	{
+		// Call start on all object if we changed scene
 		for (Object* Obj : mObjectList)
 		{
 			Obj->Start();
@@ -109,6 +132,15 @@ void Core::World::CheckObjectsForStart()
 
 void Core::World::CheckObjectsToAdd()
 {
+	// Add Objects
+	AddPendingObjects();
+
+	// Add Collision Components
+	AddPendingCollisionComponent();
+}
+
+void Core::World::AddPendingObjects()
+{
 	for (Object* Obj : mToAddList)
 	{
 		if (mObjectMap.count(Obj->GetId()) > 0) return;
@@ -116,7 +148,10 @@ void Core::World::CheckObjectsToAdd()
 		mObjectMap[Obj->GetId()] = Obj;
 	}
 	mToAddList.clear();
+}
 
+void Core::World::AddPendingCollisionComponent()
+{
 	for (auto& pair : mCollisionComponentsToAdd)
 	{
 		ECollisionChannel Channel = pair.first;
@@ -142,7 +177,6 @@ void Core::World::CheckObjectsToAdd()
 			mCollisionComponents[Channel] = CompList;
 		}
 	}
-
 	mCollisionComponentsToAdd.clear();
 }
 
@@ -267,7 +301,6 @@ void Core::World::ProcessCollision(const ECollisionResponse& Response, Collision
 						Comp2->OnCollisionOverlapBegin(Obj1, Comp1);
 						Comp2->AddOverlappingObject(Obj1);
 					}
-					
 					break;
 				default:
 					break;

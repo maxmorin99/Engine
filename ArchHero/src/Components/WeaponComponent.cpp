@@ -35,7 +35,7 @@ void WeaponComponent::UpdateFlip()
 {
 	// calculate angle between target and instigator (player)
 	float AngleBetweentargetAndInstigator = mDirFromInstigator.GetNormalized().GetRotationFromX();
-	float AngleDeg = AngleBetweentargetAndInstigator * 180 / PI;
+	float AngleDeg = (float)(AngleBetweentargetAndInstigator * 180 / PI);
 	if (AngleDeg < 90)
 	{
 		mFlip.V = false;
@@ -86,7 +86,7 @@ void WeaponComponent::UpdateRotation()
 	mDirFromInstigator = TargetCenter - InstigatorCenter;
 
 	float AngleRad = mDirFromOwner.GetNormalized().GetRotationFromX();
-	float AngleDeg = AngleRad * 180 / PI;
+	float AngleDeg = (float)(AngleRad * 180 / PI);
 
 	if (TargetCenter.Y < OwnerCenter.Y)
 	{

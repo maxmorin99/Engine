@@ -36,7 +36,7 @@ void Core::RotationMatrix::Rotate(float Angle, Vector<float>* RectPoints, float 
 	float TransMatrix2[3][3] = { 0 };
 	float TransformationMatrix[3][3] = { 0 };
 	// convert deg angle to rad
-	Angle = Angle * PI / 180;
+	Angle = (float)(Angle * PI / 180);
 
 	// Build matrices
 	BuildRotationMatrix(RotationMatrix, Angle);

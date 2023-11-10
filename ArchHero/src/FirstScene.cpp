@@ -30,7 +30,7 @@ void FirstScene::Load()
 	Object* TilemapObj = new Object();
 	mObjectsToAddToWorld.push_back(TilemapObj);
 	TilemapComponent* TmComp = TilemapObj->AddComponent<TilemapComponent>();
-	TmComp->SetTilemapData(mTiledFile, mSrcTileW, mSrcTileH, mTileCountW, mTileCountH);
+	TmComp->SetTilemapData(mTiledFile, (float)mSrcTileW, (float)mSrcTileH, mTileCountW, mTileCountH);
 
 	std::string TilesetWall1 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/wall-1- 3 tiles tall.png");
 	std::string TilesetWall2 = ASSET_PATH + std::string("PrisonTileset/ERW - Old Prison V1.6.1/Tilesets/wall-2- 3 tiles tall.png");

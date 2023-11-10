@@ -67,7 +67,7 @@ namespace Core
 		Vector(T InX, T InY) : X(InX), Y(InY) {}
 		float GetRotationFromX()
 		{
-			return acos(X / sqrt(pow(X, 2) + pow(Y, 2)));
+			return (float)(acos(X / sqrt(pow(X, 2) + pow(Y, 2))));
 		}
 
 		
@@ -89,12 +89,12 @@ namespace Core
 			return *this;
 		}
 
-		Vector<T>& operator - (const Vector& Other) const
+		Vector<T> operator - (const Vector& Other) const
 		{
 			return Vector<T>(X - Other.X, Y - Other.Y);
 		}
 
-		Vector<T>& operator - () const
+		Vector<T> operator - () const
 		{
 			return Vector<T>(-X, -Y);
 		}
@@ -177,7 +177,7 @@ namespace Core
 		{
 			float DistX = abs(Point1.X - Point2.X);
 			float DistY = abs(Point1.Y - Point2.Y);
-			return sqrt(pow(DistX, 2) + pow(DistY, 2));
+			return (float)sqrt(pow(DistX, 2) + pow(DistY, 2));
 		}
 
 		T Dot(const Vector<T>& Other) const

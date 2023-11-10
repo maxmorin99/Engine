@@ -15,8 +15,8 @@ Core::SdlTileMap::SdlTileMap(const std::string& TiledFile, float SrcTileW, float
 	Engine::GetGraphic().GetWindowSize(&WindowW, &WindowH);
 	mInitialTileSize.X = SrcTileW;
 	mInitialTileSize.Y = SrcTileH;
-	mScaledTileSize.X = WindowW / mTileCount.X;
-	mScaledTileSize.Y = WindowH / mTileCount.Y;
+	mScaledTileSize.X = (float)(WindowW / mTileCount.X);
+	mScaledTileSize.Y = (float)(WindowH / mTileCount.Y);
 }
 
 void Core::SdlTileMap::SetTiledFile(const std::string& File)
@@ -92,7 +92,7 @@ std::string Core::SdlTileMap::GetNameAttributeFromLine(const std::string& Line) 
 	size_t NameEndPos = Line.find("\"", NameStartPos);
 
 	std::string Name;
-	for (int i = NameStartPos; i < NameEndPos; i++)
+	for (size_t i = NameStartPos; i < NameEndPos; i++)
 	{
 		Name += Line[i];
 	}
@@ -170,7 +170,7 @@ std::string Core::SdlTileMap::GetStringValueFromFlag(const std::string& Line, co
 std::string Core::SdlTileMap::GetDelimitedStringValue(const std::string& Line, const size_t Begin, const size_t End) const
 {
 	std::string WidthStr;
-	for (int i = Begin; i < End; i++)
+	for (size_t i = Begin; i < End; i++)
 	{
 		WidthStr += Line[i];
 	}
@@ -261,7 +261,7 @@ void Core::SdlTileMap::Draw()
 				if (TileId >= T._Sources.size()) continue;
 
 				Rect<int> Src = T._Sources[TileId - 1];
-				Rect<int> Dst(x * mScaledTileSize.X, y * mScaledTileSize.Y, mScaledTileSize.X, mScaledTileSize.Y);
+				Rect<int> Dst(x * (int)mScaledTileSize.X, y * (int)mScaledTileSize.Y, (int)mScaledTileSize.X, (int)mScaledTileSize.Y);
 
 				Engine::GetGraphic().DrawTexture(T._ImageId, Src, Dst, 0.0, Flip::None, Color::White);
 			}

@@ -53,7 +53,7 @@ void Core::TransformComponent::SetSize(float NewW, float NewH)
 Core::Vector<float> Core::TransformComponent::GetForwardVector() const
 {
 	// Convert the rotation from degrees to radians
-	float radians = (mRotation * PI) / 180.0f;
+	float radians = (float)((mRotation * PI) / 180.0f);
 
 	// Calculate the forward vector using trigonometry
 	float x = cos(radians);

@@ -9,3 +9,10 @@
 #include "Interfaces/IDrawable.h"
 #include "Interfaces/IAudio.h"
 #include "Services/Scene.h"
+
+namespace Core
+{
+	class PhysicComponent;
+	class BoxComponent;
+	class CollisionComponent;
+}

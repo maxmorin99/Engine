@@ -53,6 +53,15 @@ void Core::Object::SetLocation(float NewX, float NewY)
     mTransform->SetLocation(NewX, NewY);
 }
 
+void Core::Object::SetCenterLocation(const Vector<float>& NewLoc)
+{
+    if (!mTransform) return;
+    Vector<float> CenterLoc = NewLoc;
+    CenterLoc.X -= GetSize().X / 2;
+    CenterLoc.Y -= GetSize().Y / 2;
+    mTransform->SetLocation(CenterLoc);
+}
+
 void Core::Object::GetSize(float* OutW, float* OutH) const
 {
     if (!OutW || !OutH) return;

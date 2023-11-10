@@ -13,19 +13,11 @@ void Core::FunctionalityComponent::Start()
 
 void Core::FunctionalityComponent::Draw()
 {
-	DrawRect();
 	DrawString();
 }
 
 void Core::FunctionalityComponent::Update(float DeltaTime)
 {
-	mDelay += DeltaTime;
-	if (mDelay >= mPlaySoundDelay)
-	{
-		//PlaySfx();
-		World().Load("FirstScene");
-		mDelay = 0.f;
-	}
 }
 
 void Core::FunctionalityComponent::SetMusicFile(const char* File, int Volume)
@@ -64,12 +56,12 @@ void Core::FunctionalityComponent::DrawRect() const
 
 void Core::FunctionalityComponent::DrawString() const
 {
-	float TextW = 300.f;
+	float TextW = 1000.f;
 	float TextH = 100.f;
 	int WindowW = 0;
 	int WindowH = 0;
 	Graphic().GetWindowSize(&WindowW, &WindowH);
-	Graphic().DrawString("Remise 01", mFontId, (WindowW / 2) - (TextW / 2), (WindowH / 2) - (TextH / 2), TextW, TextH, Color::Red);
+	Graphic().DrawString("Bonjour Jean-Sébastien, dirigez-vous vers la porte!", mFontId, (WindowW / 2) - (TextW / 2), (WindowH / 4) - (TextH / 2), TextW, TextH, Color::Red);
 }
 
 void Core::FunctionalityComponent::Destroy()

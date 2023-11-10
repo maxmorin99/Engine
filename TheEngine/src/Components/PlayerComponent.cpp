@@ -26,31 +26,9 @@ void Core::PlayerComponent::Update(float DeltaTime)
 	GetMovementInput(MovementInput);
 	mWantToRoll = Input().IsKeyDown(EKey::Space);
 
-	Vector<float> CurrentVelocity = Vector<float>::ZeroVector();
-	CurrentVelocity = mPxComponent->GetVelocity();
-
-	Flip NewFlip = CurrentVelocity.X < 0.f ? Flip(true, false) : Flip(false, false);
-	mAnimationComponent->SetFlip(NewFlip);
-
-	if (mWantToRoll)
-	{
-		if (!mRolling)
-		{
-			mRolling = true;
-			mAnimationComponent->SetClip("Roll", false, std::bind(&Core::PlayerComponent::RollEndNotify, this));
-		}
-	}
-	else if (!mRolling)
-	{
-		if (CurrentVelocity.Length() > 0.f)
-		{
-			mAnimationComponent->SetClip("Walk", true);
-		}
-		else
-		{
-			mAnimationComponent->SetClip("Idle", true);
-		}
-	}
+	mCurrentVelocity = mPxComponent->GetVelocity();
+	UpdateFlip();
+	CheckRoll();
 
 	mPxComponent->AddMovement(MovementInput);
 }
@@ -98,6 +76,35 @@ bool Core::PlayerComponent::CheckReferences() const
 		return false;
 	}
 	return true;
+}
+
+void Core::PlayerComponent::UpdateFlip()
+{
+	Flip NewFlip = mCurrentVelocity.X < 0.f ? Flip(true, false) : Flip(false, false);
+	mAnimationComponent->SetFlip(NewFlip);
+}
+
+void Core::PlayerComponent::CheckRoll()
+{
+	if (mWantToRoll)
+	{
+		if (!mRolling)
+		{
+			mRolling = true;
+			mAnimationComponent->SetClip("Roll", false, std::bind(&Core::PlayerComponent::RollEndNotify, this));
+		}
+	}
+	else if (!mRolling)
+	{
+		if (mCurrentVelocity.Length() > 0.f)
+		{
+			mAnimationComponent->SetClip("Walk", true);
+		}
+		else
+		{
+			mAnimationComponent->SetClip("Idle", true);
+		}
+	}
 }
 
 void Core::PlayerComponent::Destroy()

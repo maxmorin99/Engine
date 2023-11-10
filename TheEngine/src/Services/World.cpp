@@ -27,6 +27,8 @@ std::vector<Core::Object*>::const_iterator Core::World::GetObjectIt(const Object
 
 void Core::World::Start()
 {
+	CheckObjectsToAdd();
+
 	for (int i = 0; i < mObjectList.size(); i++)
 	{
 		Object* Obj = mObjectList[i];
@@ -39,6 +41,7 @@ void Core::World::Start()
 
 void Core::World::Update(float DeltaTime)
 {
+	CheckObjectsToAdd();
 	UpdateObjects(DeltaTime);
 	CheckWorldCollision();
 	DeleteObjects();
@@ -82,6 +85,9 @@ void Core::World::DeleteObjects()
 		delete Obj;
 	}
 	mToDestroyList.clear();
+
+	// remove collision components from map
+	RemoveCollisionComponentsFromMap();
 }
 
 void Core::World::CheckObjectsForStart()
@@ -94,6 +100,72 @@ void Core::World::CheckObjectsForStart()
 		}
 		bChangeSceneRequested = false;
 	}
+
+	for (Object* Obj : mToAddList)
+	{
+		Obj->Start();
+	}
+}
+
+void Core::World::CheckObjectsToAdd()
+{
+	for (Object* Obj : mToAddList)
+	{
+		if (mObjectMap.count(Obj->GetId()) > 0) return;
+		mObjectList.push_back(Obj);
+		mObjectMap[Obj->GetId()] = Obj;
+	}
+	mToAddList.clear();
+
+	for (auto& pair : mCollisionComponentsToAdd)
+	{
+		ECollisionChannel Channel = pair.first;
+
+		if (mCollisionComponents.count(Channel) == 0)
+		{
+			std::vector<CollisionComponent*> CompList;
+			for (int i = 0; i < pair.second.size(); i++)
+			{
+				CompList.push_back(pair.second[i]);
+			}
+			mCollisionComponentsToAdd[Channel].clear();
+			mCollisionComponents[Channel] = CompList;
+		}
+		else
+		{
+			std::vector<CollisionComponent*> CompList = mCollisionComponents.at(Channel);
+			for (int i = 0; i < pair.second.size(); i++)
+			{
+				CompList.push_back(pair.second[i]);
+			}
+			mCollisionComponentsToAdd[Channel].clear();
+			mCollisionComponents[Channel] = CompList;
+		}
+	}
+
+	mCollisionComponentsToAdd.clear();
+}
+
+void Core::World::RemoveCollisionComponentsFromMap()
+{
+	for (auto& pair : mCollisionComponentsToDel)
+	{
+		ECollisionChannel Channel = pair.first;
+		std::vector<CollisionComponent*> CompListToDel = mCollisionComponentsToDel[Channel];
+
+		for (int i = 0; i < mCollisionComponentsToDel[Channel].size(); i++)
+		{
+			for (int j = 0; j < mCollisionComponents[Channel].size(); j++)
+			{
+				if (mCollisionComponentsToDel[Channel][i] == mCollisionComponents[Channel][j])
+				{
+					mCollisionComponents[Channel].erase(mCollisionComponents[Channel].begin() + j);
+				}
+			}
+		}
+		mCollisionComponentsToDel[Channel].clear();
+	}
+	mCollisionComponentsToDel.clear();
 }
 
 void Core::World::CheckWorldCollision()
@@ -127,6 +199,7 @@ void Core::World::CheckWorldCollision()
 Core::ECollisionResponse Core::World::GetLeastSevereCollisionResponse(CollisionComponent* Comp1, CollisionComponent* Comp2)
 {
 	// Return the least severe collision between the two compared components
+	if (!Comp1 || !Comp2) return ECollisionResponse::Ignore;
 
 	ECollisionChannel ChannelComp1 = Comp1->GetCollisionChannel();
 	ECollisionChannel ChannelComp2 = Comp2->GetCollisionChannel();
@@ -285,7 +358,7 @@ std::vector<Core::CollisionComponent*> Core::World::GetAllCollisionComponentOfCh
 		std::vector<CollisionComponent*> Comps = mCollisionComponents[ChannelList[i]];
 		for (int k = 0; k < Comps.size(); k++)
 		{
-			OtherCollisionComp.push_back(Comps[i]);
+			OtherCollisionComp.push_back(Comps[k]);
 		}
 	}
 	return OtherCollisionComp;
@@ -320,6 +393,14 @@ void Core::World::Destroy(Object* Obj)
 	if (!bContains)
 	{
 		mToDestroyList.push_back(Obj);
+
+		// Add object's collision comp to destroy list too
+		CollisionComponent* ColComp = Obj->GetCollisionComponent();
+		if (ColComp)
+		{
+			ECollisionChannel Channel = ColComp->GetCollisionChannel();
+			mCollisionComponentsToDel[Channel].push_back(ColComp);
+		}
 	}
 }
 
@@ -352,17 +433,42 @@ void Core::World::Unload()
 	{
 		Destroy(Obj);
 	}
+	for (Object* Obj : mToAddList)
+	{
+		Destroy(Obj);
+	}
 
 	mObjectList.clear();
 	mObjectMap.clear();
+	mToAddList.clear();
+	mCollisionComponentsToAdd.clear();
 	mCurrentScene = nullptr;
 }
 
 void Core::World::AddObject(Object* Obj)
 {
-	if (!Obj ||  mObjectMap.count(Obj->GetId()) > 0) return;
+	/*if (!Obj ||  mObjectMap.count(Obj->GetId()) > 0) return;
 	mObjectList.push_back(Obj);
-	mObjectMap[Obj->GetId()] = Obj;
+	mObjectMap[Obj->GetId()] = Obj;*/
+
+	bool bContains = false;
+	for (Object* O : mToAddList)
+	{
+		if (Obj == O)
+		{
+			bContains = true;
+			break;
+		}
+	}
+
+	if (!Obj || bContains) return;
+	mToAddList.push_back(Obj);
+
+	CollisionComponent* ColComp = Obj->GetCollisionComponent();
+	if (ColComp)
+	{
+		AddCollisionComponent(ColComp);
+	}
 }
 
 void Core::World::ShutDown()
@@ -381,7 +487,7 @@ void Core::World::AddCollisionComponent(CollisionComponent* Comp)
 	if (!Comp) return;
 
 	ECollisionChannel Channel = Comp->GetCollisionChannel();
-	if (mCollisionComponents.count(Channel) == 0)
+	/*if (mCollisionComponents.count(Channel) == 0)
 	{
 		std::vector<CollisionComponent*> CompList;
 		CompList.push_back(Comp);
@@ -392,5 +498,18 @@ void Core::World::AddCollisionComponent(CollisionComponent* Comp)
 		std::vector<CollisionComponent*> CompList = mCollisionComponents.at(Channel);
 		CompList.push_back(Comp);
 		mCollisionComponents[Channel] = CompList;
+	}*/
+
+	if (mCollisionComponentsToAdd.count(Channel) == 0)
+	{
+		std::vector<CollisionComponent*> CompList;
+		CompList.push_back(Comp);
+		mCollisionComponentsToAdd[Channel] = CompList;
+	}
+	else
+	{
+		std::vector<CollisionComponent*> CompList = mCollisionComponentsToAdd.at(Channel);
+		CompList.push_back(Comp);
+		mCollisionComponentsToAdd[Channel] = CompList;
 	}
 }

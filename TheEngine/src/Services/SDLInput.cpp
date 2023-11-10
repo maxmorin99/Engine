@@ -24,13 +24,14 @@ void Core::SdlInput::Update()
             SDL_GetMouseState(&mMouseX, &mMouseY);
             break;
         case SDL_MOUSEBUTTONDOWN:
-            mMouseStates[0] = SDL_BUTTON_LEFT;
-            mMouseStates[1] = SDL_BUTTON_MIDDLE;
-            mMouseStates[2] = SDL_BUTTON_RIGHT;
+            mMouseStates[0] = (Event.button.button == SDL_BUTTON_LEFT) ? 1 : 0;
+            mMouseStates[1] = (Event.button.button == SDL_BUTTON_MIDDLE) ? 1 : 0;
+            mMouseStates[2] = (Event.button.button == SDL_BUTTON_RIGHT) ? 1 : 0;
+            break;
         case SDL_MOUSEBUTTONUP:
-            mMouseStates[0] = SDL_BUTTON_LEFT;
-            mMouseStates[1] = SDL_BUTTON_MIDDLE;
-            mMouseStates[2] = SDL_BUTTON_RIGHT;
+            mMouseStates[0] = (Event.button.button == SDL_BUTTON_LEFT) ? 0 : mMouseStates[0];
+            mMouseStates[1] = (Event.button.button == SDL_BUTTON_MIDDLE) ? 0 : mMouseStates[1];
+            mMouseStates[2] = (Event.button.button == SDL_BUTTON_RIGHT) ? 0 : mMouseStates[2];
             break;
 		}
 	}
@@ -47,7 +48,8 @@ bool Core::SdlInput::IsKeyDown(const EKey& Key)
 
 bool Core::SdlInput::IsButtonDown(int Button)
 {
-	return false;
+    if (Button > 2 || Button < 0) return false;
+	return mMouseStates[Button];
 }
 
 void Core::SdlInput::GetMousePosition(int* x, int* y)

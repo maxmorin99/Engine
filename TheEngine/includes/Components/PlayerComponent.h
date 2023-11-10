@@ -24,6 +24,7 @@ namespace Core
 	private:
 		AnimationComponent* mAnimationComponent = nullptr;
 		PhysicComponent* mPxComponent = nullptr;
+		Vector<float> mCurrentVelocity = Vector<float>::ZeroVector();
 
 		bool mWantToRoll = false;
 		bool mRolling = false;
@@ -31,5 +32,7 @@ namespace Core
 		void GetMovementInput(Vector<float>& OutMovementInput);
 		void RollEndNotify();
 		bool CheckReferences() const;
+		void UpdateFlip();
+		void CheckRoll();
 	};
 }

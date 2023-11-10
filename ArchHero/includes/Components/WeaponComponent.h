@@ -28,7 +28,7 @@ private:
 	void UpdateWeaponLocation();
 	void UpdateRotation();
 	
-	// TODO ref to the bullet class
+	Object* SpawnBullet();
 
 
 public:

@@ -24,9 +24,6 @@ namespace Core
 		virtual void Unload() override;
 		virtual void ShutDown() override;
 
-		/** Register collision component in the world for collision */
-		virtual void AddCollisionComponent(CollisionComponent* Comp) override;
-
 	private:
 		/** Map of objects <object Id, Object Ref> */
 		std::unordered_map<std::string, Object*> mObjectMap;
@@ -37,13 +34,20 @@ namespace Core
 		/** Raw list of objects pending destroy */
 		std::vector<Object*> mToDestroyList;
 
+		/** Raw list of objects pending add */
+		std::vector<Object*> mToAddList;
+
 		/** Map of scenes <Scene name, scene ref> */
-		std::unordered_map < std::string, IScene*> mSceneMap;
+		std::unordered_map <std::string, IScene*> mSceneMap;
 
 		IScene* mCurrentScene = nullptr;
 
 		/** Collision components of different category (ennemy, player, bullets, etc) */
 		std::unordered_map<ECollisionChannel, std::vector<CollisionComponent*>> mCollisionComponents;
+
+		std::unordered_map<ECollisionChannel, std::vector<CollisionComponent*>> mCollisionComponentsToAdd;
+
+		std::unordered_map<ECollisionChannel, std::vector<CollisionComponent*>> mCollisionComponentsToDel;
 
 		ILogger& mLogger;
 
@@ -56,9 +60,14 @@ namespace Core
 		void UpdateObjects(float DeltaTime);
 		void DeleteObjects();
 		void CheckObjectsForStart();
+		void CheckObjectsToAdd();
+		void RemoveCollisionComponentsFromMap();
 
 
 		/** Collisions ------------------------------------------------------------------------------------------------------------------  */
+
+		/** Register collision component in the world for collision */
+		virtual void AddCollisionComponent(CollisionComponent* Comp) override;
 
 		void CheckWorldCollision();
 

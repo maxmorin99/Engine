@@ -10,8 +10,8 @@
 #include "Components/WeaponComponent.h"
 #include "Components/TargetCursorComponent.h"
 #include "Components/BoxComponent.h"
-//#include "Services/SdlTileMap.h"
 #include "Components/TilemapComponent.h"
+#include "Components/MusicComponent.h"
 
 FirstScene::FirstScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH) :
 	Scene(name, tilemapFile, srcTileW, srcTileH, tileCountW, tileCountH)
@@ -51,7 +51,6 @@ void FirstScene::Load()
 		Obj->SetLocation(TilemapObj._Rect.X, TilemapObj._Rect.Y);
 
 		BoxComponent* Box = Obj->AddComponent<BoxComponent>();
-		mCollisionComponentsToAddToWorld.push_back(Box);
 		Box->SetCollisionChannel(ECollisionChannel::World);
 		Box->SetBoxSize(TilemapObj._Rect.W, TilemapObj._Rect.H);
 		Box->SetCollisionType(ECollisionShape::Rectangle);
@@ -172,11 +171,19 @@ void FirstScene::Load()
 
 
 	BoxComponent* Box = AnimatedPlayer->AddComponent<BoxComponent>();
-	mCollisionComponentsToAddToWorld.push_back(Box);
 	Box->SetCollisionChannel(ECollisionChannel::Player);
 	Box->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
 	Box->SetBoxSize(75, 100);
 	Box->SetOffset(85, 120);
+
+
+	/* Music Obj ----------------------------------------------- */
+
+	Object* MusicObj = new Object();
+	mObjectsToAddToWorld.push_back(MusicObj);
+	MusicComponent* MusicComp = MusicObj->AddComponent<MusicComponent>();
+	std::string MusicFile = ASSET_PATH + std::string("Music/MusicDefaultScene.wav");
+	MusicComp->SetMusicFile(MusicFile);
 
 
 	/* Add obj in the world ------------------------------------ */
@@ -184,12 +191,5 @@ void FirstScene::Load()
 	for (Object* Obj : mObjectsToAddToWorld)
 	{
 		Engine::GetWorld().AddObject(Obj);
-	}
-
-	/* Add collision comp in the world ------------------------- */
-
-	for (CollisionComponent* Comp : mCollisionComponentsToAddToWorld)
-	{
-		Engine::GetWorld().AddCollisionComponent(Comp);
 	}
 }

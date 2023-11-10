@@ -7,6 +7,7 @@ project.addFile("ArchHero/**");
 project.setDebugDir("Deployment");
 
 project.addIncludeDir("./TheEngine/includes")
+project.addIncludeDir("./TheEngine/includes/Components")
 project.addIncludeDir("./ArchHero/includes")
 
 project.flatten();

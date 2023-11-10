@@ -29,8 +29,5 @@ namespace Core
 
 		/** When initializong a scene, this list contains all object created in this process to add to the world */
 		std::vector<Object*> mObjectsToAddToWorld;
-
-		/** When initializong a scene, this list contains all collision comp created in this process to add to the world */
-		std::vector<CollisionComponent*> mCollisionComponentsToAddToWorld;
 	};
 }

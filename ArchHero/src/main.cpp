@@ -17,8 +17,7 @@ void InitGameplay()
 	IScene* First = new FirstScene("FirstScene", TiledFile.c_str(), 32, 32, 25, 19);
 	Engine::GetWorld().Register("DefaultScene", Default);
 	Engine::GetWorld().Register("FirstScene", First);
-	//Engine::GetWorld().Load("DefaultScene");
-	Engine::GetWorld().Load("FirstScene");
+	Engine::GetWorld().Load("DefaultScene");
 }
 
 INT WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ PSTR, _In_ INT)

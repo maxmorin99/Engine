@@ -4,7 +4,6 @@
 #include <Windows.h>
 #include "Engine/Core.h"
 #include "Engine/Engine.h"
-#include <vector>
 #include "DefaultScene.h"
 #include "FirstScene.h"
 

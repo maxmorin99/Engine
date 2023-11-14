@@ -38,8 +38,9 @@ void FirstScene::Load()
 	TmComp->AddTileset(TilesetWall1, 1, 32, 32, 16, 368);
 	TmComp->AddTileset(TilesetWall2, 369, 32, 32, 16, 240);
 	TmComp->AddTileset(TilesetPrison, 609, 32, 32, 65, 4485);
-	TmComp->AddLayer("FloorLayer");
 	TmComp->AddLayer("BackgroundLayer");
+	TmComp->AddLayer("FloorLayer");
+	TmComp->AddLayer("WallLayer");
 	TmComp->AddObjectLayer("CollisionLayer");
 
 	std::vector<TilemapObject> TilemapObjects = TmComp->GetTilemapObjects();

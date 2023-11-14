@@ -22,6 +22,7 @@ namespace Core
 		virtual void Register(const std::string& SceneName, IScene* Scene) = 0;
 		virtual void Unload() = 0;
 		virtual void Load(const std::string& SceneName) = 0;
+		virtual Object* GetTilemapObject() const override;
 		virtual void ShutDown() = 0;
 	};
 }

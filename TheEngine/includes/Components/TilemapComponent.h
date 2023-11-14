@@ -45,6 +45,7 @@ namespace Core
 		void AddObjectLayer(const std::string& Name);
 		void SetTiledFile(const std::string& File);
 		virtual void Destroy() override;
+		TTilemap GetTilemap() const;
 
 	private:
 

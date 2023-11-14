@@ -323,3 +323,12 @@ void Core::TilemapComponent::Destroy()
 	delete mTilemap;
 	delete mTilemapObjects;
 }
+
+Core::TTilemap Core::TilemapComponent::GetTilemap() const
+{
+	if (mTilemap)
+	{
+		return *mTilemap;
+	}
+	return TTilemap();
+}

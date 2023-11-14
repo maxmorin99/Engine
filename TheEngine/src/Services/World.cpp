@@ -4,6 +4,7 @@
 #include "Interfaces/IScene.h"
 #include "Components/BoxComponent.h"
 #include "Services/Collision.h"
+#include "Components/TilemapComponent.h"
 
 Core::World::World(ILogger& Logger) :
 	mLogger(Logger)
@@ -480,10 +481,6 @@ void Core::World::Unload()
 
 void Core::World::AddObject(Object* Obj)
 {
-	/*if (!Obj ||  mObjectMap.count(Obj->GetId()) > 0) return;
-	mObjectList.push_back(Obj);
-	mObjectMap[Obj->GetId()] = Obj;*/
-
 	bool bContains = false;
 	for (Object* O : mToAddList)
 	{
@@ -515,23 +512,24 @@ void Core::World::ShutDown()
 	mSceneMap.clear();
 }
 
+Core::Object* Core::World::GetTilemapObject() const
+{
+	for (Object* Obj : mObjectList)
+	{
+		TilemapComponent* Tm = Obj->GetComponent<TilemapComponent>();
+		if (Tm)
+		{
+			return Obj;
+		}
+	}
+	return nullptr;
+}
+
 void Core::World::AddCollisionComponent(CollisionComponent* Comp)
 {
 	if (!Comp) return;
 
 	ECollisionChannel Channel = Comp->GetCollisionChannel();
-	/*if (mCollisionComponents.count(Channel) == 0)
-	{
-		std::vector<CollisionComponent*> CompList;
-		CompList.push_back(Comp);
-		mCollisionComponents[Channel] = CompList;
-	}
-	else
-	{
-		std::vector<CollisionComponent*> CompList = mCollisionComponents.at(Channel);
-		CompList.push_back(Comp);
-		mCollisionComponents[Channel] = CompList;
-	}*/
 
 	if (mCollisionComponentsToAdd.count(Channel) == 0)
 	{

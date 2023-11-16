@@ -8,15 +8,16 @@ namespace Core
 {
 	struct Node
 	{
+		Tile BaseTile;
 		float X = 0.f;
 		float Y = 0.f;
 		size_t Cost = SIZE_MAX;
 		size_t Heuristic = SIZE_MAX;
-		size_t FinalCost = SIZE_MAX;
+		size_t TotalCost = SIZE_MAX;
 		bool bVisited = false;
 		bool bObstacle = false;
 		Node* Prev = nullptr;
-		std::vector<Node*> Neighbors;
+		std::vector<Node*> Neighbours;
 	};
 
 	struct Graph
@@ -30,6 +31,19 @@ namespace Core
 		PathFindingComponent(Object* Owner);
 		virtual void Start() override;
 		virtual void Destroy() override;
-		void BuildMap(TTilemap Tilemap);
+		std::vector<Vector<float>> GetPath(const Vector<float>& TargetLoc);
+		
+	private:
+		bool AreNodesAdjascent(const Node* Node1, const Node* Node2) const;
+		std::vector<Node*> FlattenTiles(const std::vector<Layer>& Layers);
+		void BuildAdjList(const std::vector<Layer>& Tilemap);
+		Node* GetNodeByLoc(const Vector<float>& Loc) const;
+		void ProcessNeighbours(Node* n, const Vector<float>& targetLoc);
+		void SortNodeListByCost(std::vector<Node*> list, int left, int right);
+
+
+		std::vector<Node*> mAdjList;
+		std::vector<Node*> mVisitedList;
+		std::vector<Node*> mPath;
 	};
 }

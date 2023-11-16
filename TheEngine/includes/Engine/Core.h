@@ -15,4 +15,5 @@ namespace Core
 	class PhysicComponent;
 	class BoxComponent;
 	class CollisionComponent;
+	class PathFindingComponent;
 }

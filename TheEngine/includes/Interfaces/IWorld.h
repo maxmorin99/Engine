@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace Core
 {
@@ -22,7 +23,9 @@ namespace Core
 		virtual void Register(const std::string& SceneName, IScene* Scene) = 0;
 		virtual void Unload() = 0;
 		virtual void Load(const std::string& SceneName) = 0;
-		virtual Object* GetTilemapObject() const override;
+		virtual Object* GetTilemapObject() const = 0;
+		virtual std::vector<Object*> GetObjectsWithTag(const std::string& Tag) const = 0;
+
 		virtual void ShutDown() = 0;
 	};
 }

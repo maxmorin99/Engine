@@ -23,6 +23,7 @@ void BulletComponent::Start()
 void BulletComponent::Update(float DeltaTime)
 {
 	// Move by fwd dir
+	if (!mPxComp) return;
 	mPxComp->AddMovement(mOwner->GetForwardVector().GetNormalized());
 }
 

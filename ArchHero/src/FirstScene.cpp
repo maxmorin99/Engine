@@ -12,6 +12,8 @@
 #include "Components/BoxComponent.h"
 #include "Components/TilemapComponent.h"
 #include "Components/MusicComponent.h"
+#include "Components/EnemyComponent.h"
+#include "Components/PathFindingComponent.h"
 
 FirstScene::FirstScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH) :
 	Scene(name, tilemapFile, srcTileW, srcTileH, tileCountW, tileCountH)
@@ -176,6 +178,15 @@ void FirstScene::Load()
 	Box->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
 	Box->SetBoxSize(75, 100);
 	Box->SetOffset(85, 120);
+
+
+	/* Enemy -------------------------------------------- */
+	
+	Object* Enemy = new Object();
+	Enemy->SetLocation(900, 450);
+	mObjectsToAddToWorld.push_back(Enemy);
+	EnemyComponent* EnemyComp = Enemy->AddComponent<EnemyComponent>();
+	PathFindingComponent* PathComp = Enemy->AddComponent<PathFindingComponent>();
 
 
 	/* Music Obj ----------------------------------------------- */

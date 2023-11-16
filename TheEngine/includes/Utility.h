@@ -44,7 +44,16 @@ namespace Core
 	};
 
 
-	/** typedefs tilemap ------------------------------------------ */
+	/** Tilemap ------------------------------------------ */
+
+	struct Tile
+	{
+		float X;
+		float Y;
+		float W;
+		float H;
+		std::string ParentLayerName;
+	};
 
 	/** List of sources rect of a tileset image */
 	typedef std::vector<Rect<int>> TTileset;
@@ -52,9 +61,40 @@ namespace Core
 	/** 2D list of int representing a tile layer */
 	typedef std::vector<std::vector<int>> TLayer;
 
-	/** Map of all the tile layers */
-	typedef std::unordered_map<std::string, TLayer> TTilemap;
+	struct Layer
+	{
+		std::string _Name;
+		TLayer _Layer;
+		std::vector<Tile> _Tiles;
+	};
 
+	/** Map of all the tile layers */
+	typedef std::unordered_map<std::string, Layer> TTilemap;
+
+	/** Data that represents a tileset */
+	struct Tileset
+	{
+		/** The minimal id valid for this tileset */
+		int _FirstId{ 0 };
+		/** The maximal id valid for this tileset */
+		int _LastId{ 0 };
+		/** Id of the image loaded by graphic service */
+		size_t _ImageId{ 0 };
+		/** List of source rect for this tileset image */
+		TTileset _Sources;
+	};
+
+	/** Object representing a collision in the tilemap */
+	struct TilemapObject
+	{
+		TilemapObject(const std::string& Id, Rect<float>& Rect) :
+			_Rect(Rect), _Id(Id) {};
+
+		/** Rectangle representinf the object position and dimension */
+		Rect<float> _Rect;
+		/** Id of the object */
+		std::string _Id;
+	};
 
 
 	/** Vector ---------------------------------------------------- */

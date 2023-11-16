@@ -36,6 +36,8 @@ namespace Core
 
 		std::vector<std::string> mTags;
 
+		bool bStarted = false;
+
 		/* Components --------------------------------------------- */
 
 		TransformComponent* mTransform = nullptr;
@@ -71,6 +73,7 @@ namespace Core
 		Flip GetFlip() const;
 		void AddTag(const std::string& Tag);
 		bool HasTag(const std::string& Tag) const;
+		inline bool IsStarted() const { return bStarted; }
 		inline std::vector<std::string> GetTags() const { return mTags; }
 	};
 

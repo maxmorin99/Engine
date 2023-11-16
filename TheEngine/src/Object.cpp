@@ -189,12 +189,12 @@ bool Core::Object::HasTag(const std::string& Tag) const
 
 void Core::Object::Start()
 {
-    AddComponent<Component>();
     for (Component* Cmp : mComponents)
     {
         Cmp->Start();
     }
-    GetComponent<Component>();
+
+    bStarted = true;
 }
 
 void Core::Object::Update(float DeltaTime)

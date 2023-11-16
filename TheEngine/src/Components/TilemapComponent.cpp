@@ -46,10 +46,16 @@ void Core::TilemapComponent::AddLayer(const std::string& Name)
 		if (bInData)
 		{
 			// Récupérer le tableau 2d de int
-			TLayer Layer;
-			GetLayerMatrix(TiledFile, Layer, LayerH);
+			TLayer tLayer;
+			GetLayerMatrix(TiledFile, tLayer, LayerH);
 
-			(*mTilemap)[LayerName] = Layer;
+			/** Create Layer data structure */
+			Layer layer;
+			layer._Name = Name;
+			layer._Layer = tLayer;
+			layer._Tiles = GetListOfTileForLayer(layer);
+
+			(*mTilemap)[LayerName] = layer;
 			break;
 		}
 
@@ -230,7 +236,7 @@ void Core::TilemapComponent::Draw()
 	// draw each layer with his corresponding tilset, based on firstid and lastid of the tileset.
 	for (auto& pair : *mTilemap)
 	{
-		TLayer Layer = pair.second;
+		TLayer Layer = pair.second._Layer;
 		for (int y = 0; y < Layer.size(); y++)
 		{
 			for (int x = 0; x < Layer[y].size(); x++)
@@ -244,6 +250,7 @@ void Core::TilemapComponent::Draw()
 
 				Rect<int> Src = T._Sources[TileId - 1];
 				Rect<int> Dst(x * (int)mScaledTileSize.X, y * (int)mScaledTileSize.Y, (int)mScaledTileSize.X, (int)mScaledTileSize.Y);
+
 
 				Graphic().DrawTexture(T._ImageId, Src, Dst, 0.0, Flip::None, Color::White);
 			}
@@ -262,6 +269,33 @@ Core::Tileset Core::TilemapComponent::GetTilesetBasedOnTileId(int TileId) const
 	}
 
 	return Tileset();
+}
+
+std::vector<Core::Tile> Core::TilemapComponent::GetListOfTileForLayer(const Layer& Layer)
+{
+	std::vector<Tile> OutList;
+	for (int y = 0; y < Layer._Layer.size(); y++)
+	{
+		for (int x = 0; x < Layer._Layer[y].size(); x++)
+		{
+			int TileId = Layer._Layer[y][x];
+			if (TileId == 0) continue;
+
+			Tileset T = GetTilesetBasedOnTileId(TileId);
+			TileId -= T._FirstId - 1;
+			if (TileId >= T._Sources.size()) continue;
+
+			Tile tile;
+			tile.ParentLayerName = Layer._Name;
+			tile.X = x * mScaledTileSize.X;
+			tile.Y = y * mScaledTileSize.Y;
+			tile.W = mScaledTileSize.X;
+			tile.H = mScaledTileSize.Y;
+
+			OutList.push_back(tile);
+		}
+	}
+	return OutList;
 }
 
 std::vector<Core::TilemapObject> Core::TilemapComponent::GetTilemapObjects() const
@@ -300,7 +334,7 @@ void Core::TilemapComponent::Destroy()
 
 	for (auto& Pair : *mTilemap)
 	{
-		TLayer L = Pair.second;
+		TLayer L = Pair.second._Layer;
 		for (int i = 0; i < L.size(); i++)
 		{
 			L[i].clear();
@@ -331,4 +365,16 @@ Core::TTilemap Core::TilemapComponent::GetTilemap() const
 		return *mTilemap;
 	}
 	return TTilemap();
+}
+
+std::vector<Core::Layer> Core::TilemapComponent::GetLayers() const
+{
+	if(!mTilemap) return std::vector<Layer>();
+
+	std::vector<Layer> OutList;
+	for (auto& pair : *mTilemap)
+	{
+		OutList.push_back(pair.second);
+	}
+	return OutList;
 }

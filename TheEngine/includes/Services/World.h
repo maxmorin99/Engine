@@ -23,7 +23,8 @@ namespace Core
 		virtual void Load(const std::string& SceneName) override;
 		virtual void Unload() override;
 		virtual void ShutDown() override;
-		virtual Object* GetTilemapObject() const;
+		virtual Object* GetTilemapObject() const override;
+		virtual std::vector<Object*> GetObjectsWithTag(const std::string& Tag) const override;
 
 	private:
 		/** Map of objects <object Id, Object Ref> */

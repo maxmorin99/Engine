@@ -9,31 +9,6 @@
 
 namespace Core
 {
-	/** Data that represents a tileset */
-	struct Tileset
-	{
-		/** The minimal id valid for this tileset */
-		int _FirstId{ 0 };
-		/** The maximal id valid for this tileset */
-		int _LastId{ 0 };
-		/** Id of the image loaded by graphic service */
-		size_t _ImageId{ 0 };
-		/** List of source rect for this tileset image */
-		TTileset _Sources;
-	};
-
-	/** Object representing a collision in the tilemap */
-	struct TilemapObject
-	{
-		TilemapObject(const std::string& Id, Rect<float>& Rect) :
-			_Rect(Rect), _Id(Id) {};
-
-		/** Rectangle representinf the object position and dimension */
-		Rect<float> _Rect;
-		/** Id of the object */
-		std::string _Id;
-	};
-
 	class TilemapComponent : public Component, public IDrawable
 	{
 	public:
@@ -46,6 +21,7 @@ namespace Core
 		void SetTiledFile(const std::string& File);
 		virtual void Destroy() override;
 		TTilemap GetTilemap() const;
+		std::vector<Layer> GetLayers() const;
 
 	private:
 
@@ -72,7 +48,8 @@ namespace Core
 		*/
 		Vector<int> mTileCount = Vector<int>::ZeroVector();
 
-
+		/** List of Tile by layers. Used for A* */
+		std::unordered_map<std::string, std::vector<Tile>> mTilesByLayer;
 
 		/** Get width and height of the 2d array of int values of the layer */
 		void GetLayerSize(const std::string& Line, int* OutW, int* OutH) const;
@@ -97,6 +74,8 @@ namespace Core
 
 		std::string GetNameAttributeFromLine(const std::string& Line) const;
 		Tileset GetTilesetBasedOnTileId(int TileId) const;
+
+		std::vector<Tile> GetListOfTileForLayer(const Layer& Layer);
 
 	public:
 		std::vector<TilemapObject> GetTilemapObjects() const;

@@ -47,6 +47,9 @@ void Core::World::Update(float DeltaTime)
 	// Check if there is Objects to add to the world this frame
 	CheckObjectsToAdd();
 
+	// If we changed scene, call start on objects newly added
+	CheckObjectsForStart();
+
 	// Update all objects
 	UpdateObjects(DeltaTime);
 
@@ -56,14 +59,13 @@ void Core::World::Update(float DeltaTime)
 	// If there is pending kill objects, delete them
 	DeleteObjects();
 	
-	// If we changed scene, call start on objects newly added
-	CheckObjectsForStart();
+	
 }
 
 void Core::World::UpdateObjects(float DeltaTime)
 {
 	// Don't update if we are changing scene
-	if (bChangeSceneRequested) return;
+	//if (bChangeSceneRequested) return;
 
 	for (int i = 0; i < mObjectList.size(); i++)
 	{
@@ -115,19 +117,13 @@ void Core::World::DeleteObjectFromObjectList(Object* Obj)
 
 void Core::World::CheckObjectsForStart()
 {
-	if (bChangeSceneRequested)
+	// Call start on all object unstarted
+	for (Object* Obj : mObjectList)
 	{
-		// Call start on all object if we changed scene
-		for (Object* Obj : mObjectList)
+		if (!Obj->IsStarted())
 		{
 			Obj->Start();
 		}
-		bChangeSceneRequested = false;
-	}
-
-	for (Object* Obj : mToAddList)
-	{
-		Obj->Start();
 	}
 }
 
@@ -523,6 +519,19 @@ Core::Object* Core::World::GetTilemapObject() const
 		}
 	}
 	return nullptr;
+}
+
+std::vector<Core::Object*> Core::World::GetObjectsWithTag(const std::string& Tag) const
+{
+	std::vector<Object*> OutList;
+	for (Object* Obj : mObjectList)
+	{
+		if (Obj->HasTag(Tag))
+		{
+			OutList.push_back(Obj);
+		}
+	}
+	return OutList;
 }
 
 void Core::World::AddCollisionComponent(CollisionComponent* Comp)

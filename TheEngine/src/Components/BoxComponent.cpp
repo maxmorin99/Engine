@@ -16,7 +16,6 @@ void Core::BoxComponent::Start()
 	Vector<float> OwnerLoc = mOwner->GetLocation();
 	mRect.X = OwnerLoc.X + mOwnerOffset.X;
 	mRect.Y = OwnerLoc.Y + mOwnerOffset.Y;
-
 }
 
 void Core::BoxComponent::Update(float DeltaTime)
@@ -27,6 +26,10 @@ void Core::BoxComponent::Update(float DeltaTime)
 void Core::BoxComponent::Draw()
 {
 	//Graphic().DrawRectF(false, &mRect, Color::Red);
+	/*Vector<float> OwnerSize = mOwner->GetSize();
+	Vector<float> OwnerSpriteCenterOffset = mOwner->GetCenterOffset();
+	Vector<float> Center = Vector<float>(mOwner->GetLocation().X + OwnerSize.X / 2 + OwnerSpriteCenterOffset.X, mOwner->GetLocation().Y + OwnerSize.Y / 2 + OwnerSpriteCenterOffset.Y);
+	Graphic().DrawLineF(Vector<float>::ZeroVector(), Center, Color::Purple);*/
 }
 
 void Core::BoxComponent::SetCollisionLocation(const Vector<float>& NewLoc)

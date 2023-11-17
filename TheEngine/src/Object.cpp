@@ -40,11 +40,12 @@ void Core::Object::GetLocation(float* OutX, float* OutY)
     mTransform->GetLocation(OutX, OutY);
 }
 
-Core::Vector<float> Core::Object::GetCenterLocation() const
+Core::Vector<float> Core::Object::GetSpriteCenterLocation() const
 {
     Vector<float> Size = GetSize();
     Vector<float> Loc = GetLocation();
-    return Vector<float>(Loc.X + Size.X / 2, Loc.Y + Size.Y / 2);
+    Vector<float> CenterOffset = GetCenterOffset();
+    return Vector<float>(Loc.X + Size.X / 2 + CenterOffset.X, Loc.Y + Size.Y / 2 + CenterOffset.Y);
 }
 
 void Core::Object::SetLocation(float NewX, float NewY)
@@ -246,4 +247,24 @@ Core::CollisionComponent* Core::Object::GetCollisionComponent() const
     }
     // TODO make the same logic with circle
     return nullptr;
+}
+
+Core::Vector<float> Core::Object::GetCenterOffset() const
+{
+    SpriteComponent* SC = GetComponent<SpriteComponent>();
+    if (SC)
+    {
+        return SC->GetCenterOffset();
+    }
+    AtlasComponent* AC = GetComponent<AtlasComponent>();
+    if (AC)
+    {
+        return AC->GetCenterOffset();
+    }
+    AnimationComponent* AnimC = GetComponent<AnimationComponent>();
+    if (AnimC)
+    {
+        return AnimC->GetCenterOffset();
+    }
+    return Vector<float>::ZeroVector();
 }

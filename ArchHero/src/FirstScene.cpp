@@ -86,6 +86,7 @@ void FirstScene::Load()
 	AnimationComponent* Anim = AnimatedPlayer->AddComponent<AnimationComponent>();
 	std::string FilePath = ASSET_PATH + std::string("Character_Sprite_Sheet.png");
 	Anim->SetFile(FilePath);
+	Anim->SetCenterOffset(Vector<float>(0, 50));
 
 	// Idle animation
 	std::vector<Frame> IdleFrames;
@@ -187,6 +188,13 @@ void FirstScene::Load()
 	mObjectsToAddToWorld.push_back(Enemy);
 	EnemyComponent* EnemyComp = Enemy->AddComponent<EnemyComponent>();
 	PathFindingComponent* PathComp = Enemy->AddComponent<PathFindingComponent>();
+
+	PhysicComponent* EnemyPxComp = Enemy->AddComponent<PhysicComponent>();
+	EnemyPxComp->SetMass(1.f);
+	EnemyPxComp->SetSlideFactor(0);
+	EnemyPxComp->SetMaxMovementSpeed(100.f);
+	EnemyPxComp->SetAccelerationSpeed(10000);
+	EnemyPxComp->SetDecelerationSpeed(10000);
 
 
 	/* Music Obj ----------------------------------------------- */

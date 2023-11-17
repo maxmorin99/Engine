@@ -2,6 +2,7 @@
 #include "Components/TilemapComponent.h"
 #include "Object.h"
 #include "Services/Collision.h"
+#include "Components/PhysicComponent.h"
 #include <algorithm>
 
 Core::PathFindingComponent::PathFindingComponent(Object* Owner) :
@@ -123,6 +124,8 @@ std::vector<Core::Vector<float>> Core::PathFindingComponent::GetPath(const Vecto
 		}
 		ProcessNeighbours(CurrNode, TargetLoc);
 		SortNodeListByCost(mVisitedList, 0, mVisitedList.size() - 1);
+		if (mVisitedList.size() == 0) break;
+
 		CurrNode = mVisitedList[0];
 		mVisitedList.erase(mVisitedList.begin());
 	}
@@ -134,10 +137,13 @@ std::vector<Core::Vector<float>> Core::PathFindingComponent::GetPath(const Vecto
 	{
 		OutPath.push_back(Vector<float>(PathNode->X, PathNode->Y));
 		PathNode = PathNode->Prev;
-		mPath.push_back(PathNode);
+		if (!PathNode) break;
 	}
 
 	std::reverse(OutPath.begin(), OutPath.end());
+	mPath.clear();
+	mPath = OutPath;
+	mCurrPathPoint = mPath[0];
 	return OutPath;
 }
 
@@ -217,4 +223,30 @@ void Core::PathFindingComponent::ResetNodesInAdjList()
 		n->bVisited = false;
 	}
 	mVisitedList.clear();
+}
+
+void Core::PathFindingComponent::Move()
+{
+	if (!mOwner) return;
+
+	Vector<float> OwnerLoc = mOwner->GetLocation();
+	if (Vector<float>::Dist(OwnerLoc, mCurrPathPoint) <= mTolerance)
+	{
+		mPath.erase(mPath.begin());
+		if (mPath.size() > 0)
+		{
+			mCurrPathPoint = mPath[0];
+		}
+	}
+	Vector<float> MoveDir = Vector<float>(mCurrPathPoint - OwnerLoc).GetNormalized();
+	MoveDir.Y = -MoveDir.Y;
+	PhysicComponent* PxComp = mOwner->GetComponent<PhysicComponent>();
+	if (PxComp)
+	{
+		PxComp->AddMovement(MoveDir);
+	}
+}
+
+void Core::PathFindingComponent::StopMove()
+{
 }

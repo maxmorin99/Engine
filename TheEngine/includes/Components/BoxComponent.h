@@ -22,6 +22,8 @@ namespace Core
 		Rect<float> mRect;
 		Vector<float> mOwnerOffset = Vector<float>::ZeroVector();
 
+		
+
 	public:
 		void SetOffset(float OffsetX, float OffsetY);
 		void SetBoxSize(float SizeX, float SizeY);

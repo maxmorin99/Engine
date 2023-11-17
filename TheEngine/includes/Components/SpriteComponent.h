@@ -24,11 +24,16 @@ namespace Core
 		Color mColor = Color::White;
 		Flip mFlip = Flip::None;
 
+		/** Offset to add to the sprite's destination rect to get to the center of the image */
+		Vector<float> mCenterOffset = Vector<float>::ZeroVector();
+
 	public:
 		inline void SetColor(const Color& NewColor) { mColor = NewColor; }
 		inline const Color& getColor() const { return mColor; }
 		void SetFile(const std::string& File);
 		void SetFlip(const Flip& InFlip);
 		inline Flip GetFlip() const { return mFlip; }
+		inline void SetCenterOffset(const Vector<float>& CenterOffset) { mCenterOffset = CenterOffset; }
+		inline Vector<float> GetCenterOffset() const { return mCenterOffset; }
 	};
 }

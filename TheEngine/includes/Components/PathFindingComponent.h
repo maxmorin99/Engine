@@ -30,6 +30,8 @@ namespace Core
 		virtual void Start() override;
 		virtual void Destroy() override;
 		std::vector<Vector<float>> GetPath(const Vector<float>& TargetLoc);
+		void Move();
+		void StopMove();
 		
 	private:
 		bool AreNodesAdjascent(const Node* Node1, const Node* Node2) const;
@@ -42,6 +44,8 @@ namespace Core
 
 		std::vector<Node*> mAdjList;
 		std::vector<Node*> mVisitedList;
-		std::vector<Node*> mPath;
+		std::vector<Vector<float>> mPath;
+		Vector<float> mCurrPathPoint;
+		float mTolerance = 12.f;
 	};
 }

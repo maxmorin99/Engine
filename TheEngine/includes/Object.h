@@ -38,6 +38,7 @@ namespace Core
 
 		bool bStarted = false;
 
+
 		/* Components --------------------------------------------- */
 
 		TransformComponent* mTransform = nullptr;
@@ -57,7 +58,7 @@ namespace Core
 
 		const Vector<float> GetLocation() const;
 		void GetLocation(float* OutX, float* OutY);
-		Vector<float> GetCenterLocation() const;
+		Vector<float> GetSpriteCenterLocation() const;
 		void SetLocation(const Vector<float>& NewLoc);
 		void SetLocation(float NewX, float NewY);
 		void SetCenterLocation(const Vector<float>& NewLoc);
@@ -75,6 +76,7 @@ namespace Core
 		bool HasTag(const std::string& Tag) const;
 		inline bool IsStarted() const { return bStarted; }
 		inline std::vector<std::string> GetTags() const { return mTags; }
+		Vector<float> GetCenterOffset() const;
 	};
 
 

@@ -62,6 +62,7 @@ void DefaultScene::Load()
 	AnimationComponent* Anim = AnimatedPlayer->AddComponent<AnimationComponent>();
 	std::string FilePath = ASSET_PATH + std::string("Character_Sprite_Sheet.png");
 	Anim->SetFile(FilePath);
+	Anim->SetCenterOffset(Vector<float>(0, 0));
 
 	// Idle animation
 	std::vector<Frame> IdleFrames;

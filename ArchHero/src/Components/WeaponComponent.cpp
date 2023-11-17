@@ -141,7 +141,6 @@ Object* WeaponComponent::SpawnBullet()
 	BoxComp->SetCollisionChannel(ECollisionChannel::Projectile);
 	BoxComp->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Overlap);
 	BoxComp->SetBoxSize(20.f, 20.f);
-	BoxComp->SetOffset(0, 0);
 
 	// Add bullet to the world
 	World().AddObject(Bullet);

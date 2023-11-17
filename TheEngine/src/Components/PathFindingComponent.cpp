@@ -2,6 +2,7 @@
 #include "Components/TilemapComponent.h"
 #include "Object.h"
 #include "Services/Collision.h"
+#include <algorithm>
 
 Core::PathFindingComponent::PathFindingComponent(Object* Owner) :
 	Component(Owner)
@@ -40,15 +41,15 @@ void Core::PathFindingComponent::BuildAdjList(const std::vector<Layer>& Layers)
 
 	for (int i = 0; i < mAdjList.size(); i++)
 	{
-		for (int j = 0; j < mAdjList.size(); j++)
+		for (int j = i + 1; j < mAdjList.size(); j++)
 		{
-			if (i != j && AreNodesAdjascent(mAdjList[i], mAdjList[j]))
+			if (AreNodesAdjascent(mAdjList[i], mAdjList[j]))
 			{
 				mAdjList[i]->Neighbours.push_back(mAdjList[j]);
+				mAdjList[j]->Neighbours.push_back(mAdjList[i]);
 			}
 		}
 	}
-	int bob;
 }
 
 bool Core::PathFindingComponent::AreNodesAdjascent(const Node* Node1, const Node* Node2) const
@@ -57,14 +58,28 @@ bool Core::PathFindingComponent::AreNodesAdjascent(const Node* Node1, const Node
 
 	Tile tile1 = Node1->BaseTile;
 	Tile tile2 = Node2->BaseTile;
-	float Threshold = 1.f;
 
-	if (abs(tile1.X + tile1.W - tile2.X) < Threshold) return true;
-	if (abs(tile1.X - tile2.X + tile2.W) < Threshold) return true;
-	if (abs(tile1.Y + tile1.H - tile2.Y) < Threshold) return true;
-	if (abs(tile1.Y - tile2.Y + tile2.H) < Threshold) return true;
-
-
+	if (tile1.X == tile2.X)
+	{
+		if (tile1.Y + tile1.H == tile2.Y || tile1.Y == tile2.Y + tile2.H)
+		{
+			return true;
+		}
+	}
+	if (tile1.Y == tile2.Y)
+	{
+		if (tile1.X + tile1.W == tile2.X || tile1.X == tile2.X + tile2.W)
+		{
+			return true;
+		}
+	}
+	/*if (tile1.X + tile1.W == tile2.X || tile1.X == tile2.X + tile2.W)
+	{
+		if (tile1.Y + tile1.H == tile2.Y || tile1.Y == tile2.Y + tile2.H)
+		{
+			return true;
+		}
+	}*/
 
 	return false;
 }
@@ -79,9 +94,9 @@ std::vector<Core::Node*> Core::PathFindingComponent::FlattenTiles(const std::vec
 		{
 			Node* n = new Node();
 			n->X = tile.X + tile.W / 2;
-			n->Y = tile.X + tile.H / 2;
+			n->Y = tile.Y + tile.H / 2;
 			n->BaseTile = tile;
-			n->bObstacle = tile.ParentLayerName == "Wall" ? true : false;
+			n->bObstacle = tile.ParentLayerName == "WallLayer" ? true : false;
 			OutList.push_back(n);
 		}
 	}
@@ -91,6 +106,8 @@ std::vector<Core::Node*> Core::PathFindingComponent::FlattenTiles(const std::vec
 std::vector<Core::Vector<float>> Core::PathFindingComponent::GetPath(const Vector<float>& TargetLoc)
 {
 	if (!mOwner) return std::vector<Core::Vector<float>>();
+
+	ResetNodesInAdjList();
 
 	Node* StartNode = GetNodeByLoc(mOwner->GetLocation());
 	Node* EndNode = GetNodeByLoc(TargetLoc);
@@ -107,6 +124,7 @@ std::vector<Core::Vector<float>> Core::PathFindingComponent::GetPath(const Vecto
 		ProcessNeighbours(CurrNode, TargetLoc);
 		SortNodeListByCost(mVisitedList, 0, mVisitedList.size() - 1);
 		CurrNode = mVisitedList[0];
+		mVisitedList.erase(mVisitedList.begin());
 	}
 
 	// Build path from end
@@ -118,6 +136,9 @@ std::vector<Core::Vector<float>> Core::PathFindingComponent::GetPath(const Vecto
 		PathNode = PathNode->Prev;
 		mPath.push_back(PathNode);
 	}
+
+	std::reverse(OutPath.begin(), OutPath.end());
+	return OutPath;
 }
 
 Core::Node* Core::PathFindingComponent::GetNodeByLoc(const Vector<float>& Loc) const
@@ -140,22 +161,20 @@ void Core::PathFindingComponent::ProcessNeighbours(Node* n, const Vector<float>&
 		Node* CurrNeighbour = n->Neighbours[i];
 		const Vector<float> CurrNodeLoc(n->X, n->Y);
 		size_t Heuristic = Vector<float>::Dist(CurrNodeLoc, targetLoc);
-		size_t EstimatedTotalCost = 1 + Heuristic;
+		size_t EstimatedTotalCost = n->TotalCost + 1 + Heuristic;
 
 		if (!CurrNeighbour->bObstacle && (CurrNeighbour->TotalCost == SIZE_MAX || CurrNeighbour->TotalCost > EstimatedTotalCost))
 		{
 			CurrNeighbour->TotalCost = EstimatedTotalCost;
 			CurrNeighbour->Prev = n;
-		}
-		if (!CurrNeighbour->bVisited)
-		{
+
 			CurrNeighbour->bVisited = true;
 			mVisitedList.push_back(CurrNeighbour);
 		}
 	}
 }
 
-void Core::PathFindingComponent::SortNodeListByCost(std::vector<Node*> list, int left, int right)
+void Core::PathFindingComponent::SortNodeListByCost(std::vector<Node*>& list, int left, int right)
 {
 	if (left >= right)
 	{
@@ -187,4 +206,15 @@ void Core::PathFindingComponent::SortNodeListByCost(std::vector<Node*> list, int
 		SortNodeListByCost(list, l, index - 1);
 		SortNodeListByCost(list, index, r);
 	}
+}
+
+void Core::PathFindingComponent::ResetNodesInAdjList()
+{
+	for (Node* n : mAdjList)
+	{
+		n->TotalCost = SIZE_MAX;
+		n->Prev = nullptr;
+		n->bVisited = false;
+	}
+	mVisitedList.clear();
 }

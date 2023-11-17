@@ -11,8 +11,6 @@ namespace Core
 		Tile BaseTile;
 		float X = 0.f;
 		float Y = 0.f;
-		size_t Cost = SIZE_MAX;
-		size_t Heuristic = SIZE_MAX;
 		size_t TotalCost = SIZE_MAX;
 		bool bVisited = false;
 		bool bObstacle = false;
@@ -39,8 +37,8 @@ namespace Core
 		void BuildAdjList(const std::vector<Layer>& Tilemap);
 		Node* GetNodeByLoc(const Vector<float>& Loc) const;
 		void ProcessNeighbours(Node* n, const Vector<float>& targetLoc);
-		void SortNodeListByCost(std::vector<Node*> list, int left, int right);
-
+		void SortNodeListByCost(std::vector<Node*>& list, int left, int right);
+		void ResetNodesInAdjList();
 
 		std::vector<Node*> mAdjList;
 		std::vector<Node*> mVisitedList;

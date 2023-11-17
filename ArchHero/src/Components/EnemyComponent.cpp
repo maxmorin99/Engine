@@ -15,21 +15,40 @@ void EnemyComponent::Start()
 	{
 		mPathFindingComp = mOwner->GetComponent<PathFindingComponent>();
 	}
-	if (mPathFindingComp)
+}
+
+void EnemyComponent::Update(float DeltaTime)
+{
+	Object* Player = World().GetObjectsWithTag("Player")[0];
+	if (Player)
 	{
-		Object* Player = World().GetObjectsWithTag("Player")[0];
-		Vector<float> PlayerLoc = Player->GetCenterLocation();
-		std::vector<Vector<float>> Path = mPathFindingComp->GetPath(PlayerLoc);
-		int bob;
+		mPath = mPathFindingComp->GetPath(Player->GetCenterLocation());
+		bHasPath = true;
+	}
+}
+
+void EnemyComponent::Draw()
+{
+	Graphic().DrawLineF(Vector<float>::ZeroVector(), mOwner->GetCenterLocation(), Color::Red);
+	for (int i = 0; i < mPath.size(); i++)
+	{
+		Vector<float> prev = Vector<float>::ZeroVector();
+		Vector<float> curr = mPath[i];
+		Color c = Color::Green;
+		if (i == 0)
+		{
+			prev = mOwner->GetCenterLocation();
+			c = Color::Yellow;
+		}
+		else
+		{
+			prev = mPath[i - 1];
+		}
+		Graphic().DrawLineF(prev, curr, c);
 	}
 }
 
 void EnemyComponent::Destroy()
 {
 	Component::Destroy();
-}
-
-void EnemyComponent::Draw()
-{
-	Graphic().DrawLineF(Vector<float>::ZeroVector(), mOwner->GetCenterLocation(), Color::Red);
 }

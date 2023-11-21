@@ -22,6 +22,7 @@ namespace Core
 		virtual void DrawLine(const Vector<int>& Point1, const Vector<int>& Point2, const Color& DrawColor) = 0;
 		virtual void DrawLineF(const float X1, const float Y1, const float X2, const float Y2, const Color& DrawColor) = 0;
 		virtual void DrawLineF(const Vector<float>& Point1, const Vector<float>& Point2, const Color& DrawColor) = 0;
+		virtual void DrawPoint(const Vector<float>& Point, const Color& Color) = 0;
 		virtual size_t LoadTexture(const char* FileName) = 0;
 		virtual void DrawTexture(size_t Id, const Rect<int>& Src, const Rect<int>& Dst, double Angle, const Flip& TextureFlip, const Color& Color) = 0;
 		virtual void DrawTexture(size_t Id, const Rect<int>& Dst, const Color& Color) = 0;

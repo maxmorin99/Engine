@@ -56,7 +56,7 @@ void EnemyComponent::Update(float DeltaTime)
 		mPath = mPathFindingComp->GetPath(Player->GetCenterLocation());
 		bHasPath = true;
 	}
-	//mPathFindingComp->Move();
+	mPathFindingComp->Move();
 }
 
 void EnemyComponent::Draw()

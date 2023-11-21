@@ -110,7 +110,7 @@ std::vector<Core::Vector<float>> Core::PathFindingComponent::GetPath(const Vecto
 
 	ResetNodesInAdjList();
 
-	Node* StartNode = GetNodeByLoc(mOwner->GetLocation());
+	Node* StartNode = GetNodeByLoc(mOwner->GetSpriteCenterLocation());
 	Node* EndNode = GetNodeByLoc(TargetLoc);
 	if (!StartNode || !EndNode) return std::vector<Core::Vector<float>>();
 
@@ -229,13 +229,6 @@ void Core::PathFindingComponent::Move()
 {
 	if (!mOwner || !ShouldMove) return;
 
-	/*if (mCurrPathPoint == Vector<float>::ZeroVector())
-	{
-		if (mPath.size() > 0)
-		{
-			mCurrPathPoint = mPath[0];
-		}
-	}*/
 	Vector<float> OwnerLoc = mOwner->GetCenterLocation();
 	if (Vector<float>::Dist(OwnerLoc, mCurrPathPoint) <= mTolerance)
 	{

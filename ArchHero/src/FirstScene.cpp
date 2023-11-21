@@ -234,7 +234,7 @@ void FirstScene::Load()
 	// Enemy1 collision
 	BoxComponent* EnemyBox = Enemy->AddComponent<BoxComponent>();
 	EnemyBox->SetCollisionChannel(ECollisionChannel::Enemy);
-	EnemyBox->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
+	EnemyBox->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Ignore);
 	EnemyBox->AddCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Ignore);
 	EnemyBox->AddCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Ignore);
 	EnemyBox->SetBoxSize(75, 100);

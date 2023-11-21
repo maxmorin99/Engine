@@ -178,6 +178,13 @@ void Core::SdlGraphic::DrawLineF(const Vector<float>& Point1, const Vector<float
 	SDL_RenderDrawLineF(mRenderer, Point1.X, Point1.Y, Point2.X, Point2.Y);
 }
 
+void Core::SdlGraphic::DrawPoint(const Vector<float>& Point, const Color& Color)
+{
+	SDL_Color SdlColor = ConvertToSdlColor(Color);
+	SDL_SetRenderDrawColor(mRenderer, SdlColor.r, SdlColor.g, SdlColor.b, SdlColor.a);
+	SDL_RenderDrawPoint(mRenderer, Point.X, Point.Y);
+}
+
 size_t Core::SdlGraphic::LoadTexture(const char* FileName)
 {
 	size_t TextureId = std::hash<std::string>()(FileName);

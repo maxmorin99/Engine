@@ -32,6 +32,7 @@ namespace Core
 		virtual void DrawLine(const int X1, const int Y1, const int X2, const int Y2, const Color& DrawColor) override;
 		virtual void DrawLine(const Vector<int>& Point1, const Vector<int>& Point2, const Color& DrawColor) override;
 		virtual void DrawLineF(const Vector<float>& Point1, const Vector<float>& Point2, const Color& DrawColor) override;
+		virtual void DrawPoint(const Vector<float>& Point, const Color& Color) override;
 		virtual size_t LoadTexture(const char* FileName) override;
 		virtual void DrawTexture(size_t Id, const Rect<int>& Src, const Rect<int>& Dst, double Angle, const Flip& TextureFlip, const Color& Color) override;
 		virtual void DrawTexture(size_t Id, const Rect<int>& Dst, const Color& Color) override;

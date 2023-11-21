@@ -77,6 +77,7 @@ namespace Core
 		inline bool IsStarted() const { return bStarted; }
 		inline std::vector<std::string> GetTags() const { return mTags; }
 		Vector<float> GetCenterOffset() const;
+		Vector<float> GetCenterLocation() const;
 	};
 
 

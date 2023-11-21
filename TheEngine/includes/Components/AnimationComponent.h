@@ -54,5 +54,8 @@ namespace Core
 
 		/** Default clip. This clip will be selected when a non looping animation ends and no other is requested */
 		Clip mDefaultClip;
+
+	public:
+		inline std::string GetCurrentClipName() const { return mCurrentClip.Name; }
 	};
 }

@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include <string>
 #include <SDL_ttf.h>
+#include "Engine/Engine.h"
 
 
 Core::SdlGraphic::SdlGraphic(const char* WinName, const int WinW, const int WinH)
@@ -42,7 +43,14 @@ bool Core::SdlGraphic::InitWindow(const char** ErrorMsg)
 	const int X = SDL_WINDOWPOS_CENTERED;
 	const int Y = SDL_WINDOWPOS_CENTERED;
 	const Uint32 WindowFlags = SDL_WINDOW_TOOLTIP;
-
+	SDL_DisplayMode DM;
+	SDL_GetCurrentDisplayMode(0, &DM);
+	if (DM.w < mWindowWidth) {
+		mWindowWidth = DM.w;
+	}
+	if (DM.h < mWindowHeight) {
+		mWindowHeight = DM.h;
+	}
 	mWindow = SDL_CreateWindow(mWindowName, X, Y, mWindowWidth, mWindowHeight, WindowFlags);
 	if (!mWindow)
 	{
@@ -177,7 +185,10 @@ size_t Core::SdlGraphic::LoadTexture(const char* FileName)
 	if (mTextureMap.count(TextureId) == 0)
 	{
 		SDL_Texture* Texture = IMG_LoadTexture(mRenderer, FileName);
-		if (!Texture) return -1;
+		if (!Texture) {
+			Engine::GetLogger().DebugLog(ConsoleColor::Red, SDL_GetError());
+			return -1;
+		}
 		mTextureMap[TextureId] = Texture;
 	}
 	

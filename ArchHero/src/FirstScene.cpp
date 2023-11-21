@@ -177,6 +177,7 @@ void FirstScene::Load()
 	BoxComponent* Box = AnimatedPlayer->AddComponent<BoxComponent>();
 	Box->SetCollisionChannel(ECollisionChannel::Player);
 	Box->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
+	Box->AddCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Ignore);
 	Box->SetBoxSize(75, 100);
 	Box->SetOffset(85, 120);
 
@@ -185,6 +186,7 @@ void FirstScene::Load()
 	
 	Object* Enemy = new Object();
 	Enemy->SetLocation(900, 450);
+	Enemy->SetSize(250, 250);
 	mObjectsToAddToWorld.push_back(Enemy);
 	EnemyComponent* EnemyComp = Enemy->AddComponent<EnemyComponent>();
 	PathFindingComponent* PathComp = Enemy->AddComponent<PathFindingComponent>();
@@ -195,6 +197,48 @@ void FirstScene::Load()
 	EnemyPxComp->SetMaxMovementSpeed(100.f);
 	EnemyPxComp->SetAccelerationSpeed(10000);
 	EnemyPxComp->SetDecelerationSpeed(10000);
+
+	// Animation
+	AnimationComponent* EnemyAnimationComp = Enemy->AddComponent<AnimationComponent>();
+	std::string EnemySpriteSheet = ASSET_PATH + std::string("Enemies/Enemy_1_Sprite_Sheet.png");
+	EnemyAnimationComp->SetFile(EnemySpriteSheet);
+	EnemyAnimationComp->SetCenterOffset(Vector<float>(0, 50));
+
+	// Enemy1 Idle
+	std::vector<Frame> Enemy1IdleFrames;
+	Enemy1IdleFrames.push_back(Frame(0, 2, 2048, 2048, "Idle_1"));
+	Enemy1IdleFrames.push_back(Frame(1, 2, 2048, 2048, "Idle_2"));
+	Enemy1IdleFrames.push_back(Frame(2, 2, 2048, 2048, "Idle_3"));
+	Enemy1IdleFrames.push_back(Frame(3, 2, 2048, 2048, "Idle_4"));
+	Enemy1IdleFrames.push_back(Frame(4, 2, 2048, 2048, "Idle_5"));
+	Enemy1IdleFrames.push_back(Frame(0, 3, 2048, 2048, "Idle_6"));
+	Clip Enemy1IdleClip("Idle", Enemy1IdleFrames, 0.1f);
+	EnemyAnimationComp->AddClip("Idle", Enemy1IdleClip);
+
+	// Enemy1 Walk
+	std::vector<Frame> Enemy1WalkFrames;
+	Enemy1WalkFrames.push_back(Frame(1, 3, 2048, 2048, "Walk_1"));
+	Enemy1WalkFrames.push_back(Frame(2, 3, 2048, 2048, "Walk_2"));
+	Enemy1WalkFrames.push_back(Frame(3, 3, 2048, 2048, "Walk_3"));
+	Enemy1WalkFrames.push_back(Frame(4, 3, 2048, 2048, "Walk_4"));
+	Enemy1WalkFrames.push_back(Frame(0, 4, 2048, 2048, "Walk_5"));
+	Enemy1WalkFrames.push_back(Frame(1, 4, 2048, 2048, "Walk_6"));
+	Enemy1WalkFrames.push_back(Frame(2, 4, 2048, 2048, "Walk_7"));
+	Enemy1WalkFrames.push_back(Frame(3, 4, 2048, 2048, "Walk_8"));
+	Clip Enemy1WalkClip("Walk", Enemy1WalkFrames, 0.1f);
+	EnemyAnimationComp->AddClip("Walk", Enemy1WalkClip);
+
+	EnemyAnimationComp->SetDefaultClip(Enemy1IdleClip);
+	EnemyAnimationComp->SetClip("Idle", true);
+
+	// Enemy1 collision
+	BoxComponent* EnemyBox = Enemy->AddComponent<BoxComponent>();
+	EnemyBox->SetCollisionChannel(ECollisionChannel::Enemy);
+	EnemyBox->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
+	EnemyBox->AddCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Ignore);
+	EnemyBox->AddCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Ignore);
+	EnemyBox->SetBoxSize(75, 100);
+	EnemyBox->SetOffset(85, 120);
 
 
 	/* Music Obj ----------------------------------------------- */

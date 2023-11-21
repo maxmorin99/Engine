@@ -46,6 +46,7 @@ namespace Core
 		std::vector<Node*> mVisitedList;
 		std::vector<Vector<float>> mPath;
 		Vector<float> mCurrPathPoint;
-		float mTolerance = 12.f;
+		float mTolerance = 35.f;
+		bool ShouldMove = true;
 	};
 }

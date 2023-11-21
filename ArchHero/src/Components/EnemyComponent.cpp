@@ -1,6 +1,7 @@
 #include "Components/EnemyComponent.h"
 #include "Components/PathFindingComponent.h"
 #include "Object.h"
+#include "Components/AnimationComponent.h"
 
 EnemyComponent::EnemyComponent(Object* Owner):
 	Component(Owner)
@@ -19,13 +20,43 @@ void EnemyComponent::Start()
 
 void EnemyComponent::Update(float DeltaTime)
 {
+	// Update Animation
+	if (mOwner)
+	{
+		AnimationComponent* AnimComp = mOwner->GetComponent<AnimationComponent>();
+		if (AnimComp)
+		{
+			if (mOwner->GetVelocity().Length() > 0.f)
+			{
+				AnimComp->SetClip("Walk", true);
+			}
+			else if(AnimComp->GetCurrentClipName() != "Idle")
+			{
+				AnimComp->SetClip("Idle", true);
+			}
+		}
+	}
+
+	// Update Flip
+	if (mOwner)
+	{
+		if (mOwner->GetVelocity().X < 0)
+		{
+			mOwner->SetFlip(Flip(true, false));
+		}
+		else if(mOwner->GetVelocity().X > 0)
+		{
+			mOwner->SetFlip(Flip(false, false));
+		}
+	}
+
 	Object* Player = World().GetObjectsWithTag("Player")[0];
 	if (Player)
 	{
-		mPath = mPathFindingComp->GetPath(Player->GetSpriteCenterLocation());
+		mPath = mPathFindingComp->GetPath(Player->GetCenterLocation());
 		bHasPath = true;
 	}
-	mPathFindingComp->Move();
+	//mPathFindingComp->Move();
 }
 
 void EnemyComponent::Draw()

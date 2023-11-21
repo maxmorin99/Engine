@@ -1,13 +1,13 @@
 #pragma once
+#include "Interfaces/IInput.h"
+#include "Interfaces/ILogger.h"
+#include "Interfaces/IGraphic.h"
+#include "Interfaces/ITime.h"
+#include "Interfaces/IWorld.h"
+#include "Interfaces/IAudio.h"
 
 namespace Core
 {
-	class IInput;
-	class ILogger;
-	class IGraphic;
-	class ITimer;
-	class IWorld;
-	class IAudio;
 
 	class Engine final
 	{

@@ -143,7 +143,7 @@ std::vector<Core::Vector<float>> Core::PathFindingComponent::GetPath(const Vecto
 	std::reverse(OutPath.begin(), OutPath.end());
 	mPath.clear();
 	mPath = OutPath;
-	mCurrPathPoint = mPath[0];
+	mCurrPathPoint = mPath.size() > 0 ? mPath[0] : Vector<float>();
 	return OutPath;
 }
 
@@ -227,9 +227,16 @@ void Core::PathFindingComponent::ResetNodesInAdjList()
 
 void Core::PathFindingComponent::Move()
 {
-	if (!mOwner) return;
+	if (!mOwner || !ShouldMove) return;
 
-	Vector<float> OwnerLoc = mOwner->GetLocation();
+	/*if (mCurrPathPoint == Vector<float>::ZeroVector())
+	{
+		if (mPath.size() > 0)
+		{
+			mCurrPathPoint = mPath[0];
+		}
+	}*/
+	Vector<float> OwnerLoc = mOwner->GetCenterLocation();
 	if (Vector<float>::Dist(OwnerLoc, mCurrPathPoint) <= mTolerance)
 	{
 		mPath.erase(mPath.begin());
@@ -237,6 +244,15 @@ void Core::PathFindingComponent::Move()
 		{
 			mCurrPathPoint = mPath[0];
 		}
+		else
+		{
+			StopMove();
+		}
+	}
+	else if(!ShouldMove)
+	{
+		ShouldMove = true;
+		Move();
 	}
 	Vector<float> MoveDir = Vector<float>(mCurrPathPoint - OwnerLoc).GetNormalized();
 	MoveDir.Y = -MoveDir.Y;
@@ -249,4 +265,5 @@ void Core::PathFindingComponent::Move()
 
 void Core::PathFindingComponent::StopMove()
 {
+	ShouldMove = false;
 }

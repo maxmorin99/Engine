@@ -40,6 +40,14 @@ void Core::Object::GetLocation(float* OutX, float* OutY)
     mTransform->GetLocation(OutX, OutY);
 }
 
+Core::Vector<float> Core::Object::GetCenterLocation() const
+{
+    Vector<float> Loc = GetLocation();
+    Vector<float> Size = GetSize();
+    Vector<float> SpriteCenterOffset = GetCenterOffset();
+    return Vector<float>(Loc.X + Size.X / 2 + SpriteCenterOffset.X, Loc.Y + Size.Y / 2 + SpriteCenterOffset.Y);
+}
+
 Core::Vector<float> Core::Object::GetSpriteCenterLocation() const
 {
     Vector<float> Size = GetSize();

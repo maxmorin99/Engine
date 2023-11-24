@@ -18,6 +18,10 @@ public:
 
 private:
 	PhysicComponent* mPxComp = nullptr;
+
+	bool bShouldMove = true;
+
+	void OnExplosionEnd();
 };
 
 

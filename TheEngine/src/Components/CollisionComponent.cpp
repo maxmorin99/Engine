@@ -33,9 +33,17 @@ Core::ECollisionResponse Core::CollisionComponent::GetCollisionResponseToChannel
 	return ECollisionResponse::Ignore;
 }
 
-void Core::CollisionComponent::AddCollisionResponseToChannel(const ECollisionChannel& Channel, const ECollisionResponse& Response)
+void Core::CollisionComponent::SetCollisionResponseToChannel(const ECollisionChannel& Channel, const ECollisionResponse& Response)
 {
 	mCollisionResponseToChannels[Channel] = Response;
+}
+
+void Core::CollisionComponent::SetCollisionResponseToAllChannels(const ECollisionResponse& Response)
+{
+	for (uint8_t i = 0; i != static_cast<uint8_t>(ECollisionChannel::MAX); i++)
+	{
+		SetCollisionResponseToChannel(static_cast<ECollisionChannel>(i), Response);
+	}
 }
 
 void Core::CollisionComponent::AddOverlappingObject(Object* Obj)

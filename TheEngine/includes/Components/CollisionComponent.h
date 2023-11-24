@@ -79,7 +79,8 @@ namespace Core
 		inline void SetCollisionType(const ECollisionShape& Type) { mCollisionType = Type; }
 		inline ECollisionShape GetCollisionType() const { return mCollisionType; }
 		ECollisionResponse GetCollisionResponseToChannel(const ECollisionChannel& Channel);
-		void AddCollisionResponseToChannel(const ECollisionChannel& Channel, const ECollisionResponse& Response);
+		void SetCollisionResponseToChannel(const ECollisionChannel& Channel, const ECollisionResponse& Response);
+		void SetCollisionResponseToAllChannels(const ECollisionResponse& Response);
 		inline void SetCollisionChannel(const ECollisionChannel& Channel) { mCollisionChannel = Channel; }
 		inline ECollisionChannel GetCollisionChannel() const { return mCollisionChannel; }
 		void AddOverlappingObject(Object* Obj);

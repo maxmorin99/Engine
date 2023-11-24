@@ -57,10 +57,10 @@ void FirstScene::Load()
 		Box->SetCollisionChannel(ECollisionChannel::World);
 		Box->SetBoxSize(TilemapObj._Rect.W, TilemapObj._Rect.H);
 		Box->SetCollisionType(ECollisionShape::Rectangle);
-		Box->AddCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Block);
-		Box->AddCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Block);
-		Box->AddCollisionResponseToChannel(ECollisionChannel::Projectile, ECollisionResponse::Block);
-		Box->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Ignore);
+		Box->SetCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Block);
+		Box->SetCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Block);
+		Box->SetCollisionResponseToChannel(ECollisionChannel::Projectile, ECollisionResponse::Block);
+		Box->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Ignore);
 	}
 	
 
@@ -148,6 +148,7 @@ void FirstScene::Load()
 	mObjectsToAddToWorld.push_back(WeaponObj);
 	WeaponObj->SetLocation(300, 300);
 	WeaponObj->SetSize(60, 30);
+
 	WeaponComponent* WeaponComp = WeaponObj->AddComponent<WeaponComponent>();
 	std::string WeaponFile = ASSET_PATH + std::string("Weapons/testweapon.png");
 	WeaponComp->SetFile(WeaponFile);
@@ -176,8 +177,8 @@ void FirstScene::Load()
 
 	BoxComponent* Box = AnimatedPlayer->AddComponent<BoxComponent>();
 	Box->SetCollisionChannel(ECollisionChannel::Player);
-	Box->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
-	Box->AddCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Ignore);
+	Box->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
+	Box->SetCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Ignore);
 	Box->SetBoxSize(75, 100);
 	Box->SetOffset(85, 120);
 
@@ -234,9 +235,9 @@ void FirstScene::Load()
 	// Enemy1 collision
 	BoxComponent* EnemyBox = Enemy->AddComponent<BoxComponent>();
 	EnemyBox->SetCollisionChannel(ECollisionChannel::Enemy);
-	EnemyBox->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Ignore);
-	EnemyBox->AddCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Ignore);
-	EnemyBox->AddCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Ignore);
+	EnemyBox->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Ignore);
+	EnemyBox->SetCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Ignore);
+	EnemyBox->SetCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Ignore);
 	EnemyBox->SetBoxSize(75, 100);
 	EnemyBox->SetOffset(85, 120);
 

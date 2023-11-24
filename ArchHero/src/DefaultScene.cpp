@@ -24,7 +24,7 @@ void DefaultScene::Load()
 	Door->AddComponent<PortalComponent>();
 	BoxComponent* DoorBox = Door->AddComponent<BoxComponent>();
 	DoorBox->SetCollisionChannel(ECollisionChannel::World);
-	DoorBox->AddCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Overlap);
+	DoorBox->SetCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Overlap);
 	DoorBox->SetBoxSize(150, 150);
 	DoorBox->SetOffset(0, 0);
 	SpriteComponent* DoorSprite = Door->AddComponent<SpriteComponent>();
@@ -92,7 +92,7 @@ void DefaultScene::Load()
 
 	BoxComponent* Box = AnimatedPlayer->AddComponent<BoxComponent>();
 	Box->SetCollisionChannel(ECollisionChannel::Player);
-	Box->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
+	Box->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
 	Box->SetBoxSize(75, 100);
 	Box->SetOffset(85, 120);
 

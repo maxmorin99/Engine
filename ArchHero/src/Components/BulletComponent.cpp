@@ -2,6 +2,8 @@
 #include "Object.h"
 #include "Components/PhysicComponent.h"
 #include "Components/CollisionComponent.h"
+#include "Components/AnimationComponent.h"
+#include "Components/BoxComponent.h"
 
 BulletComponent::BulletComponent(Core::Object* Owner) :
 	SpriteComponent(Owner)
@@ -23,7 +25,7 @@ void BulletComponent::Start()
 void BulletComponent::Update(float DeltaTime)
 {
 	// Move by fwd dir
-	if (!mPxComp) return;
+	if (!mPxComp || !bShouldMove) return;
 	mPxComp->AddMovement(mOwner->GetForwardVector().GetNormalized());
 }
 
@@ -48,6 +50,22 @@ void BulletComponent::OnNotify(const std::unordered_map<std::string, void*>& Val
 
 	if (OtherObject)
 	{
-		World().Destroy(mOwner);
+		if (mOwner)
+		{
+			bShouldMove = false;
+			if (AnimationComponent* AnimComp = mOwner->GetComponent<AnimationComponent>())
+			{
+
+				if (BoxComponent* BoxComp = mOwner->GetComponent<BoxComponent>())
+				{
+					BoxComp->SetCollisionResponseToAllChannels(ECollisionResponse::Ignore);
+				}
+			}
+		}
 	}
+}
+
+void BulletComponent::OnExplosionEnd()
+{
+	World().Destroy(mOwner);
 }

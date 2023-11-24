@@ -5,6 +5,7 @@
 #include "Components/BulletComponent.h"
 #include "Components/PhysicComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/AnimationComponent.h"
 #include "Math/RotationMatrix.h"
 
 WeaponComponent::WeaponComponent(Object* InOwner) :
@@ -118,15 +119,16 @@ Object* WeaponComponent::SpawnBullet()
 	// spawn bullet
 	Object* Bullet = new Object();
 	Bullet->AddTag("Bullet");
-	Bullet->SetSize(20.f, 20.f);
+	//Bullet->SetSize(20.f, 20.f);
+	Bullet->SetSize(200.f, 200.f);
 	Bullet->SetRotation(-mOwner->GetRotation());
 	Bullet->SetCenterLocation(Mid + mOwner->GetForwardVector() * 45);
 	BulletComponent* BulletComp = Bullet->AddComponent<BulletComponent>();
 
 	// Set texture file
-	SpriteComponent* Sprite = Bullet->AddComponent<SpriteComponent>();
+	/*SpriteComponent* Sprite = Bullet->AddComponent<SpriteComponent>();
 	std::string File = ASSET_PATH + std::string("Weapons/bullet.png");
-	Sprite->SetFile(File);
+	Sprite->SetFile(File);*/
 
 	// Px
 	PhysicComponent* PxComp = Bullet->AddComponent<PhysicComponent>();
@@ -139,8 +141,32 @@ Object* WeaponComponent::SpawnBullet()
 	// Collision
 	BoxComponent* BoxComp = Bullet->AddComponent<BoxComponent>();
 	BoxComp->SetCollisionChannel(ECollisionChannel::Projectile);
-	BoxComp->AddCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Overlap);
+	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Overlap);
 	BoxComp->SetBoxSize(20.f, 20.f);
+
+	// Animation
+	AnimationComponent* BulletAnim = Bullet->AddComponent<AnimationComponent>();
+	std::string ExplosionFile = ASSET_PATH + std::string("Projectiles/PlayerProjectile.png");
+	BulletAnim->SetFile(ExplosionFile);
+	std::vector<Frame> BulletExplosionFrames;
+	BulletExplosionFrames.push_back(Frame(1, 0, 256, 256, "Explosion_1"));
+	BulletExplosionFrames.push_back(Frame(2, 0, 256, 256, "Explosion_2"));
+	BulletExplosionFrames.push_back(Frame(3, 0, 256, 256, "Explosion_3"));
+	BulletExplosionFrames.push_back(Frame(1, 0, 256, 256, "Explosion_4"));
+	BulletExplosionFrames.push_back(Frame(1, 1, 256, 256, "Explosion_5"));
+	BulletExplosionFrames.push_back(Frame(1, 2, 256, 256, "Explosion_6"));
+	BulletExplosionFrames.push_back(Frame(1, 3, 256, 256, "Explosion_7"));
+	BulletExplosionFrames.push_back(Frame(2, 0, 256, 256, "Explosion_8"));
+	BulletExplosionFrames.push_back(Frame(2, 1, 256, 256, "Explosion_9"));
+	BulletExplosionFrames.push_back(Frame(2, 2, 256, 256, "Explosion_10"));
+	BulletExplosionFrames.push_back(Frame(2, 3, 256, 256, "Explosion_11"));
+	BulletExplosionFrames.push_back(Frame(3, 0, 256, 256, "Explosion_12"));
+	BulletExplosionFrames.push_back(Frame(3, 1, 256, 256, "Explosion_13"));
+	Clip ExplosionClip("ExplosionClip", BulletExplosionFrames, 0.1f);
+	BulletAnim->AddClip("Explosion", ExplosionClip);
+	BulletAnim->SetDefaultClip(ExplosionClip);
+	BulletAnim->SetClip("ExplosionClip", true);
+	
 
 	// Add bullet to the world
 	World().AddObject(Bullet);

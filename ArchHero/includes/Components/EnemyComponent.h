@@ -18,6 +18,8 @@ private:
 	PathFindingComponent* mPathFindingComp = nullptr;
 	std::vector<Vector<float>> mPath;
 
+	Object* Target = nullptr;
+
 	bool bHasPath = false;
 
 	// Hérité via IDrawable
@@ -25,4 +27,7 @@ private:
 
 	// Hérité via IUpdatable
 	virtual void Update(float DeltaTime) override;
+
+	void UpdateAnimation();
+	void UpdateFlip();
 };

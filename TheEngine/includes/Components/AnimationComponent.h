@@ -47,6 +47,8 @@ namespace Core
 		void AddClip(const std::string& InName, Clip& InClip);
 		void SetClip(const std::string& InClipName, bool bLoop, std::function<void()> FunPtr = nullptr);
 		void SetDefaultClip(Clip& InClip);
+		void Enable();
+		void Disable();
 
 	private:
 		std::unordered_map<std::string, Clip> mClips;
@@ -54,6 +56,8 @@ namespace Core
 
 		/** Default clip. This clip will be selected when a non looping animation ends and no other is requested */
 		Clip mDefaultClip;
+
+		bool bShouldPlay = true;
 
 	public:
 		inline std::string GetCurrentClipName() const { return mCurrentClip.Name; }

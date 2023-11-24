@@ -45,7 +45,7 @@ void Core::AnimationComponent::Start()
 
 void Core::AnimationComponent::Update(float DeltaTime)
 {
-	if (mCurrentClip.Frames.size() == 0) return;
+	if (!bShouldPlay && mCurrentClip.Frames.size() == 0) return;
 
 	// Update the current clip
 	mCurrentClip.CurrFrameTime += DeltaTime;
@@ -72,12 +72,25 @@ void Core::AnimationComponent::Update(float DeltaTime)
 		}
 	}
 
-	SetFrame(mCurrentClip.Frames[mCurrentClip.CurrFrameIndex]);
+	if (mCurrentClip.Frames.size() > 0)
+	{
+		SetFrame(mCurrentClip.Frames[mCurrentClip.CurrFrameIndex]);
+	}
 }
 
 void Core::AnimationComponent::Destroy()
 {
 	AtlasComponent::Destroy();
+}
+
+void Core::AnimationComponent::Enable()
+{
+	bShouldPlay = true;
+}
+
+void Core::AnimationComponent::Disable()
+{
+	bShouldPlay = false;
 }
 
 void Core::AnimationComponent::Draw()

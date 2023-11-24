@@ -16,11 +16,28 @@ void EnemyComponent::Start()
 	{
 		mPathFindingComp = mOwner->GetComponent<PathFindingComponent>();
 	}
+
+	Target = World().GetObjectsWithTag("Player")[0];
 }
 
 void EnemyComponent::Update(float DeltaTime)
 {
-	// Update Animation
+	// Update Animation based on enemy's velocity
+	UpdateAnimation();
+
+	// Update Flip based on movement dir
+	UpdateFlip();
+
+	if (Target)
+	{
+		mPath = mPathFindingComp->GetPath(Target->GetCenterLocation());
+		bHasPath = true;
+	}
+	mPathFindingComp->Move();
+}
+
+void EnemyComponent::UpdateAnimation()
+{
 	if (mOwner)
 	{
 		AnimationComponent* AnimComp = mOwner->GetComponent<AnimationComponent>();
@@ -30,33 +47,27 @@ void EnemyComponent::Update(float DeltaTime)
 			{
 				AnimComp->SetClip("Walk", true);
 			}
-			else if(AnimComp->GetCurrentClipName() != "Idle")
+			else if (AnimComp->GetCurrentClipName() != "Idle")
 			{
 				AnimComp->SetClip("Idle", true);
 			}
 		}
 	}
+}
 
-	// Update Flip
+void EnemyComponent::UpdateFlip()
+{
 	if (mOwner)
 	{
 		if (mOwner->GetVelocity().X < 0)
 		{
 			mOwner->SetFlip(Flip(true, false));
 		}
-		else if(mOwner->GetVelocity().X > 0)
+		else if (mOwner->GetVelocity().X > 0)
 		{
 			mOwner->SetFlip(Flip(false, false));
 		}
 	}
-
-	Object* Player = World().GetObjectsWithTag("Player")[0];
-	if (Player)
-	{
-		mPath = mPathFindingComp->GetPath(Player->GetCenterLocation());
-		bHasPath = true;
-	}
-	mPathFindingComp->Move();
 }
 
 void EnemyComponent::Draw()

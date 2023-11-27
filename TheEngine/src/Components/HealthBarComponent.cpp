@@ -20,7 +20,6 @@ void Core::HealthBarComponent::Start()
 
 void Core::HealthBarComponent::Draw()
 {
-	Graphic().DrawRectF(false, &mBarRect, Color::Black);
 	for (int i = 0; i < mBorderSize; i++)
 	{
 		float NewX = mBarRect.X + i;

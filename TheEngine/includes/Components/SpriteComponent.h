@@ -15,6 +15,8 @@ namespace Core
 		virtual void Start();
 		virtual void Destroy();
 		virtual void Draw() override;
+		virtual Component* Clone(Object* Owner) override;
+		virtual void SetupClone(Component* Child) override;
 
 	protected:
 		std::string mFile = "";
@@ -31,6 +33,7 @@ namespace Core
 		inline void SetColor(const Color& NewColor) { mColor = NewColor; }
 		inline const Color& getColor() const { return mColor; }
 		void SetFile(const std::string& File);
+		void SetFile(const std::string& File, int IdxX, int IdxY, int ImgCountW, int ImgCountH);
 		void SetFlip(const Flip& InFlip);
 		inline Flip GetFlip() const { return mFlip; }
 		inline void SetCenterOffset(const Vector<float>& CenterOffset) { mCenterOffset = CenterOffset; }

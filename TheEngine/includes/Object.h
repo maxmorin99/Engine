@@ -22,6 +22,7 @@ namespace Core
 		void Render();
 		void Destroy();
 		void UseOldLocation();
+		Object* Clone();
 
 		template<typename T>
 		T* AddComponent();
@@ -50,6 +51,7 @@ namespace Core
 		std::unordered_map<const type_info*, Component*> mComponentsByType;
 
 		size_t GenerateId();
+		void AddComponent(Component* comp);
 
 	public:
 		inline std::string GetId() const { return mId; }

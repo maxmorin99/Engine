@@ -11,6 +11,9 @@ public:
 	WeaponComponent(Object* InOwner);
 	virtual void Update(float DeltaTime) override;
 	virtual void Draw() override;
+	virtual void Start() override;
+	virtual Component* Clone(Object* Owner) override;
+	virtual void SetupClone(Component* Child) override;
 
 private:
 	Object* mInstigator = nullptr;
@@ -27,8 +30,13 @@ private:
 	/** Update the weapon location depending on its rotation */
 	void UpdateWeaponLocation();
 	void UpdateRotation();
+	void UpdateFire(float DeltaTime);
+	void DefineBulletPrototype();
 	
 	Object* SpawnBullet();
+
+	float mFireRate = 0.4f;
+	float mFireTimeElapsed = 0.f;
 
 
 public:
@@ -42,4 +50,6 @@ public:
 
 	/** Offset from the instigator to put the weapon to the right, to the left, ... */
 	inline void SetOffset(const Vector<float>& InOffset) { mOffset = InOffset; }
+
+	inline void SetFireRate(float InRate) { mFireRate = InRate; }
 };

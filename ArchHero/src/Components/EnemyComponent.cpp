@@ -95,3 +95,16 @@ void EnemyComponent::Destroy()
 {
 	Component::Destroy();
 }
+
+Component* EnemyComponent::Clone(Object* Owner)
+{
+	EnemyComponent* Clone = new EnemyComponent(Owner);
+	__super::SetupClone(Clone);
+
+	return Clone;
+}
+
+void EnemyComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+}

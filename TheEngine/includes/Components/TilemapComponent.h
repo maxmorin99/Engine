@@ -20,6 +20,8 @@ namespace Core
 		void AddObjectLayer(const std::string& Name);
 		void SetTiledFile(const std::string& File);
 		virtual void Destroy() override;
+		virtual Component* Clone(Object* Owner);
+		virtual void SetupClone(Component* Child);
 		TTilemap GetTilemap() const;
 		std::vector<Layer> GetLayers() const;
 

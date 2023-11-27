@@ -20,6 +20,18 @@ void Core::FunctionalityComponent::Update(float DeltaTime)
 {
 }
 
+Core::Component* Core::FunctionalityComponent::Clone(Object* Owner)
+{
+	FunctionalityComponent* Clone = new FunctionalityComponent(Owner);
+	__super::SetupClone(Clone);
+	return Clone;
+}
+
+void Core::FunctionalityComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+}
+
 void Core::FunctionalityComponent::SetMusicFile(const char* File, int Volume)
 {
 	mMusicId = Audio().LoadMusic(File);

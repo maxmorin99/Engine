@@ -18,6 +18,8 @@ namespace Core
 		virtual ~PlayerComponent() = default;
 		virtual void Start();
 		virtual void Destroy();
+		virtual Component* Clone(Object* Owner);
+		virtual void SetupClone(Component* Child);
 
 		virtual void Update(float DeltaTime) override;
 

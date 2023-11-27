@@ -11,6 +11,8 @@ namespace Core
 		virtual ~MusicComponent() = default;
 		virtual void Start();
 		void SetMusicFile(const std::string& File);
+		virtual Component* Clone(Object* Owner);
+		virtual void SetupClone(Component* Child);
 
 	private:
 		std::string mMusicFile;

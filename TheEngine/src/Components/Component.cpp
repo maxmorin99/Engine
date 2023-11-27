@@ -35,3 +35,10 @@ Core::IWorld& Core::Component::World() const
 {
 	return Engine::GetWorld();
 }
+
+Core::ISpawner& Core::Component::Spawner() const
+{
+	return Engine::GetSpawner();
+}
+
+

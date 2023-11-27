@@ -13,13 +13,13 @@ public:
 	virtual void Start() override;
 	virtual void Update(float DeltaTime) override;
 	virtual void Destroy() override;
+	virtual Component* Clone(Object* Owner) override;
+	virtual void SetupClone(Component* Child) override;
 
 	virtual void OnNotify(const std::unordered_map<std::string, void*>& Value) override;
 
 private:
 	PhysicComponent* mPxComp = nullptr;
-
-	bool bShouldMove = true;
 
 	void OnExplosionEnd();
 };

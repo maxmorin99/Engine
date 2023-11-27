@@ -13,6 +13,8 @@ public:
 	virtual ~EnemyComponent() = default;
 	virtual void Start() override;
 	virtual void Destroy() override;
+	virtual Component* Clone(Object* Owner) override;
+	virtual void SetupClone(Component* Child) override;
 
 private:
 	PathFindingComponent* mPathFindingComp = nullptr;

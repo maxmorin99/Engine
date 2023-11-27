@@ -25,13 +25,26 @@ void BulletComponent::Start()
 void BulletComponent::Update(float DeltaTime)
 {
 	// Move by fwd dir
-	if (!mPxComp || !bShouldMove) return;
+	if (!mPxComp) return;
 	mPxComp->AddMovement(mOwner->GetForwardVector().GetNormalized());
 }
 
 void BulletComponent::Destroy()
 {
 	SpriteComponent::Destroy();
+}
+
+Component* BulletComponent::Clone(Object* Owner)
+{
+	BulletComponent* Clone = new BulletComponent(Owner);
+	__super::SetupClone(Clone);
+
+	return Clone;
+}
+
+void BulletComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
 }
 
 void BulletComponent::OnNotify(const std::unordered_map<std::string, void*>& Value)
@@ -52,9 +65,17 @@ void BulletComponent::OnNotify(const std::unordered_map<std::string, void*>& Val
 	{
 		if (mOwner)
 		{
-			bShouldMove = false;
+			// Disable pxComp to stop moving
+			if (mPxComp)
+			{
+				mPxComp->Disable();
+			}
+
 			if (AnimationComponent* AnimComp = mOwner->GetComponent<AnimationComponent>())
 			{
+				AnimComp->SetClip("ExplosionClip", false, std::bind(&BulletComponent::OnExplosionEnd, this));
+				mOwner->SetSize(mOwner->GetSize().X * 3, mOwner->GetSize().Y * 3);
+				mOwner->SetLocation(mOwner->GetLocation().X - mOwner->GetSize().X / 3, mOwner->GetLocation().Y - mOwner->GetSize().Y / 3);
 
 				if (BoxComponent* BoxComp = mOwner->GetComponent<BoxComponent>())
 				{

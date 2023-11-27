@@ -32,6 +32,30 @@ void Core::AtlasComponent::Draw()
 	SpriteComponent::Draw();
 }
 
+Core::Component* Core::AtlasComponent::Clone(Object* Owner)
+{
+	AtlasComponent* Clone = new AtlasComponent(Owner);
+	__super::SetupClone(Clone);
+
+	Clone->mTextureSize = mTextureSize;
+	Clone->mFrames = mFrames;
+	Clone->mCurrentFrame = mCurrentFrame;
+
+	return Clone;
+}
+
+void Core::AtlasComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+
+	AtlasComponent* Clone = dynamic_cast<AtlasComponent*>(Child);
+	if (!Clone) return;
+
+	Clone->mTextureSize = mTextureSize;
+	Clone->mFrames = mFrames;
+	Clone->mCurrentFrame = mCurrentFrame;
+}
+
 void Core::AtlasComponent::AddFrame(const std::string& Name, int X, int Y, int W, int H)
 {
 	if (mFrames.count(Name) > 0) return;

@@ -18,6 +18,8 @@ namespace Core
 		virtual void Destroy();
 		virtual void Draw() override;
 		virtual void Update(float DeltaTime) override;
+		virtual Component* Clone(Object* Owner);
+		virtual void SetupClone(Component* Child);
 
 		void SetMusicFile(const char* File, int Volume);
 		void SetFontFile(const char* File, int Size);

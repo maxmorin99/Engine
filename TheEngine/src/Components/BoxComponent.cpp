@@ -32,6 +32,26 @@ void Core::BoxComponent::Draw()
 	Graphic().DrawLineF(Vector<float>::ZeroVector(), Center, Color::Green);*/
 }
 
+Core::Component* Core::BoxComponent::Clone(Object* Owner)
+{
+	BoxComponent* Clone = new BoxComponent(Owner);
+	__super::SetupClone(Clone);
+
+	Clone->mRect = mRect;
+	Clone->mOwnerOffset = mOwnerOffset;
+	return Clone;
+}
+
+void Core::BoxComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+	BoxComponent* Clone = dynamic_cast<BoxComponent*>(Child);
+	if (!Clone) return;
+
+	Clone->mRect = mRect;
+	Clone->mOwnerOffset = mOwnerOffset;
+}
+
 void Core::BoxComponent::SetCollisionLocation(const Vector<float>& NewLoc)
 {
 	CollisionComponent::SetCollisionLocation(NewLoc);

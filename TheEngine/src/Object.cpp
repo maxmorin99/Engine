@@ -246,6 +246,45 @@ void Core::Object::UseOldLocation()
     mTransform->SetLocation(OldLoc);
 }
 
+Core::Object* Core::Object::Clone()
+{
+    Object* Clone = new Object();
+    Clone->mTags = mTags;
+    
+    for (Component* c : mComponents)
+    {
+        // Only get the size of the transform since each Object has a default transform component
+        if (TransformComponent* t = dynamic_cast<TransformComponent*>(c))
+        {
+            Clone->SetSize(t->GetSize());
+            continue;
+        }
+        Component* ClonedComp = c->Clone(Clone);
+        Clone->AddComponent(ClonedComp);
+    }
+    return Clone;
+}
+
+void Core::Object::AddComponent(Component* comp)
+{
+    if (!comp) return;
+
+    mComponents.push_back(comp);
+    const type_info* Type = &typeid(*comp);
+    mComponentsByType.emplace(Type, comp);
+
+    IUpdatable* Updatable = dynamic_cast<IUpdatable*>(comp);
+    if (Updatable)
+    {
+        mUpdatable.push_back(Updatable);
+    }
+    IDrawable* Drawable = dynamic_cast<IDrawable*>(comp);
+    if (Drawable)
+    {
+        mDrawable.push_back(Drawable);
+    }
+}
+
 Core::CollisionComponent* Core::Object::GetCollisionComponent() const
 {
     BoxComponent* BoxComp = GetComponent<BoxComponent>();

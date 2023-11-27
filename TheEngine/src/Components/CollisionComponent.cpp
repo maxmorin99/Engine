@@ -151,6 +151,30 @@ void Core::CollisionComponent::Destroy()
 	delete mSubjectOnCollisionHit;
 }
 
+Core::Component* Core::CollisionComponent::Clone(Object* Owner)
+{
+	CollisionComponent* Clone = new CollisionComponent(Owner);
+	__super::SetupClone(Clone);
+
+	Clone->mCollisionType = mCollisionType;
+	Clone->mCollisionChannel = mCollisionChannel;
+	Clone->mCollisionResponseToChannels = mCollisionResponseToChannels;
+
+	return Clone;
+}
+
+void Core::CollisionComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+
+	CollisionComponent* Clone = dynamic_cast<CollisionComponent*>(Child);
+	if (!Clone) return;
+
+	Clone->mCollisionType = mCollisionType;
+	Clone->mCollisionChannel = mCollisionChannel;
+	Clone->mCollisionResponseToChannels = mCollisionResponseToChannels;
+}
+
 void Core::CollisionComponent::SetCollisionLocation(const Vector<float>& NewLoc)
 {
 }

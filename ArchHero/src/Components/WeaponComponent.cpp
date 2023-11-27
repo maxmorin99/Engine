@@ -20,16 +20,34 @@ void WeaponComponent::Update(float DeltaTime)
 	UpdateFlip();
 	UpdateWeaponLocation();
 	UpdateRotation();
-
-	if (Input().IsButtonDown(0))
-	{
-		SpawnBullet();
-	}
+	UpdateFire(DeltaTime);
 }
 
 void WeaponComponent::Draw()
 {
 	SpriteComponent::Draw();
+}
+
+void WeaponComponent::Start()
+{
+	SpriteComponent::Start();
+
+	DefineBulletPrototype();
+
+	mFireTimeElapsed = mFireRate;
+}
+
+Component* WeaponComponent::Clone(Object* Owner)
+{
+	WeaponComponent* Clone = new WeaponComponent(Owner);
+	__super::SetupClone(Clone);
+
+	return Clone;
+}
+
+void WeaponComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
 }
 
 void WeaponComponent::UpdateFlip()
@@ -97,38 +115,26 @@ void WeaponComponent::UpdateRotation()
 	mOwner->SetRotation(AngleDeg);
 }
 
-Object* WeaponComponent::SpawnBullet()
+void WeaponComponent::UpdateFire(float DeltaTime)
 {
-	// Rotate Src rect of weapon by its rotation
-	RotationMatrix R;
-	Vector<float> Points[4]{ Vector<float>::ZeroVector() };
-	Rect<float> DstF = { static_cast<float>(mDst.X), static_cast<float>(mDst.Y), static_cast<float>(mDst.W), static_cast<float>(mDst.H) };
-	R.RotateRect(mOwner->GetRotation(), DstF, Points);
-	Rect<float> RotatedRect{Points[0].X, Points[0].Y, Points[1].X - Points[0].X, Points[2].Y - Points[0].Y};
-
-	// Get the mid point of the rotated rect
-	Vector<float> Mid = Vector<float>::ZeroVector();
-	for (int i = 0; i < 4; i++)
+	mFireTimeElapsed += DeltaTime;
+	if (Input().IsButtonDown(0))
 	{
-		Mid.X += Points[i].X;
-		Mid.Y += Points[i].Y;
+		if (mFireTimeElapsed > mFireRate)
+		{
+			mFireTimeElapsed = 0.f;
+			SpawnBullet();
+		}
 	}
-	Mid.X /= 4;
-	Mid.Y /= 4;
+}
 
-	// spawn bullet
+void WeaponComponent::DefineBulletPrototype()
+{
 	Object* Bullet = new Object();
 	Bullet->AddTag("Bullet");
-	//Bullet->SetSize(20.f, 20.f);
-	Bullet->SetSize(200.f, 200.f);
+	Bullet->SetSize(20.f, 20.f);
 	Bullet->SetRotation(-mOwner->GetRotation());
-	Bullet->SetCenterLocation(Mid + mOwner->GetForwardVector() * 45);
 	BulletComponent* BulletComp = Bullet->AddComponent<BulletComponent>();
-
-	// Set texture file
-	/*SpriteComponent* Sprite = Bullet->AddComponent<SpriteComponent>();
-	std::string File = ASSET_PATH + std::string("Weapons/bullet.png");
-	Sprite->SetFile(File);*/
 
 	// Px
 	PhysicComponent* PxComp = Bullet->AddComponent<PhysicComponent>();
@@ -148,28 +154,55 @@ Object* WeaponComponent::SpawnBullet()
 	AnimationComponent* BulletAnim = Bullet->AddComponent<AnimationComponent>();
 	std::string ExplosionFile = ASSET_PATH + std::string("Projectiles/PlayerProjectile.png");
 	BulletAnim->SetFile(ExplosionFile);
+	std::vector<Frame> BulletIdleFrames;
+	BulletIdleFrames.push_back(Frame(3, 0, 256, 256, "Idle_1"));
+	BulletIdleFrames.push_back(Frame(0, 1, 256, 256, "Idle_2"));
+	BulletIdleFrames.push_back(Frame(1, 1, 256, 256, "Idle_3"));
+	BulletIdleFrames.push_back(Frame(2, 1, 256, 256, "Idle_4"));
+	BulletIdleFrames.push_back(Frame(3, 1, 256, 256, "Idle_5"));
+	Clip IdleClip("IdleClip", BulletIdleFrames, 0.1f);
+	BulletAnim->AddClip("IdleClip", IdleClip);
+
 	std::vector<Frame> BulletExplosionFrames;
-	BulletExplosionFrames.push_back(Frame(1, 0, 256, 256, "Explosion_1"));
-	BulletExplosionFrames.push_back(Frame(2, 0, 256, 256, "Explosion_2"));
-	BulletExplosionFrames.push_back(Frame(3, 0, 256, 256, "Explosion_3"));
-	BulletExplosionFrames.push_back(Frame(1, 0, 256, 256, "Explosion_4"));
-	BulletExplosionFrames.push_back(Frame(1, 1, 256, 256, "Explosion_5"));
-	BulletExplosionFrames.push_back(Frame(1, 2, 256, 256, "Explosion_6"));
-	BulletExplosionFrames.push_back(Frame(1, 3, 256, 256, "Explosion_7"));
-	BulletExplosionFrames.push_back(Frame(2, 0, 256, 256, "Explosion_8"));
-	BulletExplosionFrames.push_back(Frame(2, 1, 256, 256, "Explosion_9"));
-	BulletExplosionFrames.push_back(Frame(2, 2, 256, 256, "Explosion_10"));
-	BulletExplosionFrames.push_back(Frame(2, 3, 256, 256, "Explosion_11"));
-	BulletExplosionFrames.push_back(Frame(3, 0, 256, 256, "Explosion_12"));
-	BulletExplosionFrames.push_back(Frame(3, 1, 256, 256, "Explosion_13"));
-	Clip ExplosionClip("ExplosionClip", BulletExplosionFrames, 0.1f);
-	BulletAnim->AddClip("Explosion", ExplosionClip);
-	BulletAnim->SetDefaultClip(ExplosionClip);
-	BulletAnim->SetClip("ExplosionClip", true);
-	
+	BulletExplosionFrames.push_back(Frame(4, 0, 256, 256, "Explosion_1"));
+	BulletExplosionFrames.push_back(Frame(5, 0, 256, 256, "Explosion_2"));
+	BulletExplosionFrames.push_back(Frame(6, 0, 256, 256, "Explosion_3"));
+	BulletExplosionFrames.push_back(Frame(7, 0, 256, 256, "Explosion_4"));
+	Clip ExplosionClip("ExplosionClip", BulletExplosionFrames, 0.005f);
+	BulletAnim->AddClip("ExplosionClip", ExplosionClip);
+
+	BulletAnim->SetDefaultClip(IdleClip);
+	BulletAnim->SetClip("IdleClip", true);
+
+	Spawner().AddPrototype("Bullet", Bullet);
+}
+
+Object* WeaponComponent::SpawnBullet()
+{
+	// Rotate Src rect of weapon by its rotation
+	RotationMatrix R;
+	Vector<float> Points[4]{ Vector<float>::ZeroVector() };
+	Rect<float> DstF = { static_cast<float>(mDst.X), static_cast<float>(mDst.Y), static_cast<float>(mDst.W), static_cast<float>(mDst.H) };
+	R.RotateRect(mOwner->GetRotation(), DstF, Points);
+	Rect<float> RotatedRect{Points[0].X, Points[0].Y, Points[1].X - Points[0].X, Points[2].Y - Points[0].Y};
+
+	// Get the mid point of the rotated rect
+	Vector<float> Mid = Vector<float>::ZeroVector();
+	for (int i = 0; i < 4; i++)
+	{
+		Mid.X += Points[i].X;
+		Mid.Y += Points[i].Y;
+	}
+	Mid.X /= 4;
+	Mid.Y /= 4;
+
+	Object* Bullet = Spawner().Spawn("Bullet");
+	Bullet->SetRotation(-mOwner->GetRotation());
+	Bullet->SetCenterLocation(Mid + mOwner->GetForwardVector() * 45);
 
 	// Add bullet to the world
 	World().AddObject(Bullet);
 
 	return Bullet;
 }
+

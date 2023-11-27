@@ -29,6 +29,8 @@ namespace Core
 		PathFindingComponent(Object* Owner);
 		virtual void Start() override;
 		virtual void Destroy() override;
+		virtual Component* Clone(Object* Owner);
+		virtual void SetupClone(Component* Child);
 		std::vector<Vector<float>> GetPath(const Vector<float>& TargetLoc);
 		void Move();
 		void StopMove();

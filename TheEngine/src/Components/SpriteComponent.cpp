@@ -24,11 +24,53 @@ void Core::SpriteComponent::Draw()
 	Graphic().DrawTexture(mTextureId, mSrc, mDst, OwnerRot, mFlip, mColor);
 }
 
+Core::Component* Core::SpriteComponent::Clone(Object* Owner)
+{
+	SpriteComponent* Clone = new SpriteComponent(Owner);
+	__super::SetupClone(Clone);
+
+	Clone->mFile = mFile;
+	Clone->mTextureId = mTextureId;
+	Clone->mSrc = mSrc;
+	Clone->mDst = mDst;
+	Clone->mColor = mColor;
+	Clone->mFlip = mFlip;
+	Clone->mCenterOffset = mCenterOffset;
+	return Clone;
+}
+
+void Core::SpriteComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+
+	SpriteComponent* Clone = dynamic_cast<SpriteComponent*>(Child);
+	if (!Clone) return;
+
+	Clone->mFile = mFile;
+	Clone->mTextureId = mTextureId;
+	Clone->mSrc = mSrc;
+	Clone->mDst = mDst;
+	Clone->mColor = mColor;
+	Clone->mFlip = mFlip;
+	Clone->mCenterOffset = mCenterOffset;
+}
+
 void Core::SpriteComponent::SetFile(const std::string& File)
 {
 	mFile = File;
 	mTextureId = Graphic().LoadTexture(mFile.c_str());
 	Graphic().GetTextureSize(mTextureId, &mSrc.W, &mSrc.H);
+}
+
+void Core::SpriteComponent::SetFile(const std::string& File, int IdxX, int IdxY, int ImgCountW, int ImgCountH)
+{
+	mFile = File;
+	mTextureId = Graphic().LoadTexture(mFile.c_str());
+	int SizeX = 0;
+	int SizeY = 0;
+	Graphic().GetTextureSize(mTextureId, &SizeX, &SizeY);
+	Logger().DebugLog(ConsoleColor::Yellow, "SizeW: %d, SizeH: %d\n", SizeX / ImgCountW, SizeY / ImgCountH);
+	mSrc = Rect<int>(IdxX * SizeX / ImgCountW, IdxY * SizeY / ImgCountH, SizeX / ImgCountW, SizeY / ImgCountH);
 }
 
 void Core::SpriteComponent::SetFlip(const Flip& InFlip)

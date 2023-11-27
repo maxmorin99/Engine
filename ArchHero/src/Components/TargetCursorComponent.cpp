@@ -22,3 +22,16 @@ void TargetCursorComponent::Draw()
 {
 	SpriteComponent::Draw();
 }
+
+Component* TargetCursorComponent::Clone(Object* Owner)
+{
+	TargetCursorComponent* Clone = new TargetCursorComponent(Owner);
+	__super::SetupClone(Clone);
+
+	return Clone;
+}
+
+void TargetCursorComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+}

@@ -14,6 +14,7 @@
 #include "Components/MusicComponent.h"
 #include "Components/EnemyComponent.h"
 #include "Components/PathFindingComponent.h"
+#include "Components/HealthBarComponent.h"
 
 FirstScene::FirstScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH) :
 	Scene(name, tilemapFile, srcTileW, srcTileH, tileCountW, tileCountH)
@@ -249,6 +250,16 @@ void FirstScene::Load()
 	MusicComponent* MusicComp = MusicObj->AddComponent<MusicComponent>();
 	std::string MusicFile = ASSET_PATH + std::string("Music/MusicDefaultScene.wav");
 	MusicComp->SetMusicFile(MusicFile);
+
+	
+	/* UI ------------------------------------------------------ */
+
+	Object* UIObj = new Object();
+	mObjectsToAddToWorld.push_back(UIObj);
+	HealthBarComponent* HealthBarComp = UIObj->AddComponent<HealthBarComponent>();
+	HealthBarComp->SetPaddingPercent(0.01f);
+	HealthBarComp->SetSizeRatio(Vector<float>(0.2, 0.05));
+	HealthBarComp->SetBorderSize(7);
 
 
 	/* Add obj in the world ------------------------------------ */

@@ -358,6 +358,18 @@ void Core::TilemapComponent::Destroy()
 	delete mTilemapObjects;
 }
 
+Core::Component* Core::TilemapComponent::Clone(Object* Owner)
+{
+	TilemapComponent* Clone = new TilemapComponent(Owner);
+	__super::SetupClone(Clone);
+	return Clone;
+}
+
+void Core::TilemapComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+}
+
 Core::TTilemap Core::TilemapComponent::GetTilemap() const
 {
 	if (mTilemap)

@@ -83,6 +83,31 @@ void Core::AnimationComponent::Destroy()
 	AtlasComponent::Destroy();
 }
 
+Core::Component* Core::AnimationComponent::Clone(Object* Owner)
+{
+	AnimationComponent* Clone = new AnimationComponent(Owner);
+	__super::SetupClone(Clone);
+
+	Clone->mCurrentClip = mCurrentClip;
+	Clone->mDefaultClip = mDefaultClip;
+	Clone->bShouldPlay = true;
+	Clone->mClips = mClips;
+
+	return Clone;
+}
+
+void Core::AnimationComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+
+	AnimationComponent* Clone = dynamic_cast<AnimationComponent*>(Child);
+	if (!Clone) return;
+
+	Clone->mCurrentClip = mDefaultClip;
+	Clone->mDefaultClip = mDefaultClip;
+	Clone->bShouldPlay = true;
+}
+
 void Core::AnimationComponent::Enable()
 {
 	bShouldPlay = true;

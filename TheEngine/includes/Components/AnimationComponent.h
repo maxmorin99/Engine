@@ -39,6 +39,8 @@ namespace Core
 		virtual ~AnimationComponent() = default;
 		virtual void Start();
 		virtual void Destroy();
+		virtual Component* Clone(Object* Owner) override;
+		virtual void SetupClone(Component* Child) override;
 
 		
 		void Update(float DeltaTime) override;

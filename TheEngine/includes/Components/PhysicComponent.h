@@ -18,6 +18,8 @@ namespace Core
 		virtual void Start();
 		virtual void Destroy();
 		virtual void Update(float DeltaTime) override;
+		virtual Component* Clone(Object* Owner);
+		virtual void SetupClone(Component* Child);
 		
 		void AddMovement(const Vector<float>& MovementDirection);
 
@@ -25,6 +27,7 @@ namespace Core
 		float mMaxMovementSpeed = 100.f;
 		float mDecelerationSpeed = 50.f;
 		float mAccelerationSpeed = 100.f;
+		bool bEnable = true;
 
 		/** 
 		*	The greater this value is, the more time the object takes to accelerate/deccelerate
@@ -73,6 +76,8 @@ namespace Core
 		void SetMass(float Mass);
 		inline float GetMass() const { return mMass; }
 		inline Vector<float> GetVelocity() const { return mVelocity; }
+		inline void Enable() { bEnable = true; }
+		inline void Disable() { bEnable = false; }
 
 		// Hérité via IObserver
 		void OnNotify(const std::unordered_map<std::string, void*>& Value) override;

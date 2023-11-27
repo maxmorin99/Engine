@@ -13,6 +13,8 @@ namespace Core
 		virtual ~TransformComponent() = default;
 		virtual void Start();
 		virtual void Destroy();
+		virtual Component* Clone(Object* Owner) override;
+		virtual void SetupClone(Component* Child) override;
 
 	private:
 		Vector<float> mLocation = Vector<float>::ZeroVector();

@@ -24,7 +24,7 @@ void Core::PhysicComponent::Start()
 
 void Core::PhysicComponent::Update(float DeltaTime)
 {
-	if (!mOwner) return;
+	if (!mOwner || !bEnable) return;
 
 	/////////////////// Process movement based on registered collisions //////////////////////////////////////
 	
@@ -61,6 +61,25 @@ void Core::PhysicComponent::Update(float DeltaTime)
 	ApplyDeceleration(DeltaTime);
 
 	mDesiredMoveThisFrame = Vector<float>::ZeroVector();
+}
+
+Core::Component* Core::PhysicComponent::Clone(Object* Owner)
+{
+	PhysicComponent* Clone = new PhysicComponent(Owner);
+	__super::SetupClone(Clone);
+
+	Clone->mMaxMovementSpeed = mMaxMovementSpeed;
+	Clone->mDecelerationSpeed = mDecelerationSpeed;
+	Clone->mAccelerationSpeed = mAccelerationSpeed;
+	Clone->mMass = mMass;
+	Clone->mSlideFactor = mSlideFactor;
+
+	return Clone;
+}
+
+void Core::PhysicComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
 }
 
 void Core::PhysicComponent::AddMovement(const Vector<float>& MovementDirection)

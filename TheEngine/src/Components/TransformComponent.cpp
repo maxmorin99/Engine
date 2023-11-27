@@ -22,6 +22,22 @@ void Core::TransformComponent::Destroy()
 {
 }
 
+Core::Component* Core::TransformComponent::Clone(Object* Owner)
+{
+	TransformComponent* Clone = new TransformComponent(Owner);
+	__super::SetupClone(Clone);
+
+	Clone->SetLocation(GetLocation());
+	Clone->SetSize(GetSize());
+	Clone->SetRotation(0.f);
+	return Clone;
+}
+
+void Core::TransformComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+}
+
 void Core::TransformComponent::GetLocation(float* OutX, float* OutY)
 {
 	if (!OutX || !OutY) return;

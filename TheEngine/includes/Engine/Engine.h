@@ -5,6 +5,7 @@
 #include "Interfaces/ITime.h"
 #include "Interfaces/IWorld.h"
 #include "Interfaces/IAudio.h"
+#include "Interfaces/ISpawner.h"
 
 namespace Core
 {
@@ -40,6 +41,7 @@ namespace Core
 		ITimer* mTimer = nullptr;
 		IWorld* mWorld = nullptr;
 		IAudio* mAudio = nullptr;
+		ISpawner* mSpawner = nullptr;
 
 	public:
 		inline static IInput& GetInput() { return *GetInstance()->mInput; }
@@ -48,5 +50,6 @@ namespace Core
 		inline static ITimer& GetTimer() { return *GetInstance()->mTimer; }
 		inline static IWorld& GetWorld() { return *GetInstance()->mWorld; }
 		inline static IAudio& GetAudio() { return *GetInstance()->mAudio; }
+		inline static ISpawner& GetSpawner() { return *GetInstance()->mSpawner; }
 	};
 }

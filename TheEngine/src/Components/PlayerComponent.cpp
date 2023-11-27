@@ -110,3 +110,15 @@ void Core::PlayerComponent::CheckRoll()
 void Core::PlayerComponent::Destroy()
 {
 }
+
+Core::Component* Core::PlayerComponent::Clone(Object* Owner)
+{
+	PlayerComponent* Clone = new PlayerComponent(Owner);
+	__super::SetupClone(Clone);
+	return Clone;
+}
+
+void Core::PlayerComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+}

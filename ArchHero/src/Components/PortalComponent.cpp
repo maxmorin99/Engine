@@ -16,6 +16,19 @@ void PortalComponent::Start()
 	}
 }
 
+Core::Component* PortalComponent::Clone(Core::Object* Owner)
+{
+	PortalComponent* Clone = new PortalComponent(Owner);
+	__super::SetupClone(Clone);
+
+	return Clone;
+}
+
+void PortalComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+}
+
 void PortalComponent::OnNotify(const std::unordered_map<std::string, void*>& Value)
 {
 	void* OtherObject = nullptr;

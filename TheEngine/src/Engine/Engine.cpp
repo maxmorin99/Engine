@@ -6,6 +6,7 @@
 #include "Services/SdlTime.h"
 #include "Services/World.h"
 #include "Services/SdlAudio.h"
+#include "Services/Spawner.h"
 #include "Utility.h"
 #if _DEBUG
 #include "Services/SdlConsoleLogger.h"
@@ -13,7 +14,7 @@
 #include "Services/SdlFileLogger.h"
 #endif
 #include "Object.h"
-//#include "vld.h"
+#include "vld.h"
 
 Core::Engine* Core::Engine::mInstance = nullptr;
 
@@ -33,7 +34,7 @@ void Core::Engine::WindowQuitCallback()
 
 bool Core::Engine::Init(const char* Name, int Width, int Height)
 {
-	//VLDEnable();
+	VLDEnable();
 
 	const char* InitMsg = nullptr;
 
@@ -66,6 +67,9 @@ bool Core::Engine::Init(const char* Name, int Width, int Height)
 
 	// World
 	GetInstance()->mWorld = new World(*GetInstance()->mLogger);
+
+	// Spawner
+	GetInstance()->mSpawner = new Spawner();
 
 	return true;
 }
@@ -114,7 +118,7 @@ void Core::Engine::Start(void)
 	Shutdown();
 
 	delete mInstance;
-	//VLDDisable();
+	VLDDisable();
 }
 
 void Core::Engine::ProcessInput(void)
@@ -142,10 +146,12 @@ void Core::Engine::Shutdown(void)
 	GetInstance()->GetLogger().Shutdown();
 	GetInstance()->GetGraphic().ShutDown();
 	GetInstance()->GetAudio().ShutDown();
+	GetInstance()->GetSpawner().Shutdown();
 	delete GetInstance()->mInput;
 	delete GetInstance()->mLogger;
 	delete GetInstance()->mAudio;
 	delete GetInstance()->mGraphic;
 	delete GetInstance()->mTimer;
 	delete GetInstance()->mWorld;
+	delete GetInstance()->mSpawner;
 }

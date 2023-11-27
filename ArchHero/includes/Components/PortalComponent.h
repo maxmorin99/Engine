@@ -9,6 +9,8 @@ public:
 	PortalComponent(Core::Object* Owner);
 	virtual ~PortalComponent() = default;
 	virtual void Start() override;
+	virtual Component* Clone(Core::Object* Owner) override;
+	virtual void SetupClone(Component* Child) override;
 
 	virtual void OnNotify(const std::unordered_map<std::string, void*>& Value) override;
 

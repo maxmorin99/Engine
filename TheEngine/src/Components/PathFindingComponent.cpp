@@ -36,6 +36,18 @@ void Core::PathFindingComponent::Destroy()
 	}
 }
 
+Core::Component* Core::PathFindingComponent::Clone(Object* Owner)
+{
+	PathFindingComponent* Clone = new PathFindingComponent(Owner);
+	__super::SetupClone(Clone);
+	return Clone;
+}
+
+void Core::PathFindingComponent::SetupClone(Component* Child)
+{
+	__super::SetupClone(Child);
+}
+
 void Core::PathFindingComponent::BuildAdjList(const std::vector<Layer>& Layers)
 {
 	mAdjList = FlattenTiles(Layers);

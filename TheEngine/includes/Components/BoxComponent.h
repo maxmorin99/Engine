@@ -14,6 +14,8 @@ namespace Core
 		virtual void Start() override;
 		virtual void Update(float DeltaTime) override;
 		virtual void Draw() override;
+		virtual Component* Clone(Object* Owner) override;
+		virtual void SetupClone(Component* Child) override;
 		virtual void SetCollisionLocation(const Vector<float>& NewLoc);
 		virtual Vector<float> GetCollisionLocation() const override;
 		virtual void OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp) override;

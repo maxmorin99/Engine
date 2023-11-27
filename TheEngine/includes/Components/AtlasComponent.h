@@ -24,6 +24,8 @@ namespace Core
 		virtual void Start();
 		virtual void Destroy();
 		virtual void Draw() override;
+		virtual Component* Clone(Object* Owner) override;
+		virtual void SetupClone(Component* Child) override;
 
 		void AddFrame(const std::string& Name, int X, int Y, int W, int H);
 		void AddFrame(Frame& InFrame);

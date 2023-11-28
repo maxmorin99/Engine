@@ -315,6 +315,7 @@ namespace Core
 		Enemy = 1,
 		Projectile = 2,
 		World = 3,
+		UI = 4,
 
 		MAX
 	};

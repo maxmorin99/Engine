@@ -311,10 +311,12 @@ void Core::World::ProcessCollision(const ECollisionResponse& Response, Collision
 				if (Comp1->IsOverlappingWith(Obj2))
 				{
 					Comp1->RemoveOverlappingObject(Obj2);
+					Comp1->OnCollisionOverlapEnd(Obj2, Comp2);
 				}
 				if (Comp2->IsOverlappingWith(Obj1))
 				{
 					Comp2->RemoveOverlappingObject(Obj1);
+					Comp2->OnCollisionOverlapEnd(Obj1, Comp1);
 				}
 			}
 			break;

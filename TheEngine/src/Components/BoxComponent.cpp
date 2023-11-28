@@ -13,9 +13,12 @@ void Core::BoxComponent::Start()
 
 	if (!mOwner) return;
 
-	Vector<float> OwnerLoc = mOwner->GetLocation();
-	mRect.X = OwnerLoc.X + mOwnerOffset.X;
-	mRect.Y = OwnerLoc.Y + mOwnerOffset.Y;
+	if (bMovableCollision)
+	{
+		Vector<float> OwnerLoc = mOwner->GetLocation();
+		mRect.X = OwnerLoc.X + mOwnerOffset.X;
+		mRect.Y = OwnerLoc.Y + mOwnerOffset.Y;
+	}
 }
 
 void Core::BoxComponent::Update(float DeltaTime)

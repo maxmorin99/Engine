@@ -23,12 +23,12 @@ namespace Core
 	private:
 		Rect<float> mRect;
 		Vector<float> mOwnerOffset = Vector<float>::ZeroVector();
-
-		
+		bool bMovableCollision = true;
 
 	public:
 		void SetOffset(float OffsetX, float OffsetY);
 		void SetBoxSize(float SizeX, float SizeY);
 		inline Rect<float> GetRect() const { return mRect; }
+		inline void SetIsMovableCollision(bool State) { bMovableCollision = State; }
 	};
 }

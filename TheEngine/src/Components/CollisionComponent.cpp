@@ -72,6 +72,8 @@ void Core::CollisionComponent::OnCollisionOverlapBegin(Object* OtherObject, Coll
 	std::unordered_map<std::string, void*> Params;
 	Params["OtherObject"] = OtherObject;
 	Params["OtherComponent"] = OtherComp;
+	bool bBegin = true;
+	Params["bBeginOverlap"] = &bBegin;
 	mSubjectOnCollisionOverlapBegin->Invoke(Params);
 }
 
@@ -81,6 +83,8 @@ void Core::CollisionComponent::OnCollisionOverlapEnd(Object* OtherObject, Collis
 	std::unordered_map<std::string, void*> Params;
 	Params["OtherObject"] = OtherObject;
 	Params["OtherComponent"] = OtherComp;
+	bool bBegin = false;
+	Params["bBeginOverlap"] = &bBegin;
 	mSubjectOnCollisionOverlapEnd->Invoke(Params);
 }
 

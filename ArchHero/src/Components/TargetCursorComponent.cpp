@@ -1,5 +1,6 @@
 #include "Components/TargetCursorComponent.h"
 #include "Object.h"
+#include "Components/BoxComponent.h"
 
 TargetCursorComponent::TargetCursorComponent(Object* Owner) :
 	SpriteComponent(Owner)
@@ -16,6 +17,8 @@ void TargetCursorComponent::Update(float DeltaTime)
 	float NewTargetX = MousePosF.X - mOwner->GetSize().X / 2;
 	float NewTargetY = MousePosF.Y - mOwner->GetSize().Y / 2;
 	mOwner->SetLocation(NewTargetX, NewTargetY);
+	BoxComponent* Box = mOwner->GetComponent<BoxComponent>();
+	Box->SetCollisionLocation(Vector<float>(NewTargetX, NewTargetY));
 }
 
 void TargetCursorComponent::Draw()

@@ -15,6 +15,7 @@
 #include "Components/EnemyComponent.h"
 #include "Components/PathFindingComponent.h"
 #include "Components/HealthBarComponent.h"
+#include "Components/ButtonComponent.h"
 
 FirstScene::FirstScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH) :
 	Scene(name, tilemapFile, srcTileW, srcTileH, tileCountW, tileCountH)
@@ -163,12 +164,17 @@ void FirstScene::Load()
 
 	Object* TargetCursorObj = new Object();
 	mObjectsToAddToWorld.push_back(TargetCursorObj);
+	TargetCursorObj->AddTag("Cursor");
 	TargetCursorObj->SetLocation(0.f, 0.f);
 	TargetCursorObj->SetSize(25.f, 25.f);
 	TargetCursorComponent* TargetCursorComp = TargetCursorObj->AddComponent<TargetCursorComponent>();
 	std::string TargetCursorFile = ASSET_PATH + std::string("Weapons/crosshair.png");
 	TargetCursorComp->SetFile(TargetCursorFile);
 	TargetCursorComp->SetColor(Color::Black);
+	BoxComponent* TargetBoxComp = TargetCursorObj->AddComponent<BoxComponent>();
+	TargetBoxComp->SetBoxSize(25.f, 25.f);
+	TargetBoxComp->SetCollisionChannel(ECollisionChannel::UI);
+	TargetBoxComp->SetCollisionResponseToChannel(ECollisionChannel::UI, ECollisionResponse::Overlap);
 
 	WeaponObj->GetComponent<WeaponComponent>()->SetTargetCursorObject(TargetCursorObj);
 
@@ -260,6 +266,17 @@ void FirstScene::Load()
 	HealthBarComp->SetPaddingPercent(0.01f);
 	HealthBarComp->SetSizeRatio(Vector<float>(0.2, 0.05));
 	HealthBarComp->SetBorderSize(7);
+	ButtonComponent* ButtonComp = UIObj->AddComponent<ButtonComponent>();
+	ButtonComp->SetDefaultColor(Color::White);
+	ButtonComp->SetTextColor(Color::Black);
+	ButtonComp->SetText("My Button");
+	std::string FontFile = ASSET_PATH + std::string("Font/Asset.ttf");
+	ButtonComp->SetFont(FontFile, 24);
+	ButtonComp->SetSizeRatio(Vector<float>(0.1f, 0.1f));
+	ButtonComp->SetPositionRatio(Vector<float>(0.5f, 0.5f));
+	ButtonComp->SetBorderSize(10);
+
+	
 
 
 	/* Add obj in the world ------------------------------------ */

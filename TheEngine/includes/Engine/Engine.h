@@ -16,6 +16,7 @@ namespace Core
 		~Engine() = default;
 		static bool Init(const char* Name, int Width, int Height);
 		static void Start(void);
+		static void QuitButtonPressed();
 
 	private:
 		Engine() = default;

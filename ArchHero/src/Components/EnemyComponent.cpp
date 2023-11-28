@@ -2,10 +2,17 @@
 #include "Components/PathFindingComponent.h"
 #include "Object.h"
 #include "Components/AnimationComponent.h"
+#include "States/AttackState.h"
+#include "States/ChaseState.h"
+#include "States/DeathState.h"
 
 EnemyComponent::EnemyComponent(Object* Owner):
 	Component(Owner)
 {
+	mStates["Attack"] = new AttackState();
+	mStates["Chase"] = new ChaseState();
+	mStates["Death"] = new DeathState();
+	ChangeState("Chase");
 }
 
 void EnemyComponent::Start()
@@ -17,7 +24,7 @@ void EnemyComponent::Start()
 		mPathFindingComp = mOwner->GetComponent<PathFindingComponent>();
 	}
 
-	Target = World().GetObjectsWithTag("Player")[0];
+	mTarget = World().GetObjectsWithTag("Player")[0];
 }
 
 void EnemyComponent::Update(float DeltaTime)
@@ -28,16 +35,17 @@ void EnemyComponent::Update(float DeltaTime)
 	// Update Flip based on movement dir
 	UpdateFlip();
 
-	if (Target)
+	if (mCurrentState)
 	{
-		mPath = mPathFindingComp->GetPath(Target->GetCenterLocation());
-		bHasPath = true;
+		mCurrentState->Execute(this);
 	}
-	mPathFindingComp->Move();
+
+	//ChaseTarget();
 }
 
 void EnemyComponent::UpdateAnimation()
 {
+	if (mCurrentState && mCurrentState == mStates["Death"]) return;
 	if (mOwner)
 	{
 		AnimationComponent* AnimComp = mOwner->GetComponent<AnimationComponent>();
@@ -70,6 +78,25 @@ void EnemyComponent::UpdateFlip()
 	}
 }
 
+void EnemyComponent::ChangeState(const std::string& StateName)
+{
+	if (mStates.count(StateName) == 0) return;
+
+	if (mCurrentState)
+	{
+		mCurrentState->OnExit(this);
+	}
+	mCurrentState = mStates.at(StateName);
+	if (mCurrentState)
+	{
+		mCurrentState->OnEnter(this);
+	}
+}
+
+void EnemyComponent::Attack()
+{
+}
+
 void EnemyComponent::Draw()
 {
 	Graphic().DrawLineF(Vector<float>::ZeroVector(), mOwner->GetSpriteCenterLocation(), Color::Red);
@@ -94,6 +121,11 @@ void EnemyComponent::Draw()
 void EnemyComponent::Destroy()
 {
 	Component::Destroy();
+
+	for (auto& pair : mStates)
+	{
+		delete pair.second;
+	}
 }
 
 Component* EnemyComponent::Clone(Object* Owner)
@@ -107,4 +139,24 @@ Component* EnemyComponent::Clone(Object* Owner)
 void EnemyComponent::SetupClone(Component* Child)
 {
 	__super::SetupClone(Child);
+}
+
+void EnemyComponent::ChaseTarget()
+{
+	if (mTarget)
+	{
+		mPath = mPathFindingComp->GetPath(mTarget->GetCenterLocation());
+		bHasPath = true;
+	}
+	mPathFindingComp->Move();
+
+	if (mTarget)
+	{
+		float Dist = Vector<float>::Dist(mOwner->GetCenterLocation(), mTarget->GetCenterLocation());
+		if (Dist < mToleranceDistance)
+		{
+			// change to attack state
+			ChangeState("Attack");
+		}
+	}
 }

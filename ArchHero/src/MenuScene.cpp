@@ -5,6 +5,7 @@
 #include "Components/TargetCursorComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SpriteComponent.h"
+#include "Components/ButtonListenerComponent.h"
 #include "Engine/Engine.h"
 
 MenuScene::MenuScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH):
@@ -62,6 +63,14 @@ void MenuScene::Load()
 	QuitButtonComp->SetHoverColor(Color::Grey);
 	QuitButtonComp->SetBorderSize(4);
 	ButtonBoxComp->AddButton(QuitButtonComp, 0.5f);
+
+	// Button Listener
+	Object* ButtonListenerObj = new Object();
+	mObjectsToAddToWorld.push_back(ButtonListenerObj);
+
+	ButtonListenerComponent* ButtonListenerComp = ButtonListenerObj->AddComponent<ButtonListenerComponent>();
+	QuitButtonComp->mOnClickSubject.AddListener(ButtonListenerComp);
+	PlayButtonComp->mOnClickSubject.AddListener(ButtonListenerComp);
 
 	// Cursor
 	Object* TargetCursorObj = new Object();

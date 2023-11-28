@@ -85,6 +85,16 @@ void Core::ButtonComponent::SetPositionRatio(const Vector<float>& Ratio)
 	}
 }
 
+void Core::ButtonComponent::Update(float DeltaTime)
+{
+	if (Input().IsButtonDown(0) && bHover)
+	{
+		std::unordered_map<std::string, void*> mMapParams;
+		mMapParams["ButtonName"] = &mButtonText;
+		mOnClickSubject.Invoke(mMapParams);
+	}
+}
+
 void Core::ButtonComponent::OnNotify(const std::unordered_map<std::string, void*>& Value)
 {
 	// récupérer le bool "bBeginOverlap" et le bool "bEndOverlap"
@@ -117,11 +127,13 @@ void Core::ButtonComponent::OnNotify(const std::unordered_map<std::string, void*
 			{
 				// change color
 				mCurrentColor = mHoverColor;
+				bHover = true;
 			}
 			else
 			{
 				// change color
 				mCurrentColor = mDefaultColor;
+				bHover = false;
 			}
 		}
 	}

@@ -3,8 +3,12 @@
 #include "Components/Component.h"
 #include "Interfaces/IDrawable.h"
 #include "Interfaces/IUpdatable.h"
+#include <unordered_map>
+#include <string>
 
 using namespace Core;
+
+class IState;
 
 class EnemyComponent : public Component, public IDrawable, public IUpdatable
 {
@@ -13,23 +17,33 @@ public:
 	virtual ~EnemyComponent() = default;
 	virtual void Start() override;
 	virtual void Destroy() override;
+	virtual void Draw() override;
+	virtual void Update(float DeltaTime) override;
 	virtual Component* Clone(Object* Owner) override;
 	virtual void SetupClone(Component* Child) override;
+	void ChaseTarget();
+	void Attack();
+	void ChangeState(const std::string& StateName);
 
 private:
 	PathFindingComponent* mPathFindingComp = nullptr;
 	std::vector<Vector<float>> mPath;
 
-	Object* Target = nullptr;
+	Object* mTarget = nullptr;
 
 	bool bHasPath = false;
 
-	// Hérité via IDrawable
-	virtual void Draw() override;
+	float mToleranceDistance = 100.f;
 
-	// Hérité via IUpdatable
-	virtual void Update(float DeltaTime) override;
+	std::unordered_map<std::string, IState*> mStates;
+	IState* mCurrentState = nullptr;
 
 	void UpdateAnimation();
 	void UpdateFlip();
+
+public:
+	inline void SetToleranceDistance(float InDist) { mToleranceDistance = InDist; }
+	inline Object* GetTarget() const { return mTarget; }
+	inline Object* GetOwner() const { return mOwner; }
+	inline float GetToleranceDistance() const { return mToleranceDistance; }
 };

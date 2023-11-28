@@ -197,6 +197,7 @@ void FirstScene::Load()
 	Enemy->SetSize(250, 250);
 	mObjectsToAddToWorld.push_back(Enemy);
 	EnemyComponent* EnemyComp = Enemy->AddComponent<EnemyComponent>();
+	EnemyComp->SetToleranceDistance(75.f);
 	PathFindingComponent* PathComp = Enemy->AddComponent<PathFindingComponent>();
 
 	PhysicComponent* EnemyPxComp = Enemy->AddComponent<PhysicComponent>();
@@ -236,6 +237,20 @@ void FirstScene::Load()
 	Clip Enemy1WalkClip("Walk", Enemy1WalkFrames, 0.1f);
 	EnemyAnimationComp->AddClip("Walk", Enemy1WalkClip);
 
+	std::vector<Frame> Enemy1DeathFrames;
+	Enemy1DeathFrames.push_back(Frame(0, 0, 2048, 2048, "Death_1"));
+	Enemy1DeathFrames.push_back(Frame(1, 0, 2048, 2048, "Death_2"));
+	Enemy1DeathFrames.push_back(Frame(2, 0, 2048, 2048, "Death_3"));
+	Enemy1DeathFrames.push_back(Frame(3, 0, 2048, 2048, "Death_4"));
+	Enemy1DeathFrames.push_back(Frame(4, 0, 2048, 2048, "Death_5"));
+	Enemy1DeathFrames.push_back(Frame(0, 1, 2048, 2048, "Death_6"));
+	Enemy1DeathFrames.push_back(Frame(1, 1, 2048, 2048, "Death_7"));
+	Enemy1DeathFrames.push_back(Frame(2, 1, 2048, 2048, "Death_8"));
+	Enemy1DeathFrames.push_back(Frame(3, 1, 2048, 2048, "Death_9"));
+	Enemy1DeathFrames.push_back(Frame(4, 1, 2048, 2048, "Death_10"));
+	Clip Enemy1DeathClip("Death", Enemy1DeathFrames, 0.05f);
+	EnemyAnimationComp->AddClip("Death", Enemy1DeathClip);
+
 	EnemyAnimationComp->SetDefaultClip(Enemy1IdleClip);
 	EnemyAnimationComp->SetClip("Idle", true);
 
@@ -266,17 +281,6 @@ void FirstScene::Load()
 	HealthBarComp->SetPaddingPercent(0.01f);
 	HealthBarComp->SetSizeRatio(Vector<float>(0.2, 0.05));
 	HealthBarComp->SetBorderSize(7);
-	ButtonComponent* ButtonComp = UIObj->AddComponent<ButtonComponent>();
-	ButtonComp->SetDefaultColor(Color::White);
-	ButtonComp->SetTextColor(Color::Black);
-	ButtonComp->SetText("My Button");
-	std::string FontFile = ASSET_PATH + std::string("Font/Asset.ttf");
-	ButtonComp->SetFont(FontFile, 24);
-	ButtonComp->SetSizeRatio(Vector<float>(0.1f, 0.1f));
-	ButtonComp->SetPositionRatio(Vector<float>(0.5f, 0.5f));
-	ButtonComp->SetBorderSize(10);
-
-	
 
 
 	/* Add obj in the world ------------------------------------ */

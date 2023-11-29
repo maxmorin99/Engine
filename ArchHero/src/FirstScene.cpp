@@ -16,6 +16,7 @@
 #include "Components/PathFindingComponent.h"
 #include "Components/HealthBarComponent.h"
 #include "Components/ButtonComponent.h"
+#include "Components/AttributeComponent.h"
 
 FirstScene::FirstScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH) :
 	Scene(name, tilemapFile, srcTileW, srcTileH, tileCountW, tileCountH)
@@ -72,9 +73,12 @@ void FirstScene::Load()
 	Object* AnimatedPlayer = new Object();
 	mObjectsToAddToWorld.push_back(AnimatedPlayer);
 	AnimatedPlayer->AddTag("Player");
+	AnimatedPlayer->AddTag("Character");
 	AnimatedPlayer->AddComponent<PlayerComponent>();
 	AnimatedPlayer->SetLocation(250.f, 250.f);
 	AnimatedPlayer->SetSize(250, 250);
+	AttributeComponent* PlayerAttribute = AnimatedPlayer->AddComponent<AttributeComponent>();
+	PlayerAttribute->SetMaxHealth(100.f);
 
 	// Physic
 	PhysicComponent* Px = AnimatedPlayer->AddComponent<PhysicComponent>();
@@ -186,6 +190,7 @@ void FirstScene::Load()
 	Box->SetCollisionChannel(ECollisionChannel::Player);
 	Box->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
 	Box->SetCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Ignore);
+	Box->SetCollisionResponseToChannel(ECollisionChannel::Projectile, ECollisionResponse::Overlap);
 	Box->SetBoxSize(75, 100);
 	Box->SetOffset(85, 120);
 
@@ -193,13 +198,21 @@ void FirstScene::Load()
 	/* Enemy -------------------------------------------- */
 	
 	Object* Enemy = new Object();
+	Enemy->AddTag("Enemy");
+	Enemy->AddTag("Character");
 	Enemy->SetLocation(900, 450);
 	Enemy->SetSize(250, 250);
 	mObjectsToAddToWorld.push_back(Enemy);
 	EnemyComponent* EnemyComp = Enemy->AddComponent<EnemyComponent>();
-	EnemyComp->SetToleranceDistance(75.f);
+	EnemyComp->SetToleranceDistance(275.f);
+	EnemyComp->SetAttackDelay(2.f);
 	PathFindingComponent* PathComp = Enemy->AddComponent<PathFindingComponent>();
 
+	// Attribute
+	AttributeComponent* Enemi1Attribute = Enemy->AddComponent<AttributeComponent>();
+	Enemi1Attribute->SetMaxHealth(50.f);
+
+	// Px
 	PhysicComponent* EnemyPxComp = Enemy->AddComponent<PhysicComponent>();
 	EnemyPxComp->SetMass(1.f);
 	EnemyPxComp->SetSlideFactor(0);
@@ -237,6 +250,7 @@ void FirstScene::Load()
 	Clip Enemy1WalkClip("Walk", Enemy1WalkFrames, 0.1f);
 	EnemyAnimationComp->AddClip("Walk", Enemy1WalkClip);
 
+	// Enemy1 Death
 	std::vector<Frame> Enemy1DeathFrames;
 	Enemy1DeathFrames.push_back(Frame(0, 0, 2048, 2048, "Death_1"));
 	Enemy1DeathFrames.push_back(Frame(1, 0, 2048, 2048, "Death_2"));
@@ -260,8 +274,17 @@ void FirstScene::Load()
 	EnemyBox->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Ignore);
 	EnemyBox->SetCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Ignore);
 	EnemyBox->SetCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Ignore);
+	EnemyBox->SetCollisionResponseToChannel(ECollisionChannel::Projectile, ECollisionResponse::Overlap);
 	EnemyBox->SetBoxSize(75, 100);
 	EnemyBox->SetOffset(85, 120);
+
+	// Enemy1 Hit
+	std::vector<Frame> Enemy1HitFrames;
+	Enemy1HitFrames.push_back(Frame(0, 5, 2048, 2048, "Hit_1"));
+	Enemy1HitFrames.push_back(Frame(1, 5, 2048, 2048, "Hit_1"));
+	Enemy1HitFrames.push_back(Frame(2, 5, 2048, 2048, "Hit_1"));
+	Clip Enemy1HitClip("Hit", Enemy1HitFrames, 0.075f);
+	EnemyAnimationComp->AddClip("Hit", Enemy1HitClip);
 
 
 	/* Music Obj ----------------------------------------------- */
@@ -281,6 +304,7 @@ void FirstScene::Load()
 	HealthBarComp->SetPaddingPercent(0.01f);
 	HealthBarComp->SetSizeRatio(Vector<float>(0.2, 0.05));
 	HealthBarComp->SetBorderSize(7);
+	PlayerAttribute->mOnHealthChangedSubject.AddListener(HealthBarComp);
 
 
 	/* Add obj in the world ------------------------------------ */

@@ -2,10 +2,13 @@
 
 #include "Component.h"
 #include "Interfaces/IDrawable.h"
+#include "Interfaces/IObserver.h"
+#include <unordered_map>
+#include <string>
 
 namespace Core
 {
-	class HealthBarComponent : public Component, public IDrawable
+	class HealthBarComponent : public Component, public IDrawable, public IObserver<std::unordered_map<std::string, void*>>
 	{
 	public:
 		HealthBarComponent(Object* Owner);
@@ -25,6 +28,8 @@ namespace Core
 		/** % of the screen size that represents the health bar dimensions */
 		Vector<float> mSizeRatioToScreen = Vector<float>(0.5f, 0.5f);
 
+		
+
 	public:
 		inline void SetBarRect(const Rect<float>& InRect) { mBarRect = InRect; }
 		inline void SetColor(const Color& InColor) { mBarColor = InColor; }
@@ -35,5 +40,8 @@ namespace Core
 		inline void SetPaddingPercent(float Percent) { mPaddingPercent = Percent; }
 		/** Value should be >=0 or <= 1 */
 		void SetSizeRatio(const Vector<float>& Ratio) { mSizeRatioToScreen = Ratio; }
+
+		// Hérité via IObserver
+		virtual void OnNotify(const std::unordered_map<std::string, void*>& Value) override;
 	};
 }

@@ -33,7 +33,7 @@ void ChaseState::Execute(EnemyComponent* Enemy)
 	float Dist = Vector<float>::Dist(Owner->GetCenterLocation(), Target->GetCenterLocation());
 	if (Dist < Enemy->GetToleranceDistance())
 	{
-		Enemy->ChangeState("Death");
+		Enemy->ChangeState("Attack");
 	}
 }
 

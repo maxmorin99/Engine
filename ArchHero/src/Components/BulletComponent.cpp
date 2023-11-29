@@ -4,6 +4,8 @@
 #include "Components/CollisionComponent.h"
 #include "Components/AnimationComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/AttributeComponent.h"
+
 
 BulletComponent::BulletComponent(Core::Object* Owner) :
 	SpriteComponent(Owner)
@@ -38,6 +40,7 @@ Component* BulletComponent::Clone(Object* Owner)
 {
 	BulletComponent* Clone = new BulletComponent(Owner);
 	__super::SetupClone(Clone);
+	Clone->mDamage = mDamage;
 
 	return Clone;
 }
@@ -45,44 +48,86 @@ Component* BulletComponent::Clone(Object* Owner)
 void BulletComponent::SetupClone(Component* Child)
 {
 	__super::SetupClone(Child);
+
+	BulletComponent* Clone = dynamic_cast<BulletComponent*>(Child);
+	if (Clone)
+	{
+		Clone->mDamage = mDamage;
+	}
 }
 
 void BulletComponent::OnNotify(const std::unordered_map<std::string, void*>& Value)
 {
-	void* OtherObject = nullptr;
-	void* OtherComponent = nullptr;
+	void* OtherObjectVoidPtr = nullptr;
+	void* OtherComponentVoidPtr = nullptr;
 
 	if (Value.count("OtherObject") > 0)
 	{
-		OtherObject = Value.at("OtherObject");
+		OtherObjectVoidPtr = Value.at("OtherObject");
 	}
 	if (Value.count("OtherComponent") > 0)
 	{
-		OtherComponent = Value.at("OtherComponent");
+		OtherComponentVoidPtr = Value.at("OtherComponent");
 	}
 
-	if (OtherObject)
+	if (OtherObjectVoidPtr)
 	{
-		if (mOwner)
+		DisableCollision();
+
+		// Disable pxComp to stop moving
+		DisablePhysic();
+
+		Object* OtherObject = static_cast<Object*>(OtherObjectVoidPtr);
+		if (OtherObject)
 		{
-			// Disable pxComp to stop moving
-			if (mPxComp)
+			if (OtherObject->HasTag("Character"))
 			{
-				mPxComp->Disable();
-			}
-
-			if (AnimationComponent* AnimComp = mOwner->GetComponent<AnimationComponent>())
-			{
-				AnimComp->SetClip("ExplosionClip", false, std::bind(&BulletComponent::OnExplosionEnd, this));
-				mOwner->SetSize(mOwner->GetSize().X * 3, mOwner->GetSize().Y * 3);
-				mOwner->SetLocation(mOwner->GetLocation().X - mOwner->GetSize().X / 3, mOwner->GetLocation().Y - mOwner->GetSize().Y / 3);
-
-				if (BoxComponent* BoxComp = mOwner->GetComponent<BoxComponent>())
+				// Apply Damage
+				AttributeComponent* Attribute = OtherObject->GetComponent<AttributeComponent>();
+				if (Attribute)
 				{
-					BoxComp->SetCollisionResponseToAllChannels(ECollisionResponse::Ignore);
+					Attribute->TakeDamage(mDamage);
 				}
+
+				// Play blood vfx
+				PlayDestroyAnimation("BloodClip");
+			}
+			else
+			{
+				// Play explosion vfx
+				PlayDestroyAnimation("ExplosionClip");
 			}
 		}
+	}
+}
+
+void BulletComponent::DisableCollision()
+{
+	if (!mOwner) return;
+	if (BoxComponent* BoxComp = mOwner->GetComponent<BoxComponent>())
+	{
+		BoxComp->SetCollisionResponseToAllChannels(ECollisionResponse::Ignore);
+	}
+}
+
+void BulletComponent::DisablePhysic()
+{
+	if (!mOwner) return;
+	if (mPxComp)
+	{
+		mPxComp->Disable();
+	}
+}
+
+void BulletComponent::PlayDestroyAnimation(const std::string& AnimationName)
+{
+	if (!mOwner) return;
+	AnimationComponent* AnimComp = mOwner->GetComponent<AnimationComponent>();
+	if (AnimComp)
+	{
+		AnimComp->SetClip(AnimationName, false, std::bind(&BulletComponent::OnExplosionEnd, this));
+		mOwner->SetSize(mOwner->GetSize().X * 3, mOwner->GetSize().Y * 3);
+		mOwner->SetLocation(mOwner->GetLocation().X - mOwner->GetSize().X / 3, mOwner->GetLocation().Y - mOwner->GetSize().Y / 3);
 	}
 }
 

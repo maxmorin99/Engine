@@ -13,6 +13,13 @@ WeaponComponent::WeaponComponent(Object* InOwner) :
 {
 }
 
+void WeaponComponent::Start()
+{
+	SpriteComponent::Start();
+
+	mFireTimeElapsed = mFireRate;
+}
+
 void WeaponComponent::Update(float DeltaTime)
 {
 	if (!mInstigator || !mOwner) return;
@@ -26,15 +33,6 @@ void WeaponComponent::Update(float DeltaTime)
 void WeaponComponent::Draw()
 {
 	SpriteComponent::Draw();
-}
-
-void WeaponComponent::Start()
-{
-	SpriteComponent::Start();
-
-	DefineBulletPrototype();
-
-	mFireTimeElapsed = mFireRate;
 }
 
 Component* WeaponComponent::Clone(Object* Owner)
@@ -128,55 +126,6 @@ void WeaponComponent::UpdateFire(float DeltaTime)
 	}
 }
 
-void WeaponComponent::DefineBulletPrototype()
-{
-	Object* Bullet = new Object();
-	Bullet->AddTag("Bullet");
-	Bullet->SetSize(20.f, 20.f);
-	Bullet->SetRotation(-mOwner->GetRotation());
-	BulletComponent* BulletComp = Bullet->AddComponent<BulletComponent>();
-
-	// Px
-	PhysicComponent* PxComp = Bullet->AddComponent<PhysicComponent>();
-	PxComp->SetMass(1.f);
-	PxComp->SetSlideFactor(0);
-	PxComp->SetMaxMovementSpeed(750);
-	PxComp->SetAccelerationSpeed(10000);
-	PxComp->SetDecelerationSpeed(10000);
-
-	// Collision
-	BoxComponent* BoxComp = Bullet->AddComponent<BoxComponent>();
-	BoxComp->SetCollisionChannel(ECollisionChannel::Projectile);
-	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Overlap);
-	BoxComp->SetBoxSize(20.f, 20.f);
-
-	// Animation
-	AnimationComponent* BulletAnim = Bullet->AddComponent<AnimationComponent>();
-	std::string ExplosionFile = ASSET_PATH + std::string("Projectiles/PlayerProjectile.png");
-	BulletAnim->SetFile(ExplosionFile);
-	std::vector<Frame> BulletIdleFrames;
-	BulletIdleFrames.push_back(Frame(3, 0, 256, 256, "Idle_1"));
-	BulletIdleFrames.push_back(Frame(0, 1, 256, 256, "Idle_2"));
-	BulletIdleFrames.push_back(Frame(1, 1, 256, 256, "Idle_3"));
-	BulletIdleFrames.push_back(Frame(2, 1, 256, 256, "Idle_4"));
-	BulletIdleFrames.push_back(Frame(3, 1, 256, 256, "Idle_5"));
-	Clip IdleClip("IdleClip", BulletIdleFrames, 0.1f);
-	BulletAnim->AddClip("IdleClip", IdleClip);
-
-	std::vector<Frame> BulletExplosionFrames;
-	BulletExplosionFrames.push_back(Frame(4, 0, 256, 256, "Explosion_1"));
-	BulletExplosionFrames.push_back(Frame(5, 0, 256, 256, "Explosion_2"));
-	BulletExplosionFrames.push_back(Frame(6, 0, 256, 256, "Explosion_3"));
-	BulletExplosionFrames.push_back(Frame(7, 0, 256, 256, "Explosion_4"));
-	Clip ExplosionClip("ExplosionClip", BulletExplosionFrames, 0.005f);
-	BulletAnim->AddClip("ExplosionClip", ExplosionClip);
-
-	BulletAnim->SetDefaultClip(IdleClip);
-	BulletAnim->SetClip("IdleClip", true);
-
-	Spawner().AddPrototype("Bullet", Bullet);
-}
-
 Object* WeaponComponent::SpawnBullet()
 {
 	// Rotate Src rect of weapon by its rotation
@@ -196,7 +145,7 @@ Object* WeaponComponent::SpawnBullet()
 	Mid.X /= 4;
 	Mid.Y /= 4;
 
-	Object* Bullet = Spawner().Spawn("Bullet");
+	Object* Bullet = Spawner().Spawn("PlayerBullet");
 	Bullet->SetRotation(-mOwner->GetRotation());
 	Bullet->SetCenterLocation(Mid + mOwner->GetForwardVector() * 45);
 

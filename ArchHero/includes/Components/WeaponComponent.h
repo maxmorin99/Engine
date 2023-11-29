@@ -31,12 +31,13 @@ private:
 	void UpdateWeaponLocation();
 	void UpdateRotation();
 	void UpdateFire(float DeltaTime);
-	void DefineBulletPrototype();
+	
 	
 	Object* SpawnBullet();
 
 	float mFireRate = 0.4f;
 	float mFireTimeElapsed = 0.f;
+	float mDamage = 10.f;
 
 
 public:
@@ -52,4 +53,6 @@ public:
 	inline void SetOffset(const Vector<float>& InOffset) { mOffset = InOffset; }
 
 	inline void SetFireRate(float InRate) { mFireRate = InRate; }
+
+	inline void SetDamage(float InDamage) { mDamage = InDamage; }
 };

@@ -10,6 +10,7 @@ void Core::MusicComponent::Start()
 {
 	mMusicId = Audio().LoadMusic(mMusicFile.c_str());
 	Audio().PlayMusic(mMusicId, true);
+	Audio().SetMusicVolume(mMusicId, 0);
 }
 
 void Core::MusicComponent::SetMusicFile(const std::string& File)

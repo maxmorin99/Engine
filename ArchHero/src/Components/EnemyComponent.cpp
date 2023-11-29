@@ -19,6 +19,8 @@ void EnemyComponent::Start()
 {
 	Component::Start();
 
+	mCurrAttackDelay = mAttackDelay;
+
 	if (mOwner)
 	{
 		mPathFindingComp = mOwner->GetComponent<PathFindingComponent>();
@@ -35,12 +37,12 @@ void EnemyComponent::Update(float DeltaTime)
 	// Update Flip based on movement dir
 	UpdateFlip();
 
+	mCurrAttackDelay += DeltaTime;
+
 	if (mCurrentState)
 	{
 		mCurrentState->Execute(this);
 	}
-
-	//ChaseTarget();
 }
 
 void EnemyComponent::UpdateAnimation()
@@ -99,7 +101,6 @@ void EnemyComponent::Attack()
 
 void EnemyComponent::Draw()
 {
-	Graphic().DrawLineF(Vector<float>::ZeroVector(), mOwner->GetSpriteCenterLocation(), Color::Red);
 	for (int i = 0; i < mPath.size(); i++)
 	{
 		Vector<float> prev = Vector<float>::ZeroVector();
@@ -139,24 +140,4 @@ Component* EnemyComponent::Clone(Object* Owner)
 void EnemyComponent::SetupClone(Component* Child)
 {
 	__super::SetupClone(Child);
-}
-
-void EnemyComponent::ChaseTarget()
-{
-	if (mTarget)
-	{
-		mPath = mPathFindingComp->GetPath(mTarget->GetCenterLocation());
-		bHasPath = true;
-	}
-	mPathFindingComp->Move();
-
-	if (mTarget)
-	{
-		float Dist = Vector<float>::Dist(mOwner->GetCenterLocation(), mTarget->GetCenterLocation());
-		if (Dist < mToleranceDistance)
-		{
-			// change to attack state
-			ChangeState("Attack");
-		}
-	}
 }

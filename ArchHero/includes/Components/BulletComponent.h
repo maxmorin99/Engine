@@ -21,7 +21,21 @@ public:
 private:
 	PhysicComponent* mPxComp = nullptr;
 
+	/** Damage that this bullet causes */
+	float mDamage = 10.f;
+
+	void DisableCollision();
+
+	void DisablePhysic();
+
+	/** Play a specific destroy animation. The animation will call OnExplosionEnd when done */
+	void PlayDestroyAnimation(const std::string& AnimationName);
+
+	/** Called when the destroy animation end playing */
 	void OnExplosionEnd();
+
+public:
+	inline void SetDamage(float InDamage) { mDamage = InDamage; }
 };
 
 

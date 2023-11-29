@@ -21,7 +21,6 @@ public:
 	virtual void Update(float DeltaTime) override;
 	virtual Component* Clone(Object* Owner) override;
 	virtual void SetupClone(Component* Child) override;
-	void ChaseTarget();
 	void Attack();
 	void ChangeState(const std::string& StateName);
 
@@ -35,6 +34,9 @@ private:
 
 	float mToleranceDistance = 100.f;
 
+	float mAttackDelay = 2.f;
+	float mCurrAttackDelay = 0.f;
+
 	std::unordered_map<std::string, IState*> mStates;
 	IState* mCurrentState = nullptr;
 
@@ -46,4 +48,8 @@ public:
 	inline Object* GetTarget() const { return mTarget; }
 	inline Object* GetOwner() const { return mOwner; }
 	inline float GetToleranceDistance() const { return mToleranceDistance; }
+	inline void SetAttackDelay(float InDelay) { mAttackDelay = InDelay; }
+	inline float GetAttackDelay() const { return mAttackDelay; }
+	inline void SetCurrAttackDelay(float InDelay) { mCurrAttackDelay = InDelay; }
+	inline float GetCurrAttackDelay() const { return mCurrAttackDelay; }
 };

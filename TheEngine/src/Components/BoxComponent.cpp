@@ -28,11 +28,11 @@ void Core::BoxComponent::Update(float DeltaTime)
 
 void Core::BoxComponent::Draw()
 {
-	/*Graphic().DrawRectF(false, &mRect, Color::Red);
+	Graphic().DrawRectF(false, &mRect, Color::Red);
 	Vector<float> OwnerSize = mOwner->GetSize();
 	Vector<float> OwnerSpriteCenterOffset = mOwner->GetCenterOffset();
 	Vector<float> Center = Vector<float>(mOwner->GetLocation().X + OwnerSize.X / 2 + OwnerSpriteCenterOffset.X, mOwner->GetLocation().Y + OwnerSize.Y / 2 + OwnerSpriteCenterOffset.Y);
-	Graphic().DrawLineF(Vector<float>::ZeroVector(), Center, Color::Green);*/
+	//Graphic().DrawLineF(Vector<float>::ZeroVector(), Center, Color::Green);
 }
 
 Core::Component* Core::BoxComponent::Clone(Object* Owner)

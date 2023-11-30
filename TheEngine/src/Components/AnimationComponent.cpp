@@ -88,11 +88,11 @@ Core::Component* Core::AnimationComponent::Clone(Object* Owner)
 	AnimationComponent* Clone = new AnimationComponent(Owner);
 	__super::SetupClone(Clone);
 
+	Clone->mClips = mClips;
 	Clone->mCurrentClip = mCurrentClip;
 	Clone->mDefaultClip = mDefaultClip;
 	Clone->bShouldPlay = true;
-	Clone->mClips = mClips;
-
+	Clone->mDeathAnimationColor = mDeathAnimationColor;
 	return Clone;
 }
 
@@ -103,8 +103,10 @@ void Core::AnimationComponent::SetupClone(Component* Child)
 	AnimationComponent* Clone = dynamic_cast<AnimationComponent*>(Child);
 	if (!Clone) return;
 
+	Clone->mClips = mClips;
 	Clone->mCurrentClip = mDefaultClip;
 	Clone->mDefaultClip = mDefaultClip;
+	Clone->mDeathAnimationColor = mDeathAnimationColor;
 	Clone->bShouldPlay = true;
 }
 

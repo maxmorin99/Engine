@@ -5,6 +5,29 @@ Core::AttributeComponent::AttributeComponent(Object* Owner) :
 {
 }
 
+Core::Component* Core::AttributeComponent::Clone(Object* Owner)
+{
+	AttributeComponent* Clone = new AttributeComponent(Owner);
+	__super::SetupClone(Clone);
+
+	Clone->mMaxHealth = mMaxHealth;
+	Clone->mCurrentHealth = mMaxHealth;
+
+	return Clone;
+}
+
+void Core::AttributeComponent::SetupClone(Component* Child)
+{
+	AttributeComponent* Clone = dynamic_cast<AttributeComponent*>(Child);
+	__super::SetupClone(Child);
+
+	if (Clone)
+	{
+		Clone->mMaxHealth = mMaxHealth;
+		Clone->mCurrentHealth = mMaxHealth;
+	}
+}
+
 void Core::AttributeComponent::Start()
 {
 	__super::Start();
@@ -23,10 +46,10 @@ void Core::AttributeComponent::TakeDamage(float InDamage)
 	float OldCurrHealth = mCurrentHealth;
 	mCurrentHealth -= InDamage;
 	mCurrentHealth = mCurrentHealth > 0.f ? mCurrentHealth : 0.f;
-	float NewCurrhealth = mCurrentHealth;
+	float NewCurrHealth = mCurrentHealth;
 	float NewHealthPercent = GetPercentHealth();
 
-	if (OldCurrHealth != NewCurrhealth)
+	if (OldCurrHealth != NewCurrHealth)
 	{
 		std::unordered_map<std::string, void*> ParamsMap;
 		ParamsMap["Health"] = &mCurrentHealth;
@@ -34,6 +57,4 @@ void Core::AttributeComponent::TakeDamage(float InDamage)
 		ParamsMap["Percent"] = &NewHealthPercent;
 		mOnHealthChangedSubject.Invoke(ParamsMap);
 	}
-
-	// make object die
 }

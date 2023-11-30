@@ -5,12 +5,13 @@
 #include "Interfaces/IUpdatable.h"
 #include <unordered_map>
 #include <string>
+#include "Interfaces/IObserver.h"
 
 using namespace Core;
 
 class IState;
 
-class EnemyComponent : public Component, public IDrawable, public IUpdatable
+class EnemyComponent : public Component, public IDrawable, public IUpdatable, public IObserver<std::unordered_map<std::string, void*>>
 {
 public:
 	EnemyComponent(Object* Owner);
@@ -23,6 +24,7 @@ public:
 	virtual void SetupClone(Component* Child) override;
 	void Attack();
 	void ChangeState(const std::string& StateName);
+	void OnDeath();
 
 private:
 	PathFindingComponent* mPathFindingComp = nullptr;
@@ -43,6 +45,9 @@ private:
 	void UpdateAnimation();
 	void UpdateFlip();
 
+	/** Bind the attributeComponent's mOnHealthChangedSubject to this IObserver */
+	void BindAttributeSubject();
+
 public:
 	inline void SetToleranceDistance(float InDist) { mToleranceDistance = InDist; }
 	inline Object* GetTarget() const { return mTarget; }
@@ -52,4 +57,8 @@ public:
 	inline float GetAttackDelay() const { return mAttackDelay; }
 	inline void SetCurrAttackDelay(float InDelay) { mCurrAttackDelay = InDelay; }
 	inline float GetCurrAttackDelay() const { return mCurrAttackDelay; }
+
+
+	// Hérité via IObserver
+	virtual void OnNotify(const std::unordered_map<std::string, void*>& Value) override;
 };

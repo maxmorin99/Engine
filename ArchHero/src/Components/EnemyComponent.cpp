@@ -5,6 +5,7 @@
 #include "States/AttackState.h"
 #include "States/ChaseState.h"
 #include "States/DeathState.h"
+#include "Components/AttributeComponent.h"
 
 EnemyComponent::EnemyComponent(Object* Owner):
 	Component(Owner)
@@ -18,6 +19,8 @@ EnemyComponent::EnemyComponent(Object* Owner):
 void EnemyComponent::Start()
 {
 	Component::Start();
+
+	BindAttributeSubject();
 
 	mCurrAttackDelay = mAttackDelay;
 
@@ -77,7 +80,40 @@ void EnemyComponent::UpdateFlip()
 		{
 			mOwner->SetFlip(Flip(false, false));
 		}
+		else
+		{
+			if (GetTarget())
+			{
+				if (GetTarget()->GetLocation().X < mOwner->GetLocation().X)
+				{
+					mOwner->SetFlip(Flip(true, false));
+				}
+				else
+				{
+					mOwner->SetFlip(Flip(false, false));
+				}
+			}
+		}
 	}
+}
+
+void EnemyComponent::OnNotify(const std::unordered_map<std::string, void*>& Value)
+{
+	void* HealthVoidPtr = nullptr;
+	if (Value.count("Health") > 0)
+	{
+		HealthVoidPtr = Value.at("Health");
+	}
+	if (!HealthVoidPtr) return;
+	
+	if (float* Health = static_cast<float*>(HealthVoidPtr))
+	{
+		if (*Health == 0)
+		{
+			ChangeState("Death");
+		}
+	}
+
 }
 
 void EnemyComponent::ChangeState(const std::string& StateName)
@@ -134,10 +170,31 @@ Component* EnemyComponent::Clone(Object* Owner)
 	EnemyComponent* Clone = new EnemyComponent(Owner);
 	__super::SetupClone(Clone);
 
+	Clone->mToleranceDistance = mToleranceDistance;
+	Clone->mAttackDelay = mAttackDelay;
+	Clone->mCurrAttackDelay = mCurrAttackDelay;
 	return Clone;
 }
 
 void EnemyComponent::SetupClone(Component* Child)
 {
+	EnemyComponent* Clone = dynamic_cast<EnemyComponent*>(Child);
 	__super::SetupClone(Child);
+	if (!Clone) return;
+
+	Clone->mToleranceDistance = mToleranceDistance;
+	Clone->mAttackDelay = mAttackDelay;
+	Clone->mCurrAttackDelay = mCurrAttackDelay;
+}
+
+void EnemyComponent::BindAttributeSubject()
+{
+	if (!mOwner) return;
+	AttributeComponent* AttributeComp = mOwner->GetComponent<AttributeComponent>();
+	if (!AttributeComp) return;
+	AttributeComp->mOnHealthChangedSubject.AddListener(this);
+}
+
+void EnemyComponent::OnDeath()
+{
 }

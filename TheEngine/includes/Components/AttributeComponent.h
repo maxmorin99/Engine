@@ -12,6 +12,8 @@ namespace Core
 	public:
 		AttributeComponent(Object* Owner);
 		virtual ~AttributeComponent() = default;
+		virtual Component* Clone(Object* Owner) override;
+		virtual void SetupClone(Component* Child) override;
 		virtual void Start() override;
 
 		Subject<std::unordered_map<std::string, void*>> mOnHealthChangedSubject;

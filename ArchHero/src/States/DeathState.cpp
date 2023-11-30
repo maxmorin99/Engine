@@ -16,7 +16,8 @@ void DeathState::OnEnter(EnemyComponent* Enemy)
 	if (!Owner) return;
 	AnimationComponent* AnimComp = Owner->GetComponent<AnimationComponent>();
 	if (!AnimComp) return;
-	AnimComp->SetClip("Hit", false, std::bind(&DeathState::OnDeathAnimationEnd, this));
+	AnimComp->SetColor(AnimComp->GetDeathAnimationColor());
+	AnimComp->SetClip("Death", false, std::bind(&DeathState::OnDeathAnimationEnd, this));
 
 	// disbale collision
 	CollisionComponent* CollisionComp = Owner->GetCollisionComponent();

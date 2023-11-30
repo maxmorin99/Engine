@@ -59,9 +59,13 @@ namespace Core
 		/** Default clip. This clip will be selected when a non looping animation ends and no other is requested */
 		Clip mDefaultClip;
 
+		Color mDeathAnimationColor = Color::White;
+
 		bool bShouldPlay = true;
 
 	public:
 		inline std::string GetCurrentClipName() const { return mCurrentClip.Name; }
+		inline void SetDeathAnimationColor(const Color& InColor) { mDeathAnimationColor = InColor; }
+		inline Color GetDeathAnimationColor() const { return mDeathAnimationColor; }
 	};
 }

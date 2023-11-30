@@ -71,6 +71,17 @@ void Core::Object::SetCenterLocation(const Vector<float>& NewLoc)
     mTransform->SetLocation(CenterLoc);
 }
 
+void Core::Object::SetImgTopLeftLocation(const Vector<float>& NewLoc)
+{
+    if (!mTransform) return;
+    BoxComponent* Box = GetComponent<BoxComponent>();
+    if (Box)
+    {
+        Vector<float> BoxOffset = Box->GetOffset();
+        mTransform->SetLocation(Vector<float>(NewLoc.X - BoxOffset.X, NewLoc.Y - BoxOffset.Y));
+    }
+}
+
 void Core::Object::GetSize(float* OutW, float* OutH) const
 {
     if (!OutW || !OutH) return;

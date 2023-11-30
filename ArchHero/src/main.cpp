@@ -16,6 +16,9 @@
 #include "Components/EnemyComponent.h"
 #include "Components/AttributeComponent.h"
 #include "Components/PathFindingComponent.h"
+#include "Components/PlayerComponent.h"
+#include "Components/WeaponComponent.h"
+#include "Components/TargetCursorComponent.h"
 
 using namespace Core;
 
@@ -214,9 +217,9 @@ void InitGameplay()
 
 	Engine::GetSpawner().AddPrototype("PurpleEnemy", PurpleEnemy);
 
-	//// ---------------------------------------------------------------------------------------------------------------- //
+	// ---------------------------------------------------------------------------------------------------------------- //
 
-	//// Flying Enemy --------------------------------------------------------------------------------------------------- //
+	// Flying Enemy --------------------------------------------------------------------------------------------------- //
 
 	Object* FlyingEnemy = new Object();
 	FlyingEnemy->AddTag("Enemy");
@@ -294,6 +297,130 @@ void InitGameplay()
 
 	Engine::GetSpawner().AddPrototype("FlyingEnemy", FlyingEnemy);
 	
+	// ---------------------------------------------------------------------------------------------------------------- //
+
+	// Player --------------------------------------------------------------------------------------------------------- //
+
+	Object* Player = new Object();
+	Player->AddTag("Player");
+	Player->AddTag("Character");
+	Player->AddComponent<PlayerComponent>();
+	Player->SetLocation(250.f, 250.f);
+	Player->SetSize(250, 250);
+	AttributeComponent* PlayerAttribute = Player->AddComponent<AttributeComponent>();
+	PlayerAttribute->SetMaxHealth(100.f);
+
+	// Physic
+	PhysicComponent* PlayerPx = Player->AddComponent<PhysicComponent>();
+	PlayerPx->SetMass(1.f);
+	PlayerPx->SetSlideFactor(0);
+	PlayerPx->SetMaxMovementSpeed(250.f);
+	PlayerPx->SetAccelerationSpeed(10000);
+	PlayerPx->SetDecelerationSpeed(10000);
+
+	BoxComponent* PlayerBox = Player->AddComponent<BoxComponent>();
+	PlayerBox->SetCollisionChannel(ECollisionChannel::Player);
+	PlayerBox->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
+	PlayerBox->SetCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Ignore);
+	PlayerBox->SetCollisionResponseToChannel(ECollisionChannel::Projectile, ECollisionResponse::Overlap);
+	/*PlayerBox->SetBoxSize(75, 100);
+	PlayerBox->SetOffset(85, 120);*/
+
+	// Animation
+	AnimationComponent* PlayerAnim = Player->AddComponent<AnimationComponent>();
+	std::string FilePath = ASSET_PATH + std::string("Character_Sprite_Sheet.png");
+	PlayerAnim->SetFile(FilePath);
+	PlayerAnim->SetCenterOffset(Vector<float>(0, 50));
+
+	// Idle animation
+	std::vector<Frame> PlayerIdleFrames;
+	PlayerIdleFrames.push_back(Frame(4, 1, 2048, 2048, "Idle_1"));
+	PlayerIdleFrames.push_back(Frame(5, 1, 2048, 2048, "Idle_2"));
+	PlayerIdleFrames.push_back(Frame(0, 2, 2048, 2048, "Idle_3"));
+	PlayerIdleFrames.push_back(Frame(1, 2, 2048, 2048, "Idle_4"));
+	PlayerIdleFrames.push_back(Frame(2, 2, 2048, 2048, "Idle_5"));
+	PlayerIdleFrames.push_back(Frame(3, 2, 2048, 2048, "Idle_6"));
+	Clip PlayerIdleClip = Clip("Idle", PlayerIdleFrames, 0.1f);
+	PlayerAnim->AddClip("Idle", PlayerIdleClip);
+
+	// walk animation
+	std::vector<Frame> PlayerWalkFrames;
+	PlayerWalkFrames.push_back(Frame(3, 3, 2048, 2048, "Walk_1"));
+	PlayerWalkFrames.push_back(Frame(4, 3, 2048, 2048, "Walk_2"));
+	PlayerWalkFrames.push_back(Frame(5, 3, 2048, 2048, "Walk_3"));
+	PlayerWalkFrames.push_back(Frame(0, 4, 2048, 2048, "Walk_4"));
+	PlayerWalkFrames.push_back(Frame(1, 4, 2048, 2048, "Walk_5"));
+	PlayerWalkFrames.push_back(Frame(2, 4, 2048, 2048, "Walk_6"));
+	PlayerWalkFrames.push_back(Frame(3, 4, 2048, 2048, "Walk_7"));
+	PlayerWalkFrames.push_back(Frame(4, 4, 2048, 2048, "Walk_8"));
+	Clip PlayerWalkClip = Clip("Walk", PlayerWalkFrames, 0.05f);
+	PlayerAnim->AddClip("Walk", PlayerWalkClip);
+
+	// Death animation
+	std::vector<Frame> PlayerDeathFrames;
+	PlayerDeathFrames.push_back(Frame(0, 0, 2048, 2048, "Death_1"));
+	PlayerDeathFrames.push_back(Frame(1, 0, 2048, 2048, "Death_2"));
+	PlayerDeathFrames.push_back(Frame(2, 0, 2048, 2048, "Death_3"));
+	PlayerDeathFrames.push_back(Frame(3, 0, 2048, 2048, "Death_4"));
+	PlayerDeathFrames.push_back(Frame(4, 0, 2048, 2048, "Death_5"));
+	PlayerDeathFrames.push_back(Frame(5, 0, 2048, 2048, "Death_6"));
+	PlayerDeathFrames.push_back(Frame(0, 1, 2048, 2048, "Death_7"));
+	PlayerDeathFrames.push_back(Frame(1, 1, 2048, 2048, "Death_8"));
+	PlayerDeathFrames.push_back(Frame(2, 1, 2048, 2048, "Death_9"));
+	PlayerDeathFrames.push_back(Frame(3, 1, 2048, 2048, "Death_10"));
+	Clip PlayerDeathClip = Clip("Death", PlayerDeathFrames, 0.065f);
+	PlayerAnim->AddClip("Death", PlayerDeathClip);
+
+	// Roll animation
+	std::vector<Frame> PlayerRollFrames;
+	PlayerRollFrames.push_back(Frame(4, 2, 2048, 2048, "Roll_1"));
+	PlayerRollFrames.push_back(Frame(5, 2, 2048, 2048, "Roll_2"));
+	PlayerRollFrames.push_back(Frame(0, 3, 2048, 2048, "Roll_3"));
+	PlayerRollFrames.push_back(Frame(1, 3, 2048, 2048, "Roll_4"));
+	PlayerRollFrames.push_back(Frame(2, 3, 2048, 2048, "Roll_5"));
+	Clip PlayerRollClip = Clip("Roll", PlayerRollFrames, 0.065f);
+	PlayerAnim->AddClip("Roll", PlayerRollClip);
+
+	PlayerAnim->SetDefaultClip(PlayerIdleClip);
+	PlayerAnim->SetClip("Idle", true);
+
+	Engine::GetSpawner().AddPrototype("Player", Player);
+
+	// ---------------------------------------------------------------------------------------------------------------- //
+
+	// Weapon --------------------------------------------------------------------------------------------------------- //
+
+	Object* WeaponObj = new Object();
+	WeaponObj->SetLocation(300, 300);
+	WeaponObj->SetSize(60, 30);
+
+	WeaponComponent* WeaponComp = WeaponObj->AddComponent<WeaponComponent>();
+	std::string WeaponFile = ASSET_PATH + std::string("Weapons/testweapon.png");
+	WeaponComp->SetFile(WeaponFile);
+	//WeaponComp->SetInstigator(AnimatedPlayer);
+	WeaponComp->SetColor(Color::Black);
+	WeaponComp->SetOffset(Vector<float>(30.f, 50.f));
+
+	Engine::GetSpawner().AddPrototype("Weapon", WeaponObj);
+
+	// ---------------------------------------------------------------------------------------------------------------- //
+
+	// Cursor --------------------------------------------------------------------------------------------------------- //
+
+	Object* TargetCursorObj = new Object();
+	TargetCursorObj->AddTag("Cursor");
+	TargetCursorObj->SetLocation(0.f, 0.f);
+	TargetCursorObj->SetSize(25.f, 25.f);
+	TargetCursorComponent* TargetCursorComp = TargetCursorObj->AddComponent<TargetCursorComponent>();
+	std::string TargetCursorFile = ASSET_PATH + std::string("Weapons/crosshair.png");
+	TargetCursorComp->SetFile(TargetCursorFile);
+	TargetCursorComp->SetColor(Color::Black);
+	BoxComponent* TargetBoxComp = TargetCursorObj->AddComponent<BoxComponent>();
+	TargetBoxComp->SetBoxSize(25.f, 25.f);
+	TargetBoxComp->SetCollisionChannel(ECollisionChannel::UI);
+	TargetBoxComp->SetCollisionResponseToChannel(ECollisionChannel::UI, ECollisionResponse::Overlap);
+	Engine::GetSpawner().AddPrototype("Cursor", TargetCursorObj);
+
 	// ---------------------------------------------------------------------------------------------------------------- //
 
 

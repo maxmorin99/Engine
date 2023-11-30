@@ -22,9 +22,7 @@ public:
 	virtual void Update(float DeltaTime) override;
 	virtual Component* Clone(Object* Owner) override;
 	virtual void SetupClone(Component* Child) override;
-	void Attack();
 	void ChangeState(const std::string& StateName);
-	void OnDeath();
 
 private:
 	PathFindingComponent* mPathFindingComp = nullptr;
@@ -47,6 +45,9 @@ private:
 
 	/** Bind the attributeComponent's mOnHealthChangedSubject to this IObserver */
 	void BindAttributeSubject();
+
+	/** Adjust the size of the collider based on the size of the enemy */
+	void AdjustBoxSize();
 
 public:
 	inline void SetToleranceDistance(float InDist) { mToleranceDistance = InDist; }

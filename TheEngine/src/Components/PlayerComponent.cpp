@@ -5,6 +5,7 @@
 #include "Components/PhysicComponent.h"
 #include "Components/AnimationComponent.h"
 #include "Components/CollisionComponent.h"
+#include "Components/BoxComponent.h"
 
 Core::PlayerComponent::PlayerComponent(Object* Owner) :
 	Component(Owner)
@@ -14,6 +15,10 @@ Core::PlayerComponent::PlayerComponent(Object* Owner) :
 void Core::PlayerComponent::Start()
 {
 	if (!mOwner) return;
+	AdjustBoxSize();
+
+	
+
 	mAnimationComponent = mOwner->GetComponent<AnimationComponent>();
 	mPxComponent = mOwner->GetComponent<PhysicComponent>();
 }
@@ -104,6 +109,19 @@ void Core::PlayerComponent::CheckRoll()
 		{
 			mAnimationComponent->SetClip("Idle", true);
 		}
+	}
+}
+
+void Core::PlayerComponent::AdjustBoxSize()
+{
+	BoxComponent* Box = mOwner->GetComponent<BoxComponent>();
+	if (Box)
+	{
+		Box->SetBoxSize(mOwner->GetSize().X * 0.3f, mOwner->GetSize().Y * 0.4f);
+		Box->SetOffset(mOwner->GetSize().X * 0.34f, mOwner->GetSize().Y * 0.48f);
+
+		// adjust position
+		mOwner->SetLocation(mOwner->GetLocation() + Box->GetCollisionLocation());
 	}
 }
 

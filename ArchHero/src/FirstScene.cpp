@@ -63,142 +63,48 @@ void FirstScene::Load()
 		Box->SetCollisionResponseToChannel(ECollisionChannel::Projectile, ECollisionResponse::Block);
 		Box->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Ignore);
 	}
+
+	//std::vector<Tile> WallTiles = TmComp->GetTilesFromLayer("WallLayer");
 	
+	Vector<float> PlayerTileStart(1, 6);
+	Vector<float> PlayerStart = Vector<float>(PlayerTileStart.X * TmComp->GetTileSize().X, PlayerTileStart.Y * TmComp->GetTileSize().Y);
 
-	/* Init Animated Player ---------------------------------- */
 
-
-	Object* AnimatedPlayer = new Object();
+	Object* AnimatedPlayer = Engine::GetSpawner().Spawn("Player");
+	AnimatedPlayer->SetLocation(PlayerStart);
+	AnimatedPlayer->SetSize(TmComp->GetTileSize().Y * 2.5f, TmComp->GetTileSize().Y * 2.5f);
 	mObjectsToAddToWorld.push_back(AnimatedPlayer);
-	AnimatedPlayer->AddTag("Player");
-	AnimatedPlayer->AddTag("Character");
-	AnimatedPlayer->AddComponent<PlayerComponent>();
-	AnimatedPlayer->SetLocation(250.f, 250.f);
-	AnimatedPlayer->SetSize(250, 250);
-	AttributeComponent* PlayerAttribute = AnimatedPlayer->AddComponent<AttributeComponent>();
-	PlayerAttribute->SetMaxHealth(100.f);
 
-	// Physic
-	PhysicComponent* Px = AnimatedPlayer->AddComponent<PhysicComponent>();
-	Px->SetMass(1.f);
-	Px->SetSlideFactor(0);
-	Px->SetMaxMovementSpeed(250.f);
-	Px->SetAccelerationSpeed(10000);
-	Px->SetDecelerationSpeed(10000);
+	Object* Cursor = Engine::GetSpawner().Spawn("Cursor");
+	mObjectsToAddToWorld.push_back(Cursor);
 
-	// Animation
-	AnimationComponent* Anim = AnimatedPlayer->AddComponent<AnimationComponent>();
-	std::string FilePath = ASSET_PATH + std::string("Character_Sprite_Sheet.png");
-	Anim->SetFile(FilePath);
-	Anim->SetCenterOffset(Vector<float>(0, 50));
+	Object* Weapon = Engine::GetSpawner().Spawn("Weapon");
+	Weapon->SetSize(AnimatedPlayer->GetSize().X * 0.24f, AnimatedPlayer->GetSize().Y * 0.12f);
+	Weapon->GetComponent<WeaponComponent>()->SetOffset(Vector<float>(AnimatedPlayer->GetSize().X * 0.12f, AnimatedPlayer->GetSize().Y * 0.2f));
+	Weapon->GetComponent<WeaponComponent>()->SetInstigator(AnimatedPlayer);
+	Weapon->GetComponent<WeaponComponent>()->SetTargetCursorObject(Cursor);
+	mObjectsToAddToWorld.push_back(Weapon);
 
-	// Idle animation
-	std::vector<Frame> IdleFrames;
-	IdleFrames.push_back(Frame(4, 1, 2048, 2048, "Idle_1"));
-	IdleFrames.push_back(Frame(5, 1, 2048, 2048, "Idle_2"));
-	IdleFrames.push_back(Frame(0, 2, 2048, 2048, "Idle_3"));
-	IdleFrames.push_back(Frame(1, 2, 2048, 2048, "Idle_4"));
-	IdleFrames.push_back(Frame(2, 2, 2048, 2048, "Idle_5"));
-	IdleFrames.push_back(Frame(3, 2, 2048, 2048, "Idle_6"));
-	Clip IdleClip = Clip("Idle", IdleFrames, 0.1f);
-	Anim->AddClip("Idle", IdleClip);
-
-	// walk animation
-	std::vector<Frame> WalkFrames;
-	WalkFrames.push_back(Frame(3, 3, 2048, 2048, "Walk_1"));
-	WalkFrames.push_back(Frame(4, 3, 2048, 2048, "Walk_2"));
-	WalkFrames.push_back(Frame(5, 3, 2048, 2048, "Walk_3"));
-	WalkFrames.push_back(Frame(0, 4, 2048, 2048, "Walk_4"));
-	WalkFrames.push_back(Frame(1, 4, 2048, 2048, "Walk_5"));
-	WalkFrames.push_back(Frame(2, 4, 2048, 2048, "Walk_6"));
-	WalkFrames.push_back(Frame(3, 4, 2048, 2048, "Walk_7"));
-	WalkFrames.push_back(Frame(4, 4, 2048, 2048, "Walk_8"));
-	Clip WalkClip = Clip("Walk", WalkFrames, 0.05f);
-	Anim->AddClip("Walk", WalkClip);
-
-	// Death animation
-	std::vector<Frame> DeathFrames;
-	DeathFrames.push_back(Frame(0, 0, 2048, 2048, "Death_1"));
-	DeathFrames.push_back(Frame(1, 0, 2048, 2048, "Death_2"));
-	DeathFrames.push_back(Frame(2, 0, 2048, 2048, "Death_3"));
-	DeathFrames.push_back(Frame(3, 0, 2048, 2048, "Death_4"));
-	DeathFrames.push_back(Frame(4, 0, 2048, 2048, "Death_5"));
-	DeathFrames.push_back(Frame(5, 0, 2048, 2048, "Death_6"));
-	DeathFrames.push_back(Frame(0, 1, 2048, 2048, "Death_7"));
-	DeathFrames.push_back(Frame(1, 1, 2048, 2048, "Death_8"));
-	DeathFrames.push_back(Frame(2, 1, 2048, 2048, "Death_9"));
-	DeathFrames.push_back(Frame(3, 1, 2048, 2048, "Death_10"));
-	Clip DeathClip = Clip("Death", DeathFrames, 0.065f);
-	Anim->AddClip("Death", DeathClip);
-
-	// Roll animation
-	std::vector<Frame> RollFrames;
-	RollFrames.push_back(Frame(4, 2, 2048, 2048, "Roll_1"));
-	RollFrames.push_back(Frame(5, 2, 2048, 2048, "Roll_2"));
-	RollFrames.push_back(Frame(0, 3, 2048, 2048, "Roll_3"));
-	RollFrames.push_back(Frame(1, 3, 2048, 2048, "Roll_4"));
-	RollFrames.push_back(Frame(2, 3, 2048, 2048, "Roll_5"));
-	Clip RollClip = Clip("Roll", RollFrames, 0.065f);
-	Anim->AddClip("Roll", RollClip);
-
-	Anim->SetDefaultClip(IdleClip);
-	Anim->SetClip("Idle", true);
-
-
-	/* Weapon -------------------------------------------------- */
-
-
-	Object* WeaponObj = new Object();
-	mObjectsToAddToWorld.push_back(WeaponObj);
-	WeaponObj->SetLocation(300, 300);
-	WeaponObj->SetSize(60, 30);
-
-	WeaponComponent* WeaponComp = WeaponObj->AddComponent<WeaponComponent>();
-	std::string WeaponFile = ASSET_PATH + std::string("Weapons/testweapon.png");
-	WeaponComp->SetFile(WeaponFile);
-	WeaponComp->SetInstigator(AnimatedPlayer);
-	WeaponComp->SetColor(Color::Black);
-	WeaponComp->SetOffset(Vector<float>(30.f, 50.f));
-
-
-	/* targetCursor -------------------------------------------- */
-
-
-	Object* TargetCursorObj = new Object();
-	mObjectsToAddToWorld.push_back(TargetCursorObj);
-	TargetCursorObj->AddTag("Cursor");
-	TargetCursorObj->SetLocation(0.f, 0.f);
-	TargetCursorObj->SetSize(25.f, 25.f);
-	TargetCursorComponent* TargetCursorComp = TargetCursorObj->AddComponent<TargetCursorComponent>();
-	std::string TargetCursorFile = ASSET_PATH + std::string("Weapons/crosshair.png");
-	TargetCursorComp->SetFile(TargetCursorFile);
-	TargetCursorComp->SetColor(Color::Black);
-	BoxComponent* TargetBoxComp = TargetCursorObj->AddComponent<BoxComponent>();
-	TargetBoxComp->SetBoxSize(25.f, 25.f);
-	TargetBoxComp->SetCollisionChannel(ECollisionChannel::UI);
-	TargetBoxComp->SetCollisionResponseToChannel(ECollisionChannel::UI, ECollisionResponse::Overlap);
-
-	WeaponObj->GetComponent<WeaponComponent>()->SetTargetCursorObject(TargetCursorObj);
-
-
-	/* BoxComponent -------------------------------------------- */
-
-
-	BoxComponent* Box = AnimatedPlayer->AddComponent<BoxComponent>();
-	Box->SetCollisionChannel(ECollisionChannel::Player);
-	Box->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
-	Box->SetCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Ignore);
-	Box->SetCollisionResponseToChannel(ECollisionChannel::Projectile, ECollisionResponse::Overlap);
-	Box->SetBoxSize(75, 100);
-	Box->SetOffset(85, 120);
-
+	Vector<float> PurpleEnemyTileStart(9, 11);
+	Vector<float> PurpleEnemyStart = Vector<float>(PurpleEnemyTileStart.X * TmComp->GetTileSize().X, PurpleEnemyTileStart.Y * TmComp->GetTileSize().Y);
 	Object* PurpleEnemyObj = Engine::GetSpawner().Spawn("PurpleEnemy");
-	PurpleEnemyObj->SetLocation(900, 450);
+	PurpleEnemyObj->SetLocation(PurpleEnemyStart);
+	PurpleEnemyObj->SetSize(TmComp->GetTileSize().Y * 2.5f, TmComp->GetTileSize().Y * 2.5f);
 	mObjectsToAddToWorld.push_back(PurpleEnemyObj);
 
+	Vector<float> FlyingEnemyTileStart(15, 6);
+	Vector<float> FlyingEnemyStart = Vector<float>(FlyingEnemyTileStart.X * TmComp->GetTileSize().X, FlyingEnemyTileStart.Y * TmComp->GetTileSize().Y);
 	Object* FlyingEnemyObj = Engine::GetSpawner().Spawn("FlyingEnemy");
-	FlyingEnemyObj->SetLocation(900, 750);
+	FlyingEnemyObj->SetLocation(FlyingEnemyStart);
+	FlyingEnemyObj->SetSize(TmComp->GetTileSize().Y * 2, TmComp->GetTileSize().Y * 2);
 	mObjectsToAddToWorld.push_back(FlyingEnemyObj);
+
+	Vector<float> FlyingEnemyTileStart2(13, 11);
+	Vector<float> FlyingEnemyStart2 = Vector<float>(FlyingEnemyTileStart2.X * TmComp->GetTileSize().X, FlyingEnemyTileStart2.Y * TmComp->GetTileSize().Y);
+	Object* FlyingEnemyObj2 = Engine::GetSpawner().Spawn("FlyingEnemy");
+	FlyingEnemyObj2->SetLocation(FlyingEnemyStart2);
+	FlyingEnemyObj2->SetSize(TmComp->GetTileSize().Y * 2, TmComp->GetTileSize().Y * 2);
+	mObjectsToAddToWorld.push_back(FlyingEnemyObj2);
 
 
 	/* Music Obj ----------------------------------------------- */
@@ -218,7 +124,7 @@ void FirstScene::Load()
 	HealthBarComp->SetPaddingPercent(0.01f);
 	HealthBarComp->SetSizeRatio(Vector<float>(0.2, 0.05));
 	HealthBarComp->SetBorderSize(7);
-	PlayerAttribute->mOnHealthChangedSubject.AddListener(HealthBarComp);
+	AnimatedPlayer->GetComponent<AttributeComponent>()->mOnHealthChangedSubject.AddListener(HealthBarComp);
 
 
 	/* Add obj in the world ------------------------------------ */

@@ -64,6 +64,7 @@ namespace Core
 		void SetLocation(const Vector<float>& NewLoc);
 		void SetLocation(float NewX, float NewY);
 		void SetCenterLocation(const Vector<float>& NewLoc);
+		void SetImgTopLeftLocation(const Vector<float>& NewLoc);
 		const Vector<float> GetSize() const;
 		void GetSize(float* OutW, float* OutH) const;
 		void SetSize(const Vector<float>& NewSize);

@@ -27,6 +27,7 @@ namespace Core
 
 	public:
 		void SetOffset(float OffsetX, float OffsetY);
+		inline Vector<float> GetOffset() const { return mOwnerOffset; }
 		void SetBoxSize(float SizeX, float SizeY);
 		inline Rect<float> GetRect() const { return mRect; }
 		inline void SetIsMovableCollision(bool State) { bMovableCollision = State; }

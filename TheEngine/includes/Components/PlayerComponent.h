@@ -36,5 +36,6 @@ namespace Core
 		bool CheckReferences() const;
 		void UpdateFlip();
 		void CheckRoll();
+		void AdjustBoxSize();
 	};
 }

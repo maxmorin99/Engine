@@ -40,12 +40,20 @@ Component* WeaponComponent::Clone(Object* Owner)
 	WeaponComponent* Clone = new WeaponComponent(Owner);
 	__super::SetupClone(Clone);
 
+	Clone->mOffset = mOffset;
+	Clone->mFireRate = mFireRate;
+	Clone->mDamage = mDamage;
 	return Clone;
 }
 
 void WeaponComponent::SetupClone(Component* Child)
 {
-	__super::SetupClone(Child);
+	WeaponComponent* Clone = dynamic_cast<WeaponComponent*>(Child);
+	__super::SetupClone(Clone);
+
+	Clone->mOffset = mOffset;
+	Clone->mFireRate = mFireRate;
+	Clone->mDamage = mDamage;
 }
 
 void WeaponComponent::UpdateFlip()

@@ -6,6 +6,7 @@
 #include "States/ChaseState.h"
 #include "States/DeathState.h"
 #include "Components/AttributeComponent.h"
+#include "Components/BoxComponent.h"
 
 EnemyComponent::EnemyComponent(Object* Owner):
 	Component(Owner)
@@ -19,6 +20,8 @@ EnemyComponent::EnemyComponent(Object* Owner):
 void EnemyComponent::Start()
 {
 	Component::Start();
+
+	AdjustBoxSize();
 
 	BindAttributeSubject();
 
@@ -131,10 +134,6 @@ void EnemyComponent::ChangeState(const std::string& StateName)
 	}
 }
 
-void EnemyComponent::Attack()
-{
-}
-
 void EnemyComponent::Draw()
 {
 	for (int i = 0; i < mPath.size(); i++)
@@ -195,6 +194,15 @@ void EnemyComponent::BindAttributeSubject()
 	AttributeComp->mOnHealthChangedSubject.AddListener(this);
 }
 
-void EnemyComponent::OnDeath()
+void EnemyComponent::AdjustBoxSize()
 {
+	BoxComponent* Box = mOwner->GetComponent<BoxComponent>();
+	if (Box)
+	{
+		Box->SetBoxSize(mOwner->GetSize().X * 0.3f, mOwner->GetSize().Y * 0.4f);
+		Box->SetOffset(mOwner->GetSize().X * 0.34f, mOwner->GetSize().Y * 0.48f);
+
+		// adjust position
+		mOwner->SetLocation(mOwner->GetLocation() + Box->GetCollisionLocation());
+	}
 }

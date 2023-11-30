@@ -51,7 +51,7 @@ namespace Core
 		Vector<int> mTileCount = Vector<int>::ZeroVector();
 
 		/** List of Tile by layers. Used for A* */
-		std::unordered_map<std::string, std::vector<Tile>> mTilesByLayer;
+		//std::unordered_map<std::string, std::vector<Tile>> mTilesByLayer;
 
 		/** Get width and height of the 2d array of int values of the layer */
 		void GetLayerSize(const std::string& Line, int* OutW, int* OutH) const;
@@ -80,6 +80,8 @@ namespace Core
 		std::vector<Tile> GetListOfTileForLayer(const Layer& Layer);
 
 	public:
+		std::vector<Tile> GetTilesFromLayer(const std::string& LayerName);
 		std::vector<TilemapObject> GetTilemapObjects() const;
+		Vector<float> GetTileSize() const;
 	};
 }

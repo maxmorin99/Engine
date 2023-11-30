@@ -14,7 +14,13 @@
 #include "Services/SdlFileLogger.h"
 #endif
 #include "Object.h"
-//#include "vld.h"
+
+
+#define VLD 0
+
+#if VLD
+#include "vld.h"
+#endif
 
 Core::Engine* Core::Engine::mInstance = nullptr;
 
@@ -34,7 +40,9 @@ void Core::Engine::WindowQuitCallback()
 
 bool Core::Engine::Init(const char* Name, int Width, int Height)
 {
-	//VLDEnable();
+#if VLD
+	VLDEnable();
+#endif
 
 	const char* InitMsg = nullptr;
 
@@ -118,7 +126,10 @@ void Core::Engine::Start(void)
 	Shutdown();
 
 	delete mInstance;
-	//VLDDisable();
+
+#if VLD
+	VLDDisable();
+#endif
 }
 
 void Core::Engine::QuitButtonPressed()

@@ -32,7 +32,6 @@ private:
 	void UpdateRotation();
 	void UpdateFire(float DeltaTime);
 	
-	
 	Object* SpawnBullet();
 
 	float mFireRate = 0.4f;

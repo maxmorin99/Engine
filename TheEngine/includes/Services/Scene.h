@@ -15,7 +15,9 @@ namespace Core
 	public:
 		Scene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH);
 		virtual void Load() override;
+		virtual void UnLoad() override;
 		virtual void Destroy() override;
+		virtual std::string GetName() override;
 
 	private:
 		std::string mName = "\0";

@@ -17,5 +17,8 @@ namespace Core
 	private:
 		std::string mMusicFile;
 		size_t mMusicId = 0;
+
+	public:
+		inline size_t GetMusicId() const { return mMusicId; }
 	};
 }

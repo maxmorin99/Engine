@@ -58,8 +58,6 @@ void Core::World::Update(float DeltaTime)
 
 	// If there is pending kill objects, delete them
 	DeleteObjects();
-	
-	
 }
 
 void Core::World::UpdateObjects(float DeltaTime)
@@ -461,6 +459,10 @@ void Core::World::Load(const std::string& SceneName)
 
 void Core::World::Unload()
 {
+	if (mCurrentScene)
+	{
+		mCurrentScene->UnLoad();
+	}
 	for (Object* Obj : mObjectList)
 	{
 		Destroy(Obj);
@@ -508,6 +510,7 @@ void Core::World::ShutDown()
 		delete S;
 	}
 	mSceneMap.clear();
+	mPersistentValuesMapF.clear();
 }
 
 Core::Object* Core::World::GetTilemapObject() const
@@ -534,6 +537,30 @@ std::vector<Core::Object*> Core::World::GetObjectsWithTag(const std::string& Tag
 		}
 	}
 	return OutList;
+}
+
+std::string Core::World::GetCurrentSceneName() const
+{
+	if(!mCurrentScene) return std::string();
+	return mCurrentScene->GetName();
+}
+
+void Core::World::SetPersistentValueF(const std::string& ValueName, float Value)
+{
+	if (mPersistentValuesMapF.count(ValueName) > 0)
+	{
+		mPersistentValuesMapF[ValueName] = Value;
+	}
+	else
+	{
+		mPersistentValuesMapF.emplace(ValueName, Value);
+	}
+}
+
+float Core::World::GetPersistentValueF(const std::string& ValueName) const
+{
+	if (mPersistentValuesMapF.count(ValueName) == 0) return 0.f;
+	return mPersistentValuesMapF.at(ValueName);
 }
 
 void Core::World::AddCollisionComponent(CollisionComponent* Comp)

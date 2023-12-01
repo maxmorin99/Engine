@@ -3,6 +3,7 @@
 #include "Components/SpriteComponent.h"
 #include "Interfaces/IUpdatable.h"
 #include "Interfaces/IObserver.h"
+#include <vector>
 
 using namespace Core;
 
@@ -18,8 +19,14 @@ public:
 
 	virtual void OnNotify(const std::unordered_map<std::string, void*>& Value) override;
 
+	void AddImpactWallSoundId(const std::vector<size_t>& InId);
+	void AddImpactBodySoundId(const std::vector<size_t>& InId);
+
 private:
 	PhysicComponent* mPxComp = nullptr;
+
+	std::vector<size_t> mImpactWallSoundIdList;
+	std::vector<size_t> mImpactBodySoundIdList;
 
 	/** Damage that this bullet causes */
 	float mDamage = 10.f;

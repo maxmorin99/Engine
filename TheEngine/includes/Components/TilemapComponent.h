@@ -80,7 +80,6 @@ namespace Core
 		std::vector<Tile> GetListOfTileForLayer(const Layer& Layer);
 
 	public:
-		std::vector<Tile> GetTilesFromLayer(const std::string& LayerName);
 		std::vector<TilemapObject> GetTilemapObjects() const;
 		Vector<float> GetTileSize() const;
 	};

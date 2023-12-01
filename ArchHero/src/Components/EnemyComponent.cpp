@@ -7,6 +7,7 @@
 #include "States/DeathState.h"
 #include "Components/AttributeComponent.h"
 #include "Components/BoxComponent.h"
+#include <cstdlib> 
 
 EnemyComponent::EnemyComponent(Object* Owner):
 	Component(Owner)
@@ -42,6 +43,22 @@ void EnemyComponent::Update(float DeltaTime)
 
 	// Update Flip based on movement dir
 	UpdateFlip();
+
+	if (bShouldFlash)
+	{
+		if (AnimationComponent* AnimComp = mOwner->GetComponent<AnimationComponent>())
+		{
+			AnimComp->SetColor(Color::Red);
+			mCurrFlashTime += DeltaTime;
+
+			if (mCurrFlashTime > mHitFlashTime)
+			{
+				mCurrFlashTime = 0.f;
+				AnimComp->SetColor(Color::White);
+				bShouldFlash = false;
+			}
+		}
+	}
 
 	mCurrAttackDelay += DeltaTime;
 
@@ -102,6 +119,7 @@ void EnemyComponent::UpdateFlip()
 
 void EnemyComponent::OnNotify(const std::unordered_map<std::string, void*>& Value)
 {
+	bShouldFlash = true;
 	void* HealthVoidPtr = nullptr;
 	if (Value.count("Health") > 0)
 	{
@@ -113,10 +131,23 @@ void EnemyComponent::OnNotify(const std::unordered_map<std::string, void*>& Valu
 	{
 		if (*Health == 0)
 		{
+			bShouldFlash = false;
+			
+			// play random death sound
+			int RandomId = std::rand() % mDeathSoundId.size();
+			Audio().PlaySFX(mDeathSoundId[RandomId]);
 			ChangeState("Death");
 		}
 	}
 
+}
+
+void EnemyComponent::AddDeathAudioIdList(const std::vector<size_t>& InId)
+{
+	for (size_t id : InId)
+	{
+		mDeathSoundId.push_back(id);
+	}
 }
 
 void EnemyComponent::ChangeState(const std::string& StateName)
@@ -172,6 +203,8 @@ Component* EnemyComponent::Clone(Object* Owner)
 	Clone->mToleranceDistance = mToleranceDistance;
 	Clone->mAttackDelay = mAttackDelay;
 	Clone->mCurrAttackDelay = mCurrAttackDelay;
+	Clone->mHitFlashTime = mHitFlashTime;
+	Clone->mDeathSoundId = mDeathSoundId;
 	return Clone;
 }
 
@@ -184,6 +217,8 @@ void EnemyComponent::SetupClone(Component* Child)
 	Clone->mToleranceDistance = mToleranceDistance;
 	Clone->mAttackDelay = mAttackDelay;
 	Clone->mCurrAttackDelay = mCurrAttackDelay;
+	Clone->mHitFlashTime = mHitFlashTime;
+	Clone->mDeathSoundId = mDeathSoundId;
 }
 
 void EnemyComponent::BindAttributeSubject()

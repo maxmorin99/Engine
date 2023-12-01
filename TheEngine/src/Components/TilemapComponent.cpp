@@ -298,15 +298,6 @@ std::vector<Core::Tile> Core::TilemapComponent::GetListOfTileForLayer(const Laye
 	return OutList;
 }
 
-std::vector<Core::Tile> Core::TilemapComponent::GetTilesFromLayer(const std::string& LayerName)
-{
-	if (mTilemap->count(LayerName))
-	{
-		return GetListOfTileForLayer(mTilemap->at(LayerName));
-	}
-	return std::vector<Tile>();
-}
-
 std::vector<Core::TilemapObject> Core::TilemapComponent::GetTilemapObjects() const
 {
 	if (!mTilemapObjects) return std::vector<TilemapObject>();

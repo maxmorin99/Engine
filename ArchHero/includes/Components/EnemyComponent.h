@@ -5,6 +5,7 @@
 #include "Interfaces/IUpdatable.h"
 #include <unordered_map>
 #include <string>
+#include <vector>
 #include "Interfaces/IObserver.h"
 
 using namespace Core;
@@ -22,6 +23,9 @@ public:
 	virtual void Update(float DeltaTime) override;
 	virtual Component* Clone(Object* Owner) override;
 	virtual void SetupClone(Component* Child) override;
+	virtual void OnNotify(const std::unordered_map<std::string, void*>& Value) override;
+	void AddDeathAudioIdList(const std::vector<size_t>& InId);
+
 	void ChangeState(const std::string& StateName);
 
 private:
@@ -36,6 +40,11 @@ private:
 
 	float mAttackDelay = 2.f;
 	float mCurrAttackDelay = 0.f;
+	float mHitFlashTime = 0.5f;
+	float mCurrFlashTime = 0.f;
+	bool bShouldFlash = false;
+
+	std::vector<size_t> mDeathSoundId;
 
 	std::unordered_map<std::string, IState*> mStates;
 	IState* mCurrentState = nullptr;
@@ -58,8 +67,5 @@ public:
 	inline float GetAttackDelay() const { return mAttackDelay; }
 	inline void SetCurrAttackDelay(float InDelay) { mCurrAttackDelay = InDelay; }
 	inline float GetCurrAttackDelay() const { return mCurrAttackDelay; }
-
-
-	// Hérité via IObserver
-	virtual void OnNotify(const std::unordered_map<std::string, void*>& Value) override;
+	inline void SetHitFlashTime(float InTime) { mHitFlashTime = InTime; }
 };

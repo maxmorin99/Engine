@@ -6,6 +6,7 @@
 #include "Components/AnimationComponent.h"
 #include "Components/CollisionComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/AttributeComponent.h"
 
 Core::PlayerComponent::PlayerComponent(Object* Owner) :
 	Component(Owner)
@@ -17,15 +18,28 @@ void Core::PlayerComponent::Start()
 	if (!mOwner) return;
 	AdjustBoxSize();
 
-	
-
 	mAnimationComponent = mOwner->GetComponent<AnimationComponent>();
 	mPxComponent = mOwner->GetComponent<PhysicComponent>();
+
+	if (AttributeComponent* AttributeComp = mOwner->GetComponent<AttributeComponent>())
+	{
+		AttributeComp->mOnHealthChangedSubject.AddListener(this);
+		float PlayerHealth = World().GetPersistentValueF("PlayerHealth");
+		if (PlayerHealth)
+		{
+			AttributeComp->SetCurrentHealth(PlayerHealth);
+		}
+		else
+		{
+			AttributeComp->SetCurrentHealth(AttributeComp->GetMaxHealth());
+		}
+	}
 }
 
 void Core::PlayerComponent::Update(float DeltaTime)
 {
 	if (!CheckReferences()) return;
+	if (!bAlive) return;
 
 	Vector<float> MovementInput = Vector<float>::ZeroVector();
 	GetMovementInput(MovementInput);
@@ -61,6 +75,12 @@ void Core::PlayerComponent::GetMovementInput(Vector<float>& OutMovementInput)
 void Core::PlayerComponent::RollEndNotify()
 {
 	mRolling = false;
+}
+
+void Core::PlayerComponent::DeathEndNotify()
+{
+	World().SetPersistentValueF("PlayerHealth", 100.f);
+	World().Load("MenuScene");
 }
 
 bool Core::PlayerComponent::CheckReferences() const
@@ -125,6 +145,52 @@ void Core::PlayerComponent::AdjustBoxSize()
 	}
 }
 
+void Core::PlayerComponent::Die()
+{
+	if (!bAlive) return;
+	bAlive = false;
+	Audio().PlaySFX(mDeathSoundId);
+	if (mAnimationComponent)
+	{
+		mAnimationComponent->SetClip("Death", false, std::bind(&PlayerComponent::DeathEndNotify, this));
+	}
+}
+
+void Core::PlayerComponent::OnNotify(const std::unordered_map<std::string, void*>& Value)
+{
+	void* HealthVoidPtr = nullptr;
+
+	if (Value.count("Health") > 0)
+	{
+		HealthVoidPtr = Value.at("Health");
+	}
+
+	if (HealthVoidPtr)
+	{
+		float* Health = static_cast<float*>(HealthVoidPtr);
+		if (Health)
+		{
+			World().SetPersistentValueF("PlayerHealth", *Health);
+
+			if (*Health == 0)
+			{
+				// die
+				Die();
+			}
+		}
+	}
+}
+
+void Core::PlayerComponent::AddHitSoundId(const std::vector<size_t>& InId)
+{
+	mHitSoundId = InId;
+}
+
+void Core::PlayerComponent::SetDeathSoundId(size_t InId)
+{
+	mDeathSoundId = InId;
+}
+
 void Core::PlayerComponent::Destroy()
 {
 }
@@ -133,10 +199,16 @@ Core::Component* Core::PlayerComponent::Clone(Object* Owner)
 {
 	PlayerComponent* Clone = new PlayerComponent(Owner);
 	__super::SetupClone(Clone);
+	Clone->mHitSoundId = mHitSoundId;
+	Clone->mDeathSoundId = mDeathSoundId;
 	return Clone;
 }
 
 void Core::PlayerComponent::SetupClone(Component* Child)
 {
-	__super::SetupClone(Child);
+	PlayerComponent* Clone = dynamic_cast<PlayerComponent*>(Child);
+	__super::SetupClone(Clone);
+	if (!Clone) return;
+	Clone->mHitSoundId = mHitSoundId;
+	Clone->mDeathSoundId = mDeathSoundId;
 }

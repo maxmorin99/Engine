@@ -41,6 +41,8 @@ Component* BulletComponent::Clone(Object* Owner)
 	BulletComponent* Clone = new BulletComponent(Owner);
 	__super::SetupClone(Clone);
 	Clone->mDamage = mDamage;
+	Clone->mImpactWallSoundIdList = mImpactWallSoundIdList;
+	Clone->mImpactBodySoundIdList = mImpactBodySoundIdList;
 
 	return Clone;
 }
@@ -53,6 +55,8 @@ void BulletComponent::SetupClone(Component* Child)
 	if (Clone)
 	{
 		Clone->mDamage = mDamage;
+		Clone->mImpactWallSoundIdList = mImpactWallSoundIdList;
+		Clone->mImpactBodySoundIdList = mImpactBodySoundIdList;
 	}
 }
 
@@ -89,16 +93,34 @@ void BulletComponent::OnNotify(const std::unordered_map<std::string, void*>& Val
 					Attribute->TakeDamage(mDamage);
 				}
 
+				// play random body impact sound
+				int RandomId = std::rand() % mImpactBodySoundIdList.size();
+				Audio().PlaySFX(mImpactBodySoundIdList[RandomId], false);
+
 				// Play blood vfx
 				PlayDestroyAnimation("BloodClip");
 			}
 			else
 			{
+				// play random impact sound
+				int RandomId = std::rand() % mImpactWallSoundIdList.size();
+				Audio().PlaySFX(mImpactWallSoundIdList[RandomId], false);
+
 				// Play explosion vfx
 				PlayDestroyAnimation("ExplosionClip");
 			}
 		}
 	}
+}
+
+void BulletComponent::AddImpactWallSoundId(const std::vector<size_t>& InId)
+{
+	mImpactWallSoundIdList = InId;
+}
+
+void BulletComponent::AddImpactBodySoundId(const std::vector<size_t>& InId)
+{
+	mImpactBodySoundIdList = InId;
 }
 
 void BulletComponent::DisableCollision()

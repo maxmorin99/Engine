@@ -99,7 +99,8 @@ void Core::SdlAudio::SetVolume(int Volume)
 
 void Core::SdlAudio::SetSFXVolume(size_t SoundId, int Volume)
 {
-    if (mSoundMap.find(SoundId) == mSoundMap.end()) return;
+   // if (mSoundMap.count(SoundId) > 0) return;
+    if (mSoundMap.count(SoundId) == 0) return;
     Mix_Chunk* Sfx = mSoundMap[SoundId];
     Mix_VolumeChunk(Sfx, Volume);
 }

@@ -18,6 +18,16 @@ void Core::Scene::Load()
 {
 }
 
+void Core::Scene::UnLoad()
+{
+	mObjectsToAddToWorld.clear();
+}
+
 void Core::Scene::Destroy()
 {
+}
+
+std::string Core::Scene::GetName()
+{
+	return mName;
 }

@@ -113,6 +113,21 @@ std::vector<Core::Node*> Core::PathFindingComponent::FlattenTiles(const std::vec
 			OutList.push_back(n);
 		}
 	}
+	for (int i = 0; i < OutList.size(); i++)
+	{
+		Node* n = OutList[i];
+		if (!n->bObstacle)
+		{
+			for (int j = 0; j < OutList.size(); j++)
+			{
+				Node* n2 = OutList[j];
+				if (n2->bObstacle && n2->X == n->X && n2->Y == n->Y)
+				{
+					n->bObstacle = true;
+				}
+			}
+		}
+	}
 	return OutList;
 }
 

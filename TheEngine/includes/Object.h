@@ -112,6 +112,7 @@ namespace Core
 	inline T* Object::GetComponent() const
 	{
 		const type_info* Type = &(typeid(T));
+		if (!Type) return nullptr;
 		if (mComponentsByType.count(Type) > 0)
 		{
 			return static_cast<T*>(mComponentsByType.at(Type));

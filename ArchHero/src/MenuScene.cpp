@@ -6,6 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/ButtonListenerComponent.h"
+#include "Components/MusicComponent.h"
 #include "Engine/Engine.h"
 
 MenuScene::MenuScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH):
@@ -86,6 +87,15 @@ void MenuScene::Load()
 	TargetBoxComp->SetBoxSize(1.f, 1.f);
 	TargetBoxComp->SetCollisionChannel(ECollisionChannel::UI);
 	TargetBoxComp->SetCollisionResponseToChannel(ECollisionChannel::UI, ECollisionResponse::Overlap);
+
+	/* Music Obj ----------------------------------------------- */
+
+	Object* MusicObj = new Object();
+	mObjectsToAddToWorld.push_back(MusicObj);
+	MusicComponent* MusicComp = MusicObj->AddComponent<MusicComponent>();
+	std::string MusicFile = ASSET_PATH + std::string("Music/MenuSceneMusic.mp3");
+	MusicComp->SetMusicFile(MusicFile);
+	Engine::GetAudio().SetMusicVolume(MusicComp->GetMusicId(), 50);
 
 	/* Add obj in the world ------------------------------------ */
 

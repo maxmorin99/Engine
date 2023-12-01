@@ -1,4 +1,4 @@
-#include "FirstScene.h"
+#include "ThirdScene.h"
 #include "Object.h"
 #include "Engine/Engine.h"
 #include "Interfaces/IWorld.h"
@@ -17,14 +17,15 @@
 #include "Components/HealthBarComponent.h"
 #include "Components/ButtonComponent.h"
 #include "Components/AttributeComponent.h"
+#include "Components/GateComponent.h"
 
-FirstScene::FirstScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH) :
+ThirdScene::ThirdScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH) :
 	Scene(name, tilemapFile, srcTileW, srcTileH, tileCountW, tileCountH)
 {
 	mTiledFile = tilemapFile;
 }
 
-void FirstScene::Load()
+void ThirdScene::Load()
 {
 	Scene::Load();
 
@@ -42,8 +43,8 @@ void FirstScene::Load()
 	TmComp->AddTileset(TilesetWall2, 369, 32, 32, 16, 240);
 	TmComp->AddTileset(TilesetPrison, 609, 32, 32, 65, 4485);
 	TmComp->AddLayer("BackgroundLayer");
-	TmComp->AddLayer("FloorLayer");
 	TmComp->AddLayer("WallLayer");
+	TmComp->AddLayer("FloorLayer");
 	TmComp->AddObjectLayer("CollisionLayer");
 
 	std::vector<TilemapObject> TilemapObjects = TmComp->GetTilemapObjects();
@@ -64,42 +65,43 @@ void FirstScene::Load()
 		Box->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Ignore);
 	}
 
-	//std::vector<Tile> WallTiles = TmComp->GetTilesFromLayer("WallLayer");
-	
-	Vector<float> PlayerTileStart(1, 6);
+	// Player
+	Vector<float> PlayerTileStart(1, 2);
 	Vector<float> PlayerStart = Vector<float>(PlayerTileStart.X * TmComp->GetTileSize().X, PlayerTileStart.Y * TmComp->GetTileSize().Y);
+	Object* Player = Engine::GetSpawner().Spawn("Player");
+	Player->SetLocation(PlayerStart);
+	Player->SetSize(TmComp->GetTileSize().Y * 2.5f, TmComp->GetTileSize().Y * 2.5f);
+	mObjectsToAddToWorld.push_back(Player);
 
-
-	Object* AnimatedPlayer = Engine::GetSpawner().Spawn("Player");
-	AnimatedPlayer->SetLocation(PlayerStart);
-	AnimatedPlayer->SetSize(TmComp->GetTileSize().Y * 2.5f, TmComp->GetTileSize().Y * 2.5f);
-	mObjectsToAddToWorld.push_back(AnimatedPlayer);
-
+	// Cursor
 	Object* Cursor = Engine::GetSpawner().Spawn("Cursor");
-	
 
+	// Weapon
 	Object* Weapon = Engine::GetSpawner().Spawn("Weapon");
-	Weapon->SetSize(AnimatedPlayer->GetSize().X * 0.24f, AnimatedPlayer->GetSize().Y * 0.12f);
-	Weapon->GetComponent<WeaponComponent>()->SetOffset(Vector<float>(AnimatedPlayer->GetSize().X * 0.12f, AnimatedPlayer->GetSize().Y * 0.2f));
-	Weapon->GetComponent<WeaponComponent>()->SetInstigator(AnimatedPlayer);
+	Weapon->SetSize(Player->GetSize().X * 0.24f, Player->GetSize().Y * 0.12f);
+	Weapon->GetComponent<WeaponComponent>()->SetOffset(Vector<float>(Player->GetSize().X * 0.12f, Player->GetSize().Y * 0.2f));
+	Weapon->GetComponent<WeaponComponent>()->SetInstigator(Player);
 	Weapon->GetComponent<WeaponComponent>()->SetTargetCursorObject(Cursor);
 	mObjectsToAddToWorld.push_back(Weapon);
 
-	Vector<float> PurpleEnemyTileStart(9, 11);
+	// Purple enemy 1
+	Vector<float> PurpleEnemyTileStart(12, 4);
 	Vector<float> PurpleEnemyStart = Vector<float>(PurpleEnemyTileStart.X * TmComp->GetTileSize().X, PurpleEnemyTileStart.Y * TmComp->GetTileSize().Y);
 	Object* PurpleEnemyObj = Engine::GetSpawner().Spawn("PurpleEnemy");
 	PurpleEnemyObj->SetLocation(PurpleEnemyStart);
 	PurpleEnemyObj->SetSize(TmComp->GetTileSize().Y * 2.5f, TmComp->GetTileSize().Y * 2.5f);
 	mObjectsToAddToWorld.push_back(PurpleEnemyObj);
 
-	Vector<float> FlyingEnemyTileStart(15, 6);
+	// Flying enemy 1
+	Vector<float> FlyingEnemyTileStart(22, 6);
 	Vector<float> FlyingEnemyStart = Vector<float>(FlyingEnemyTileStart.X * TmComp->GetTileSize().X, FlyingEnemyTileStart.Y * TmComp->GetTileSize().Y);
 	Object* FlyingEnemyObj = Engine::GetSpawner().Spawn("FlyingEnemy");
 	FlyingEnemyObj->SetLocation(FlyingEnemyStart);
 	FlyingEnemyObj->SetSize(TmComp->GetTileSize().Y * 2, TmComp->GetTileSize().Y * 2);
 	mObjectsToAddToWorld.push_back(FlyingEnemyObj);
 
-	Vector<float> FlyingEnemyTileStart2(13, 11);
+	// Flying enemy 2
+	Vector<float> FlyingEnemyTileStart2(19, 12);
 	Vector<float> FlyingEnemyStart2 = Vector<float>(FlyingEnemyTileStart2.X * TmComp->GetTileSize().X, FlyingEnemyTileStart2.Y * TmComp->GetTileSize().Y);
 	Object* FlyingEnemyObj2 = Engine::GetSpawner().Spawn("FlyingEnemy");
 	FlyingEnemyObj2->SetLocation(FlyingEnemyStart2);
@@ -127,7 +129,8 @@ void FirstScene::Load()
 	Object* MusicObj = new Object();
 	mObjectsToAddToWorld.push_back(MusicObj);
 	MusicComponent* MusicComp = MusicObj->AddComponent<MusicComponent>();
-	std::string MusicFile = ASSET_PATH + std::string("Music/FirstSceneMusic.mp3");
+	std::string MusicFile = ASSET_PATH + std::string("Music/ThirdSceneMusic.mp3");
+	MusicComp->SetMusicFile(MusicFile);
 	MusicComp->SetMusicFile(MusicFile);
 	Engine::GetAudio().SetMusicVolume(MusicComp->GetMusicId(), 40);
 
@@ -142,7 +145,7 @@ void FirstScene::Load()
 	HealthBarComp->SetPaddingPercent(0.01f);
 	HealthBarComp->SetSizeRatio(Vector<float>(0.2, 0.05));
 	HealthBarComp->SetBorderSize(7);
-	AnimatedPlayer->GetComponent<AttributeComponent>()->mOnHealthChangedSubject.AddListener(HealthBarComp);
+	Player->GetComponent<AttributeComponent>()->mOnHealthChangedSubject.AddListener(HealthBarComp);
 
 
 	/* Add obj in the world ------------------------------------ */

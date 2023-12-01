@@ -31,8 +31,18 @@ void Core::AttributeComponent::SetupClone(Component* Child)
 void Core::AttributeComponent::Start()
 {
 	__super::Start();
+	
+}
 
-	mCurrentHealth = mMaxHealth;
+void Core::AttributeComponent::SetCurrentHealth(float InHealth)
+{
+	mCurrentHealth = InHealth;
+	float NewHealthPercent = GetPercentHealth();
+	std::unordered_map<std::string, void*> ParamsMap;
+	ParamsMap["Health"] = &mCurrentHealth;
+	ParamsMap["MaxHealth"] = &mMaxHealth;
+	ParamsMap["Percent"] = &NewHealthPercent;
+	mOnHealthChangedSubject.Invoke(ParamsMap);
 }
 
 float Core::AttributeComponent::GetPercentHealth() const
@@ -56,5 +66,11 @@ void Core::AttributeComponent::TakeDamage(float InDamage)
 		ParamsMap["MaxHealth"] = &mMaxHealth;
 		ParamsMap["Percent"] = &NewHealthPercent;
 		mOnHealthChangedSubject.Invoke(ParamsMap);
+
+		if (NewHealthPercent == 0.f)
+		{
+			std::unordered_map<std::string, void*> mParamsMap;
+			mOnDeathSubject.Invoke(mParamsMap);
+		}
 	}
 }

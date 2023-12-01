@@ -7,6 +7,8 @@
 #include "MenuScene.h"
 #include "DefaultScene.h"
 #include "FirstScene.h"
+#include "SecondScene.h"
+#include "ThirdScene.h"
 
 #include "Object.h"
 #include "Components/BulletComponent.h"
@@ -19,11 +21,21 @@
 #include "Components/PlayerComponent.h"
 #include "Components/WeaponComponent.h"
 #include "Components/TargetCursorComponent.h"
+#include "Components/GateComponent.h"
+#include "Components/ChangeSceneTrigger.h"
+
+#include <cstdlib>  
+#include <ctime>    
 
 using namespace Core;
 
 void InitGameplay()
 {
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+	int WinW, WinH = 0;
+	Engine::GetGraphic().GetWindowSize(&WinW, &WinH);
+
 	// prototypes
 
 	// Player bullet -------------------------------------------------------------------------------------------------- //
@@ -32,8 +44,35 @@ void InitGameplay()
 	PlayerBullet->AddTag("Bullet");
 	PlayerBullet->SetSize(20.f, 20.f);
 	PlayerBullet->SetRotation(0.f);
+
+	std::vector<size_t> BulletImpactSoundIdList;
+	std::string BulletImpactSoundFile_01 = ASSET_PATH + std::string("Sfx/BulletImpactWall_01.wav");
+	std::string BulletImpactSoundFile_02 = ASSET_PATH + std::string("Sfx/BulletImpactWall_02.wav");
+	BulletImpactSoundIdList.push_back(Engine::GetAudio().LoadSound(BulletImpactSoundFile_01.c_str()));
+	BulletImpactSoundIdList.push_back(Engine::GetAudio().LoadSound(BulletImpactSoundFile_02.c_str()));
+	for (int i = 0; i < BulletImpactSoundIdList.size(); i++)
+	{
+		Engine::GetAudio().SetSFXVolume(BulletImpactSoundIdList[i], 7);
+	}
+
+	std::vector<size_t> BulletImpactBodySoundIdList;
+	std::string BulletImpactBodySoundFile_01 = ASSET_PATH + std::string("Sfx/BulletImpactBody_01.wav");
+	std::string BulletImpactBodySoundFile_02 = ASSET_PATH + std::string("Sfx/BulletImpactBody_02.wav");
+	std::string BulletImpactBodySoundFile_03 = ASSET_PATH + std::string("Sfx/BulletImpactBody_03.wav");
+	std::string BulletImpactBodySoundFile_04 = ASSET_PATH + std::string("Sfx/BulletImpactBody_04.wav");
+	BulletImpactBodySoundIdList.push_back(Engine::GetAudio().LoadSound(BulletImpactBodySoundFile_01.c_str()));
+	BulletImpactBodySoundIdList.push_back(Engine::GetAudio().LoadSound(BulletImpactBodySoundFile_02.c_str()));
+	BulletImpactBodySoundIdList.push_back(Engine::GetAudio().LoadSound(BulletImpactBodySoundFile_03.c_str()));
+	BulletImpactBodySoundIdList.push_back(Engine::GetAudio().LoadSound(BulletImpactBodySoundFile_04.c_str()));
+	for (int i = 0; i < BulletImpactBodySoundIdList.size(); i++)
+	{
+		Engine::GetAudio().SetSFXVolume(BulletImpactBodySoundIdList[i], 25);
+	}
+
 	BulletComponent* PlayerBulletComp = PlayerBullet->AddComponent<BulletComponent>();
 	PlayerBulletComp->SetDamage(10.f);
+	PlayerBulletComp->AddImpactWallSoundId(BulletImpactSoundIdList);
+	PlayerBulletComp->AddImpactBodySoundId(BulletImpactBodySoundIdList);
 
 	// Px
 	PhysicComponent* PlayerPxComp = PlayerBullet->AddComponent<PhysicComponent>();
@@ -96,6 +135,8 @@ void InitGameplay()
 	EnemyBullet->SetRotation(0.f);
 	BulletComponent* EnemyBulletComp = EnemyBullet->AddComponent<BulletComponent>();
 	EnemyBulletComp->SetDamage(10.f);
+	EnemyBulletComp->AddImpactWallSoundId(BulletImpactSoundIdList);
+	EnemyBulletComp->AddImpactBodySoundId(BulletImpactBodySoundIdList);
 
 	// Px
 	PhysicComponent* EnemyPxComp = EnemyBullet->AddComponent<PhysicComponent>();
@@ -139,9 +180,22 @@ void InitGameplay()
 	PurpleEnemy->SetLocation(900, 450);
 	PurpleEnemy->SetSize(150, 150);
 
+	std::vector<size_t> PurpleEnemyDeathSoundIdList;
+	std::string PurpleEnemyDeathFile_01 = ASSET_PATH + std::string("Sfx/PurpleCreatureDeath_01.wav");
+	std::string PurpleEnemyDeathFile_02 = ASSET_PATH + std::string("Sfx/PurpleCreatureDeath_02.wav");
+	std::string PurpleEnemyDeathFile_03 = ASSET_PATH + std::string("Sfx/PurpleCreatureDeath_03.wav");
+	PurpleEnemyDeathSoundIdList.push_back(Engine::GetAudio().LoadSound(PurpleEnemyDeathFile_01.c_str()));
+	PurpleEnemyDeathSoundIdList.push_back(Engine::GetAudio().LoadSound(PurpleEnemyDeathFile_02.c_str()));
+	PurpleEnemyDeathSoundIdList.push_back(Engine::GetAudio().LoadSound(PurpleEnemyDeathFile_03.c_str()));
+	for (int i = 0; i < PurpleEnemyDeathSoundIdList.size(); i++)
+	{
+		Engine::GetAudio().SetSFXVolume(PurpleEnemyDeathSoundIdList[i], 35);
+	}
 	EnemyComponent* PurpleEnemyComp = PurpleEnemy->AddComponent<EnemyComponent>();
-	PurpleEnemyComp->SetToleranceDistance(275.f);
+	PurpleEnemyComp->AddDeathAudioIdList(PurpleEnemyDeathSoundIdList);
+	PurpleEnemyComp->SetToleranceDistance(WinW * 0.09f);
 	PurpleEnemyComp->SetAttackDelay(2.f);
+	PurpleEnemyComp->SetHitFlashTime(0.15f);
 	PathFindingComponent* PurplePathComp = PurpleEnemy->AddComponent<PathFindingComponent>();
 
 	// Attribute
@@ -226,10 +280,32 @@ void InitGameplay()
 	FlyingEnemy->AddTag("Character");
 	FlyingEnemy->SetLocation(900, 700);
 	FlyingEnemy->SetSize(150, 150); //250, 250
+	std::vector<size_t> FlyingEnemyDeathIdList;
+	std::string FlyingEnemyDeathSound_01 = ASSET_PATH + std::string("Sfx/FlyingCreatureDeath_01.wav");
+	std::string FlyingEnemyDeathSound_02 = ASSET_PATH + std::string("Sfx/FlyingCreatureDeath_02.wav");
+	std::string FlyingEnemyDeathSound_03 = ASSET_PATH + std::string("Sfx/FlyingCreatureDeath_03.wav");
+	std::string FlyingEnemyDeathSound_04 = ASSET_PATH + std::string("Sfx/FlyingCreatureDeath_04.wav");
+	std::string FlyingEnemyDeathSound_05 = ASSET_PATH + std::string("Sfx/FlyingCreatureDeath_05.wav");
+	std::string FlyingEnemyDeathSound_06 = ASSET_PATH + std::string("Sfx/FlyingCreatureDeath_06.wav");
+	std::string FlyingEnemyDeathSound_07 = ASSET_PATH + std::string("Sfx/FlyingCreatureDeath_07.wav");
+	std::string FlyingEnemyDeathSound_08 = ASSET_PATH + std::string("Sfx/FlyingCreatureDeath_08.wav");
+	FlyingEnemyDeathIdList.push_back(Engine::GetAudio().LoadSound(FlyingEnemyDeathSound_01.c_str()));
+	FlyingEnemyDeathIdList.push_back(Engine::GetAudio().LoadSound(FlyingEnemyDeathSound_02.c_str()));
+	FlyingEnemyDeathIdList.push_back(Engine::GetAudio().LoadSound(FlyingEnemyDeathSound_03.c_str()));
+	FlyingEnemyDeathIdList.push_back(Engine::GetAudio().LoadSound(FlyingEnemyDeathSound_04.c_str()));
+	FlyingEnemyDeathIdList.push_back(Engine::GetAudio().LoadSound(FlyingEnemyDeathSound_05.c_str()));
+	FlyingEnemyDeathIdList.push_back(Engine::GetAudio().LoadSound(FlyingEnemyDeathSound_06.c_str()));
+	FlyingEnemyDeathIdList.push_back(Engine::GetAudio().LoadSound(FlyingEnemyDeathSound_07.c_str()));
+	FlyingEnemyDeathIdList.push_back(Engine::GetAudio().LoadSound(FlyingEnemyDeathSound_08.c_str()));
+	for (int i = 0; i < FlyingEnemyDeathIdList.size(); i++)
+	{
+		Engine::GetAudio().SetSFXVolume(FlyingEnemyDeathIdList[i], 35);
+	}
 	EnemyComponent* FlyingEnemyComp = FlyingEnemy->AddComponent<EnemyComponent>();
-	FlyingEnemyComp->SetToleranceDistance(275.f);
+	FlyingEnemyComp->AddDeathAudioIdList(FlyingEnemyDeathIdList);
+	FlyingEnemyComp->SetHitFlashTime(0.15f);
+	FlyingEnemyComp->SetToleranceDistance(WinW * 0.3f);
 	FlyingEnemyComp->SetAttackDelay(2.f);
-	FlyingEnemyComp->SetToleranceDistance(500);
 	PathFindingComponent* FlyingPathComp = FlyingEnemy->AddComponent<PathFindingComponent>();
 
 	// Attribute
@@ -301,10 +377,25 @@ void InitGameplay()
 
 	// Player --------------------------------------------------------------------------------------------------------- //
 
+	std::vector<size_t> PlayerHitIdList;
+	std::string PlayerHitSoundFile_01 = ASSET_PATH + std::string("Sfx/PlayerHit_01.wav");
+	std::string PlayerHitSoundFile_02 = ASSET_PATH + std::string("Sfx/PlayerHit_02.wav");
+	std::string PlayerHitSoundFile_03 = ASSET_PATH + std::string("Sfx/PlayerHit_03.wav");
+	PlayerHitIdList.push_back(Engine::GetAudio().LoadSound(PlayerHitSoundFile_01.c_str()));
+	PlayerHitIdList.push_back(Engine::GetAudio().LoadSound(PlayerHitSoundFile_02.c_str()));
+	PlayerHitIdList.push_back(Engine::GetAudio().LoadSound(PlayerHitSoundFile_03.c_str()));
+	for (int i = 0; i < PlayerHitIdList.size(); i++)
+	{
+		Engine::GetAudio().SetSFXVolume(PlayerHitIdList[i], 20);
+	}
+	std::string PlayerDeathSoundFile = ASSET_PATH + std::string("Sfx/PlayerDeath.wav");
 	Object* Player = new Object();
 	Player->AddTag("Player");
 	Player->AddTag("Character");
-	Player->AddComponent<PlayerComponent>();
+	PlayerComponent* PlayerComp = Player->AddComponent<PlayerComponent>();
+	PlayerComp->AddHitSoundId(PlayerHitIdList);
+	PlayerComp->SetDeathSoundId(Engine::GetAudio().LoadSound(PlayerDeathSoundFile.c_str()));
+	Engine::GetAudio().SetSFXVolume(PlayerComp->GetDeathSondId(), 20);
 	Player->SetLocation(250.f, 250.f);
 	Player->SetSize(250, 250);
 	AttributeComponent* PlayerAttribute = Player->AddComponent<AttributeComponent>();
@@ -323,8 +414,6 @@ void InitGameplay()
 	PlayerBox->SetCollisionResponseToChannel(ECollisionChannel::World, ECollisionResponse::Block);
 	PlayerBox->SetCollisionResponseToChannel(ECollisionChannel::Enemy, ECollisionResponse::Ignore);
 	PlayerBox->SetCollisionResponseToChannel(ECollisionChannel::Projectile, ECollisionResponse::Overlap);
-	/*PlayerBox->SetBoxSize(75, 100);
-	PlayerBox->SetOffset(85, 120);*/
 
 	// Animation
 	AnimationComponent* PlayerAnim = Player->AddComponent<AnimationComponent>();
@@ -423,15 +512,93 @@ void InitGameplay()
 
 	// ---------------------------------------------------------------------------------------------------------------- //
 
+	// Gate ----------------------------------------------------------------------------------------------------------- //
+
+	Object* GateObj = new Object();
+	GateComponent* GateComp = GateObj->AddComponent<GateComponent>();
+	const std::string GateSoundFile = ASSET_PATH + std::string("Sfx/Door.wav");
+	GateComp->SetAudioFile(GateSoundFile);
+	GateObj->SetSize(150, 150);
+	GateObj->SetLocation(0.f, 0.f);
+	BoxComponent* GateBox = GateObj->AddComponent<BoxComponent>();
+	GateBox->SetCollisionChannel(ECollisionChannel::World);
+	GateBox->SetCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Block);
+	AnimationComponent* GateAnimComp = GateObj->AddComponent<AnimationComponent>();
+	const std::string GateFile = ASSET_PATH + std::string("Gate/Gate.png");
+	GateAnimComp->SetFile(GateFile);
+
+	std::vector<Frame> GateIdleFrames;
+	GateIdleFrames.push_back(Frame(0, 0, 128, 160, "Idle_1"));
+
+	Clip GateIdleClip("IdleClip", GateIdleFrames, 0);
+	GateAnimComp->AddClip("Idle", GateIdleClip);
+
+	std::vector<Frame> GateOpenedFrames;
+	GateOpenedFrames.push_back(Frame(22, 0, 128, 160, "Opened_1"));
+
+	Clip GateOpenedClip("OpenedClip", GateOpenedFrames, 0);
+	GateAnimComp->AddClip("Opened", GateOpenedClip);
+
+	std::vector<Frame> GateOpenFrames;
+	GateOpenFrames.push_back(Frame(0, 0, 128, 160, "Open_1"));
+	GateOpenFrames.push_back(Frame(1, 0, 128, 160, "Open_2"));
+	GateOpenFrames.push_back(Frame(2, 0, 128, 160, "Open_3"));
+	GateOpenFrames.push_back(Frame(3, 0, 128, 160, "Open_4"));
+	GateOpenFrames.push_back(Frame(4, 0, 128, 160, "Open_5"));
+	GateOpenFrames.push_back(Frame(5, 0, 128, 160, "Open_6"));
+	GateOpenFrames.push_back(Frame(6, 0, 128, 160, "Open_7"));
+	GateOpenFrames.push_back(Frame(7, 0, 128, 160, "Open_8"));
+	GateOpenFrames.push_back(Frame(8, 0, 128, 160, "Open_9"));
+	GateOpenFrames.push_back(Frame(9, 0, 128, 160, "Open_10"));
+	GateOpenFrames.push_back(Frame(10, 0, 128, 160, "Open_11"));
+	GateOpenFrames.push_back(Frame(11, 0, 128, 160, "Open_12"));
+	GateOpenFrames.push_back(Frame(12, 0, 128, 160, "Open_13"));
+	GateOpenFrames.push_back(Frame(13, 0, 128, 160, "Open_14"));
+	GateOpenFrames.push_back(Frame(14, 0, 128, 160, "Open_15"));
+	GateOpenFrames.push_back(Frame(15, 0, 128, 160, "Open_16"));
+	GateOpenFrames.push_back(Frame(16, 0, 128, 160, "Open_17"));
+	GateOpenFrames.push_back(Frame(17, 0, 128, 160, "Open_18"));
+	GateOpenFrames.push_back(Frame(18, 0, 128, 160, "Open_19"));
+	GateOpenFrames.push_back(Frame(19, 0, 128, 160, "Open_20"));
+	GateOpenFrames.push_back(Frame(20, 0, 128, 160, "Open_21"));
+	GateOpenFrames.push_back(Frame(21, 0, 128, 160, "Open_22"));
+	GateOpenFrames.push_back(Frame(22, 0, 128, 160, "Open_23"));
+
+	Clip GateOpenClip("OpenClip", GateOpenFrames, 0.08f);
+	GateAnimComp->AddClip("Open", GateOpenClip);
+
+	GateAnimComp->SetDefaultClip(GateOpenedClip);
+	GateAnimComp->SetClip("Idle", true);
+	Engine::GetSpawner().AddPrototype("Gate", GateObj);
+
+	// ---------------------------------------------------------------------------------------------------------------- //
+
+	// ChangeSceneTrigger --------------------------------------------------------------------------------------------- //
+
+	Object* ChangeSceneTriggerObj = new Object();
+	ChangeSceneTriggerObj->AddComponent<ChangeSceneTrigger>();
+	BoxComponent* ChangeSceneTriggerBoxComp = ChangeSceneTriggerObj->AddComponent<BoxComponent>();
+	ChangeSceneTriggerBoxComp->SetCollisionChannel(ECollisionChannel::World);
+	ChangeSceneTriggerBoxComp->SetCollisionResponseToChannel(ECollisionChannel::Player, ECollisionResponse::Overlap);
+	Engine::GetSpawner().AddPrototype("ChangeSceneTrigger", ChangeSceneTriggerObj);
+
+	// ---------------------------------------------------------------------------------------------------------------- //
+
 
 	// scenes
-	std::string TiledFile = ASSET_PATH + std::string("PrisonTileset/test.tmx");
+	std::string FirstSceneTiledFile = ASSET_PATH + std::string("PrisonTileset/Map_1.tmx");
+	std::string SecondSceneTiledFile = ASSET_PATH + std::string("PrisonTileset/Map_2.tmx");
+	std::string ThirdSceneTiledFile = ASSET_PATH + std::string("PrisonTileset/Map_3.tmx");
 	IScene* Menu = new MenuScene("MenuScene", nullptr, 0, 0, 0, 0);
-	IScene* Default = new DefaultScene("DefaultScene", TiledFile.c_str(), 32, 32, 25, 19);
-	IScene* First = new FirstScene("FirstScene", TiledFile.c_str(), 32, 32, 25, 19);
+	IScene* Default = new DefaultScene("DefaultScene", FirstSceneTiledFile.c_str(), 32, 32, 25, 19);
+	IScene* First = new FirstScene("FirstScene", FirstSceneTiledFile.c_str(), 32, 32, 25, 19);
+	IScene* Second = new SecondScene("SecondScene", SecondSceneTiledFile.c_str(), 32, 32, 25, 19);
+	IScene* Third = new ThirdScene("ThirdScene", ThirdSceneTiledFile.c_str(), 32, 32, 25, 19);
 	Engine::GetWorld().Register("MenuScene", Menu);
 	Engine::GetWorld().Register("DefaultScene", Default);
 	Engine::GetWorld().Register("FirstScene", First);
+	Engine::GetWorld().Register("SecondScene", Second);
+	Engine::GetWorld().Register("ThirdScene", Third);
 	Engine::GetWorld().Load("MenuScene");
 }
 

@@ -25,6 +25,9 @@ namespace Core
 		virtual void Load(const std::string& SceneName) = 0;
 		virtual Object* GetTilemapObject() const = 0;
 		virtual std::vector<Object*> GetObjectsWithTag(const std::string& Tag) const = 0;
+		virtual std::string GetCurrentSceneName() const = 0;
+		virtual void SetPersistentValueF(const std::string& ValueName, float Value) = 0;
+		virtual float GetPersistentValueF(const std::string& ValueName) const = 0;
 
 		virtual void ShutDown() = 0;
 	};

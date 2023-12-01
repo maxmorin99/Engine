@@ -8,6 +8,7 @@
 #include "Components/PortalComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/AnimationComponent.h"
+#include "Components/MusicComponent.h"
 
 DefaultScene::DefaultScene(const char* name, const char* tilemapFile, int srcTileW, int srcTileH, int tileCountW, int tileCountH) :
 	Scene(name, tilemapFile, srcTileW, srcTileH, tileCountW, tileCountH)

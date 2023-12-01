@@ -182,7 +182,7 @@ void Core::SdlGraphic::DrawPoint(const Vector<float>& Point, const Color& Color)
 {
 	SDL_Color SdlColor = ConvertToSdlColor(Color);
 	SDL_SetRenderDrawColor(mRenderer, SdlColor.r, SdlColor.g, SdlColor.b, SdlColor.a);
-	SDL_RenderDrawPoint(mRenderer, Point.X, Point.Y);
+	SDL_RenderDrawPoint(mRenderer, (int)Point.X, (int)Point.Y);
 }
 
 size_t Core::SdlGraphic::LoadTexture(const char* FileName)

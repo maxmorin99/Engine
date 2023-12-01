@@ -47,7 +47,7 @@ void AttackState::SpawnBullet(EnemyComponent* Enemy, Object* Target, Object* Own
 	Object* Bullet = Engine::GetSpawner().Spawn("EnemyBullet");
 	Vector<float> ToTargetDir = Vector<float>(Target->GetCenterLocation() - Owner->GetCenterLocation()).GetNormalized();
 	float RotationRad = ToTargetDir.GetRotationFromX();
-	float RotationDeg = RotationRad * 180 / PI;
+	float RotationDeg = (float)(RotationRad * 180.f / PI);
 
 	if (Target->GetCenterLocation().Y > Owner->GetCenterLocation().Y)
 	{

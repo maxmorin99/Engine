@@ -39,15 +39,23 @@ namespace Core
 		virtual ~AnimationComponent() = default;
 		virtual void Start();
 		virtual void Destroy();
-		virtual Component* Clone(Object* Owner) override;
-		virtual void SetupClone(Component* Child) override;
 
+		/** Called to clone this component and all important member variables */
+		virtual Component* Clone(Object* Owner) override;
+
+		/** If a child component calls Clone(), it will call SetupClone to clone all important member variables of its parents component */
+		virtual void SetupClone(Component* Child) override;
 		
 		void Update(float DeltaTime) override;
 		virtual void Draw() override;
 
+		/** Add a new animation clip */
 		void AddClip(const std::string& InName, Clip& InClip);
+
+		/** Set a new clip to start playing it */
 		void SetClip(const std::string& InClipName, bool bLoop, std::function<void()> FunPtr = nullptr);
+
+		/** This clip will be selected when a non looping animation ends and no other is requested */
 		void SetDefaultClip(Clip& InClip);
 		void Enable();
 		void Disable();

@@ -28,9 +28,8 @@ namespace Core
 		/** % of the screen size that represents the health bar dimensions */
 		Vector<float> mSizeRatioToScreen = Vector<float>(0.5f, 0.5f);
 
-		
-
 	public:
+		/** Set the rect that defines  */
 		inline void SetBarRect(const Rect<float>& InRect) { mBarRect = InRect; }
 		inline void SetColor(const Color& InColor) { mBarColor = InColor; }
 		inline void SetPercent(float InPercent) { mPercent = InPercent; }

@@ -12,7 +12,11 @@ namespace Core
 		virtual ~Component() = default;
 		virtual void Start() {};
 		virtual void Destroy() {};
+
+		/** Called to clone this component and all important member variables */
 		virtual Component* Clone(Object* Owner) { return nullptr; };
+
+		/** If a child component calls Clone(), it will call SetupClone to clone all important member variables of its parents component */
 		virtual void SetupClone(Component* Child) {};
 
 	protected:

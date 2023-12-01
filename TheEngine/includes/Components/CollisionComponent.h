@@ -85,8 +85,14 @@ namespace Core
 		void SetCollisionResponseToAllChannels(const ECollisionResponse& Response);
 		inline void SetCollisionChannel(const ECollisionChannel& Channel) { mCollisionChannel = Channel; }
 		inline ECollisionChannel GetCollisionChannel() const { return mCollisionChannel; }
+
+		/** Add an object to the overlapping list */
 		void AddOverlappingObject(Object* Obj);
+
+		/** Remove an object from the overlapping list */
 		void RemoveOverlappingObject(Object* Obj);
+
+		/** Get a list of all the current overlapping objects */
 		inline std::vector<Object*> GetOverlappingObjects() const { return mOverlappingObjects; }
 		inline std::unordered_map<ECollisionChannel, ECollisionResponse> GetCollisionResponseToChannels() const { return mCollisionResponseToChannels; }		
 	};

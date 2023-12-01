@@ -28,8 +28,10 @@ namespace Core
 		inline void SetMaxHealth(float InHealth) { mMaxHealth = InHealth; mCurrentHealth = InHealth; }
 		inline float GetMaxHealth() const { return mMaxHealth; }
 
-		/** return percent of the object's health from 0 -> 1, 1 = 100% */
+		/** return percent of the object's health from 0 -> 100 */
 		float GetPercentHealth() const;
+
+		/** Reduces the health attribute by the amount defined bu InDamage */
 		void TakeDamage(float InDamage);
 	};
 }

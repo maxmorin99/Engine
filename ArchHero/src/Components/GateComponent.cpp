@@ -31,7 +31,7 @@ void GateComponent::Start()
 	if (!mOwner) return;
 
 	std::vector<Object*> Enemies = World().GetObjectsWithTag("Enemy");
-	SetEnemiesCount(Enemies.size());
+	SetEnemiesCount((int)Enemies.size());
 	for (Object* o : Enemies)
 	{
 		if (AttributeComponent* EnemyAttributeComp = o->GetComponent<AttributeComponent>())

@@ -12,11 +12,10 @@ namespace Core
 	public:
 		ButtonListenerComponent(Object* Owner);
 		virtual ~ButtonListenerComponent() = default;
-		
 		void Play();
 		void Quit();
 
-		// Hérité via IObserver
+		/** Called when the listened button is clicked */
 		void OnNotify(const std::unordered_map<std::string, void*>& Value) override;
 	};
 }

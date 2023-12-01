@@ -111,7 +111,7 @@ void FirstScene::Load()
 	Vector<float> GateStart = Vector<float>(GateTileStart.X * TmComp->GetTileSize().X, GateTileStart.Y * TmComp->GetTileSize().Y);
 	Object* GateObj = Engine::GetSpawner().Spawn("Gate");
 	GateObj->SetLocation(GateStart);
-	GateObj->SetSize(TmComp->GetTileSize().Y * 3, TmComp->GetTileSize().Y * 3.5);
+	GateObj->SetSize(TmComp->GetTileSize().Y * 3.f, TmComp->GetTileSize().Y * 3.5f);
 	mObjectsToAddToWorld.push_back(GateObj);
 
 	Vector<float> ChangeSceneTriggerTileStart(24, 6);
@@ -140,7 +140,7 @@ void FirstScene::Load()
 	mObjectsToAddToWorld.push_back(UIObj);
 	HealthBarComponent* HealthBarComp = UIObj->AddComponent<HealthBarComponent>();
 	HealthBarComp->SetPaddingPercent(0.01f);
-	HealthBarComp->SetSizeRatio(Vector<float>(0.2, 0.05));
+	HealthBarComp->SetSizeRatio(Vector<float>(0.2f, 0.05f));
 	HealthBarComp->SetBorderSize(7);
 	AnimatedPlayer->GetComponent<AttributeComponent>()->mOnHealthChangedSubject.AddListener(HealthBarComp);
 

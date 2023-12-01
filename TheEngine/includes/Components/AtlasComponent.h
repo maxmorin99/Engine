@@ -27,12 +27,17 @@ namespace Core
 		virtual Component* Clone(Object* Owner) override;
 		virtual void SetupClone(Component* Child) override;
 
+		/** Add a new frame in the map. This frame will be available to be render on demands */
 		void AddFrame(const std::string& Name, int X, int Y, int W, int H);
 		void AddFrame(Frame& InFrame);
+
+		/** Set a specific frame to be rendered */
 		void SetFrame(const std::string& Name);
 
 	protected:
 		Vector<int> mTextureSize = Vector<int>::ZeroVector();
+
+		/** Map of all the avalable frames */
 		std::unordered_map<std::string, Frame> mFrames;
 		Frame mCurrentFrame = Frame::Empty();
 

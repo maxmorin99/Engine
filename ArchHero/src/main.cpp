@@ -45,6 +45,7 @@ void InitGameplay()
 	PlayerBullet->SetSize(20.f, 20.f);
 	PlayerBullet->SetRotation(0.f);
 
+	// Bullet sounds
 	std::vector<size_t> BulletImpactSoundIdList;
 	std::string BulletImpactSoundFile_01 = ASSET_PATH + std::string("Sfx/BulletImpactWall_01.wav");
 	std::string BulletImpactSoundFile_02 = ASSET_PATH + std::string("Sfx/BulletImpactWall_02.wav");
@@ -168,10 +169,6 @@ void InitGameplay()
 
 	// ---------------------------------------------------------------------------------------------------------------- //
 
-
-
-	// Ennemies
-
 	// Purple Enemy --------------------------------------------------------------------------------------------------- //
 
 	Object* PurpleEnemy = new Object();
@@ -180,6 +177,7 @@ void InitGameplay()
 	PurpleEnemy->SetLocation(900, 450);
 	PurpleEnemy->SetSize(150, 150);
 
+	// Sounds
 	std::vector<size_t> PurpleEnemyDeathSoundIdList;
 	std::string PurpleEnemyDeathFile_01 = ASSET_PATH + std::string("Sfx/PurpleCreatureDeath_01.wav");
 	std::string PurpleEnemyDeathFile_02 = ASSET_PATH + std::string("Sfx/PurpleCreatureDeath_02.wav");
@@ -191,6 +189,7 @@ void InitGameplay()
 	{
 		Engine::GetAudio().SetSFXVolume(PurpleEnemyDeathSoundIdList[i], 35);
 	}
+
 	EnemyComponent* PurpleEnemyComp = PurpleEnemy->AddComponent<EnemyComponent>();
 	PurpleEnemyComp->AddDeathAudioIdList(PurpleEnemyDeathSoundIdList);
 	PurpleEnemyComp->SetToleranceDistance(WinW * 0.09f);
@@ -280,6 +279,8 @@ void InitGameplay()
 	FlyingEnemy->AddTag("Character");
 	FlyingEnemy->SetLocation(900, 700);
 	FlyingEnemy->SetSize(150, 150); //250, 250
+
+	// Sounds
 	std::vector<size_t> FlyingEnemyDeathIdList;
 	std::string FlyingEnemyDeathSound_01 = ASSET_PATH + std::string("Sfx/FlyingCreatureDeath_01.wav");
 	std::string FlyingEnemyDeathSound_02 = ASSET_PATH + std::string("Sfx/FlyingCreatureDeath_02.wav");
@@ -301,6 +302,7 @@ void InitGameplay()
 	{
 		Engine::GetAudio().SetSFXVolume(FlyingEnemyDeathIdList[i], 35);
 	}
+
 	EnemyComponent* FlyingEnemyComp = FlyingEnemy->AddComponent<EnemyComponent>();
 	FlyingEnemyComp->AddDeathAudioIdList(FlyingEnemyDeathIdList);
 	FlyingEnemyComp->SetHitFlashTime(0.15f);
@@ -381,6 +383,8 @@ void InitGameplay()
 	std::string PlayerHitSoundFile_01 = ASSET_PATH + std::string("Sfx/PlayerHit_01.wav");
 	std::string PlayerHitSoundFile_02 = ASSET_PATH + std::string("Sfx/PlayerHit_02.wav");
 	std::string PlayerHitSoundFile_03 = ASSET_PATH + std::string("Sfx/PlayerHit_03.wav");
+
+	// Sounds
 	PlayerHitIdList.push_back(Engine::GetAudio().LoadSound(PlayerHitSoundFile_01.c_str()));
 	PlayerHitIdList.push_back(Engine::GetAudio().LoadSound(PlayerHitSoundFile_02.c_str()));
 	PlayerHitIdList.push_back(Engine::GetAudio().LoadSound(PlayerHitSoundFile_03.c_str()));
@@ -389,6 +393,7 @@ void InitGameplay()
 		Engine::GetAudio().SetSFXVolume(PlayerHitIdList[i], 20);
 	}
 	std::string PlayerDeathSoundFile = ASSET_PATH + std::string("Sfx/PlayerDeath.wav");
+
 	Object* Player = new Object();
 	Player->AddTag("Player");
 	Player->AddTag("Character");

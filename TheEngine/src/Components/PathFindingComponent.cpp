@@ -150,7 +150,7 @@ std::vector<Core::Vector<float>> Core::PathFindingComponent::GetPath(const Vecto
 			mVisitedList.push_back(CurrNode);
 		}
 		ProcessNeighbours(CurrNode, TargetLoc);
-		SortNodeListByCost(mVisitedList, 0, mVisitedList.size() - 1);
+		SortNodeListByCost(mVisitedList, 0, static_cast<int>(mVisitedList.size() - 1));
 		if (mVisitedList.size() == 0) break;
 
 		CurrNode = mVisitedList[0];
@@ -193,7 +193,7 @@ void Core::PathFindingComponent::ProcessNeighbours(Node* n, const Vector<float>&
 	{
 		Node* CurrNeighbour = n->Neighbours[i];
 		const Vector<float> CurrNodeLoc(n->X, n->Y);
-		size_t Heuristic = Vector<float>::Dist(CurrNodeLoc, targetLoc);
+		size_t Heuristic = static_cast<size_t>(Vector<float>::Dist(CurrNodeLoc, targetLoc));
 		size_t EstimatedTotalCost = n->TotalCost + 1 + Heuristic;
 
 		if (!CurrNeighbour->bObstacle && (CurrNeighbour->TotalCost == SIZE_MAX || CurrNeighbour->TotalCost > EstimatedTotalCost))

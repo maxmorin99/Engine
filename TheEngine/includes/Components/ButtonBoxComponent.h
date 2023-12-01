@@ -19,14 +19,20 @@ namespace Core
 
 	private:
 		Rect<float> mRect;
-		/** Key -> Btn, Key -> Item Vertical size */
+		/** Key -> Btn, Value -> Vertical size */
 		std::unordered_map<ButtonComponent*, float> mItemMap;
+
+		/** Padding between buttons in this box */
 		float mPadding = 1.f;
 
+		/** Returns the first Y coordinates available to place another button */
 		float GetFirstAvailablePositionY();
 
 	public:
+		/** Set the rect that defines the box boundaries */
 		inline void SetRect(const Rect<float>& InRect) { mRect = InRect; }
+
+		/** Set the padding value to apply between eah buttons */
 		inline void SetPadding(float InPadding) { mPadding = InPadding; }
 	};
 }

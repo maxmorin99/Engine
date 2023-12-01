@@ -21,14 +21,22 @@ namespace Core
 		virtual void OnCollisionHit(Object* OtherObject, CollisionComponent* OtherComp) override;
 
 	private:
+		/** Rect that defines the collision boundaries */
 		Rect<float> mRect;
+
+		/** Vector value to add to the rect location to fit the owner sprite(s) */
 		Vector<float> mOwnerOffset = Vector<float>::ZeroVector();
 		bool bMovableCollision = true;
 
 	public:
+		/** Set the Vector value to add to the rect location to fit the owner sprite(s) */
 		void SetOffset(float OffsetX, float OffsetY);
+
+		/** Get the Vector value to add to the rect location to fit the owner sprite(s) */
 		inline Vector<float> GetOffset() const { return mOwnerOffset; }
 		void SetBoxSize(float SizeX, float SizeY);
+
+		/** Get the rect that defines the box boundaries of this collision */
 		inline Rect<float> GetRect() const { return mRect; }
 		inline void SetIsMovableCollision(bool State) { bMovableCollision = State; }
 	};

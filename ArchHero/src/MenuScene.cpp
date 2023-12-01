@@ -20,7 +20,7 @@ void MenuScene::Load()
 	Engine::GetGraphic().GetWindowSize(&WinW, &WinH);
 
 	Object* BackgroundImg = new Object();
-	BackgroundImg->SetSize(WinW, WinH);
+	BackgroundImg->SetSize((float)WinW, (float)WinH);
 	mObjectsToAddToWorld.push_back(BackgroundImg);
 	SpriteComponent* SpriteComp = BackgroundImg->AddComponent<SpriteComponent>();
 	std::string ImgFile = ASSET_PATH + std::string("MenuImage.jpg");

@@ -5,7 +5,6 @@
 #include "Components/AtlasComponent.h"
 #include "Components/PlayerComponent.h"
 #include "Components/PhysicComponent.h"
-#include "Components/Functionality.h"
 #include "Components/AnimationComponent.h"
 #include "Components/WeaponComponent.h"
 #include "Components/TargetCursorComponent.h"
@@ -92,6 +91,22 @@ void ThirdScene::Load()
 	PurpleEnemyObj->SetSize(TmComp->GetTileSize().Y * 2.5f, TmComp->GetTileSize().Y * 2.5f);
 	mObjectsToAddToWorld.push_back(PurpleEnemyObj);
 
+	// Purple enemy 2
+	Vector<float> PurpleEnemyTileStart2(7, 7);
+	Vector<float> PurpleEnemyStart2 = Vector<float>(PurpleEnemyTileStart2.X * TmComp->GetTileSize().X, PurpleEnemyTileStart2.Y * TmComp->GetTileSize().Y);
+	Object* PurpleEnemyObj2 = Engine::GetSpawner().Spawn("PurpleEnemy");
+	PurpleEnemyObj2->SetLocation(PurpleEnemyStart2);
+	PurpleEnemyObj2->SetSize(TmComp->GetTileSize().Y * 2.5f, TmComp->GetTileSize().Y * 2.5f);
+	mObjectsToAddToWorld.push_back(PurpleEnemyObj2);
+
+	// Purple enemy 3
+	Vector<float> PurpleEnemyTileStart3(17, 7);
+	Vector<float> PurpleEnemyStart3 = Vector<float>(PurpleEnemyTileStart3.X * TmComp->GetTileSize().X, PurpleEnemyTileStart3.Y * TmComp->GetTileSize().Y);
+	Object* PurpleEnemyObj3 = Engine::GetSpawner().Spawn("PurpleEnemy");
+	PurpleEnemyObj3->SetLocation(PurpleEnemyStart3);
+	PurpleEnemyObj3->SetSize(TmComp->GetTileSize().Y * 2.5f, TmComp->GetTileSize().Y * 2.5f);
+	mObjectsToAddToWorld.push_back(PurpleEnemyObj3);
+
 	// Flying enemy 1
 	Vector<float> FlyingEnemyTileStart(22, 6);
 	Vector<float> FlyingEnemyStart = Vector<float>(FlyingEnemyTileStart.X * TmComp->GetTileSize().X, FlyingEnemyTileStart.Y * TmComp->GetTileSize().Y);
@@ -107,6 +122,22 @@ void ThirdScene::Load()
 	FlyingEnemyObj2->SetLocation(FlyingEnemyStart2);
 	FlyingEnemyObj2->SetSize(TmComp->GetTileSize().Y * 2, TmComp->GetTileSize().Y * 2);
 	mObjectsToAddToWorld.push_back(FlyingEnemyObj2);
+
+	// Flying enemy 3
+	Vector<float> FlyingEnemyTileStart3(17, 9);
+	Vector<float> FlyingEnemyStart3 = Vector<float>(FlyingEnemyTileStart3.X * TmComp->GetTileSize().X, FlyingEnemyTileStart3.Y * TmComp->GetTileSize().Y);
+	Object* FlyingEnemyObj3 = Engine::GetSpawner().Spawn("FlyingEnemy");
+	FlyingEnemyObj3->SetLocation(FlyingEnemyStart3);
+	FlyingEnemyObj3->SetSize(TmComp->GetTileSize().Y * 2, TmComp->GetTileSize().Y * 2);
+	mObjectsToAddToWorld.push_back(FlyingEnemyObj3);
+
+	// Flying enemy 4
+	Vector<float> FlyingEnemyTileStart4(13, 8);
+	Vector<float> FlyingEnemyStart4 = Vector<float>(FlyingEnemyTileStart4.X * TmComp->GetTileSize().X, FlyingEnemyTileStart4.Y * TmComp->GetTileSize().Y);
+	Object* FlyingEnemyObj4 = Engine::GetSpawner().Spawn("FlyingEnemy");
+	FlyingEnemyObj4->SetLocation(FlyingEnemyStart4);
+	FlyingEnemyObj4->SetSize(TmComp->GetTileSize().Y * 2, TmComp->GetTileSize().Y * 2);
+	mObjectsToAddToWorld.push_back(FlyingEnemyObj4);
 
 	// Gate
 	Vector<float> GateTileStart(22, 6);

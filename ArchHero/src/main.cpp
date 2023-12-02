@@ -5,7 +5,6 @@
 #include "Engine/Core.h"
 #include "Engine/Engine.h"
 #include "MenuScene.h"
-#include "DefaultScene.h"
 #include "FirstScene.h"
 #include "SecondScene.h"
 #include "ThirdScene.h"
@@ -135,7 +134,7 @@ void InitGameplay()
 	EnemyBullet->SetSize(20.f, 20.f);
 	EnemyBullet->SetRotation(0.f);
 	BulletComponent* EnemyBulletComp = EnemyBullet->AddComponent<BulletComponent>();
-	EnemyBulletComp->SetDamage(10.f);
+	EnemyBulletComp->SetDamage(15.f);
 	EnemyBulletComp->AddImpactWallSoundId(BulletImpactSoundIdList);
 	EnemyBulletComp->AddImpactBodySoundId(BulletImpactBodySoundIdList);
 
@@ -595,12 +594,10 @@ void InitGameplay()
 	std::string SecondSceneTiledFile = ASSET_PATH + std::string("PrisonTileset/Map_2.tmx");
 	std::string ThirdSceneTiledFile = ASSET_PATH + std::string("PrisonTileset/Map_3.tmx");
 	IScene* Menu = new MenuScene("MenuScene", nullptr, 0, 0, 0, 0);
-	IScene* Default = new DefaultScene("DefaultScene", FirstSceneTiledFile.c_str(), 32, 32, 25, 19);
 	IScene* First = new FirstScene("FirstScene", FirstSceneTiledFile.c_str(), 32, 32, 25, 19);
 	IScene* Second = new SecondScene("SecondScene", SecondSceneTiledFile.c_str(), 32, 32, 25, 19);
 	IScene* Third = new ThirdScene("ThirdScene", ThirdSceneTiledFile.c_str(), 32, 32, 25, 19);
 	Engine::GetWorld().Register("MenuScene", Menu);
-	Engine::GetWorld().Register("DefaultScene", Default);
 	Engine::GetWorld().Register("FirstScene", First);
 	Engine::GetWorld().Register("SecondScene", Second);
 	Engine::GetWorld().Register("ThirdScene", Third);

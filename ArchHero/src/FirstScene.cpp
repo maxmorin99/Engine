@@ -5,7 +5,6 @@
 #include "Components/AtlasComponent.h"
 #include "Components/PlayerComponent.h"
 #include "Components/PhysicComponent.h"
-#include "Components/Functionality.h"
 #include "Components/AnimationComponent.h"
 #include "Components/WeaponComponent.h"
 #include "Components/TargetCursorComponent.h"

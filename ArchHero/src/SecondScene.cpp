@@ -5,7 +5,6 @@
 #include "Components/AtlasComponent.h"
 #include "Components/PlayerComponent.h"
 #include "Components/PhysicComponent.h"
-#include "Components/Functionality.h"
 #include "Components/AnimationComponent.h"
 #include "Components/WeaponComponent.h"
 #include "Components/TargetCursorComponent.h"
@@ -92,6 +91,14 @@ void SecondScene::Load()
 	PurpleEnemyObj->SetSize(TmComp->GetTileSize().Y * 2.5f, TmComp->GetTileSize().Y * 2.5f);
 	mObjectsToAddToWorld.push_back(PurpleEnemyObj);
 
+	// Purple enemy 2
+	Vector<float> PurpleEnemyTileStart2(5, 12);
+	Vector<float> PurpleEnemyStart2 = Vector<float>(PurpleEnemyTileStart2.X * TmComp->GetTileSize().X, PurpleEnemyTileStart2.Y * TmComp->GetTileSize().Y);
+	Object* PurpleEnemyObj2 = Engine::GetSpawner().Spawn("PurpleEnemy");
+	PurpleEnemyObj2->SetLocation(PurpleEnemyStart2);
+	PurpleEnemyObj2->SetSize(TmComp->GetTileSize().Y * 2.5f, TmComp->GetTileSize().Y * 2.5f);
+	mObjectsToAddToWorld.push_back(PurpleEnemyObj2);
+
 	// Flying enemy 1
 	Vector<float> FlyingEnemyTileStart(22, 6);
 	Vector<float> FlyingEnemyStart = Vector<float>(FlyingEnemyTileStart.X * TmComp->GetTileSize().X, FlyingEnemyTileStart.Y * TmComp->GetTileSize().Y);
@@ -107,6 +114,14 @@ void SecondScene::Load()
 	FlyingEnemyObj2->SetLocation(FlyingEnemyStart2);
 	FlyingEnemyObj2->SetSize(TmComp->GetTileSize().Y * 2, TmComp->GetTileSize().Y * 2);
 	mObjectsToAddToWorld.push_back(FlyingEnemyObj2);
+
+	// Flying enemy 3
+	Vector<float> FlyingEnemyTileStart3(11, 16);
+	Vector<float> FlyingEnemyStart3 = Vector<float>(FlyingEnemyTileStart3.X * TmComp->GetTileSize().X, FlyingEnemyTileStart3.Y * TmComp->GetTileSize().Y);
+	Object* FlyingEnemyObj3 = Engine::GetSpawner().Spawn("FlyingEnemy");
+	FlyingEnemyObj3->SetLocation(FlyingEnemyStart3);
+	FlyingEnemyObj3->SetSize(TmComp->GetTileSize().Y * 2, TmComp->GetTileSize().Y * 2);
+	mObjectsToAddToWorld.push_back(FlyingEnemyObj3);
 
 	// Gate
 	Vector<float> GateTileStart(22, 6);

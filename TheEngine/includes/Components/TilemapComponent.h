@@ -22,7 +22,11 @@ namespace Core
 		virtual void Destroy() override;
 		virtual Component* Clone(Object* Owner);
 		virtual void SetupClone(Component* Child);
+
+		/** Get the tilemap */
 		TTilemap GetTilemap() const;
+
+		/** Get all the layers of the tilemap */
 		std::vector<Layer> GetLayers() const;
 
 	private:
@@ -74,13 +78,19 @@ namespace Core
 		/** Construct all rect from object layer (for collisions) */
 		void ConstructRectsFromObjectLayer(std::ifstream& TiledFile, const std::string& FirstLine);
 
+		/** Get the "name" value of the line from a .csv file */
 		std::string GetNameAttributeFromLine(const std::string& Line) const;
+
+		/** Get the tileset that owns a tile with a specified tile id */
 		Tileset GetTilesetBasedOnTileId(int TileId) const;
 
 		std::vector<Tile> GetListOfTileForLayer(const Layer& Layer);
 
 	public:
+		/** Get the collision objects of the tilemap */
 		std::vector<TilemapObject> GetTilemapObjects() const;
+
+		/** Get the size of the tiles scaled to the screen */
 		Vector<float> GetTileSize() const;
 	};
 }

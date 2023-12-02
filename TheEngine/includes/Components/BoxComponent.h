@@ -29,15 +29,27 @@ namespace Core
 		bool bMovableCollision = true;
 
 	public:
-		/** Set the Vector value to add to the rect location to fit the owner sprite(s) */
+		/** Set the Vector value to add to the rect location to fit the owner sprite(s)
+		*	@param OffsetX: X value to offset the component from its owner
+		*	@param OffsetY: Y value to offset the component from its owner
+		*/
 		void SetOffset(float OffsetX, float OffsetY);
 
 		/** Get the Vector value to add to the rect location to fit the owner sprite(s) */
 		inline Vector<float> GetOffset() const { return mOwnerOffset; }
+
+		/** Set the collision box dimensions
+		*	@param SizeX: X dimension
+		*	@param SizeY: Y dimension
+		*/
 		void SetBoxSize(float SizeX, float SizeY);
 
 		/** Get the rect that defines the box boundaries of this collision */
 		inline Rect<float> GetRect() const { return mRect; }
+
+		/** Set whether this is a movable collision, which means that its owner can move
+		*	@param State: Movable or not
+		*/
 		inline void SetIsMovableCollision(bool State) { bMovableCollision = State; }
 	};
 }

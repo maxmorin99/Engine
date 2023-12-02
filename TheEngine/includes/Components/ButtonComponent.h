@@ -18,6 +18,8 @@ namespace Core
 		virtual ~ButtonComponent() = default;
 		void Update(float DeltaTime) override;
 		virtual void Draw() override;
+
+		/** Called when something collides with the button. */
 		virtual void OnNotify(const std::unordered_map<std::string, void*>& Value) override;
 
 		Subject<std::unordered_map<std::string, void*>> mOnClickSubject;
@@ -49,31 +51,50 @@ namespace Core
 		bool bHover = false;
 
 	public:
-		/** Set the button's border size, in pixels */
+		/** Set the button's border size, in pixels
+		*	@param Size: Size value to use as the border
+		*/
 		void SetBorderSize(int Size);
 
-		/** Set the rect that defines the button's boundaries */
+		/** Set the rect that defines the button's boundaries
+		*	@param InRect: Rect to use as the button rect
+		*/
 		void SetButtonRect(const Rect<float>& InRect);
 
-		/** Set the font for the button's text */
+		/** Set the font for the button's text
+		*	@param File: File of the font
+		*	@param FontSize: Size of the font
+		*/
 		void SetFont(const std::string& File, int FontSize);
 
-		/** Set the button's text */
+		/** Set the button's text
+		*	@param Text: the actual string of the text
+		*/
 		void SetText(const std::string& Text);
 
-		/** Set the button default color */
+		/** Set the button default color
+		*	@param InColor: Color to use as the default color
+		*/
 		void SetDefaultColor(const Color& InColor);
 
-		/** Set the button's text color */
+		/** Set the button's text color
+		*	@param InColor: Color to use for the text
+		*/
 		void SetTextColor(const Color& InColor);
 
-		/** Set the button color when the cursor is on it */
+		/** Set the button color when the cursor is on it
+		*	@param InColor: Color to use for when the button is hovered by the cursor
+		*/
 		void SetHoverColor(const Color& InColor);
 
-		/** Set the button size scale ratio compared to the screen size */
+		/** Set the button size scale ratio compared to the screen size
+		*	@param Ratio: Percentage of the screen that represents the button's size
+		*/
 		void SetSizeRatio(const Vector<float>& Ratio);
 
-		/** Set the button location scale ratio compared to the screen size */
+		/** Set the button location scale ratio compared to the screen size 
+		*	@param Ratio: Percentage of the screen that represents the button's location
+		*/
 		void SetPositionRatio(const Vector<float>& Ratio);
 
 		/** Get the rect that defines the button boundaries */

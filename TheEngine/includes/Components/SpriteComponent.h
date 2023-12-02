@@ -30,11 +30,20 @@ namespace Core
 		Vector<float> mCenterOffset = Vector<float>::ZeroVector();
 
 	public:
+		/** Set the image color */
 		inline void SetColor(const Color& NewColor) { mColor = NewColor; }
+
+		/** Get the image color */
 		inline const Color& getColor() const { return mColor; }
+
+		/** Set the source image path */
 		void SetFile(const std::string& File);
 		void SetFile(const std::string& File, int IdxX, int IdxY, int ImgCountW, int ImgCountH);
+
+		/** Set the image flip */
 		void SetFlip(const Flip& InFlip);
+
+		/** Get the image flip */
 		inline Flip GetFlip() const { return mFlip; }
 		inline void SetCenterOffset(const Vector<float>& CenterOffset) { mCenterOffset = CenterOffset; }
 		inline Vector<float> GetCenterOffset() const { return mCenterOffset; }

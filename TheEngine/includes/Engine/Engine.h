@@ -14,18 +14,37 @@ namespace Core
 	{
 	public:
 		~Engine() = default;
+		/** Initialize all the services
+		*	@param Name: Window Name
+		*	@param Width: Window width
+		*	@param Height: Window height
+		*/
 		static bool Init(const char* Name, int Width, int Height);
+
+		/** Start the game. At this point, all the services are initialized */
 		static void Start(void);
+
+		/** Called from the input service when the esc key is pressed */
 		static void QuitButtonPressed();
 
 	private:
 		Engine() = default;
 		Engine(const Engine&) = delete;
 		Engine& operator=(const Engine&) = delete;
+
+		/** Update the input service */
 		static void ProcessInput(void);
+
+		/** Update the world service */
 		static void Update(float DeltaTime);
+
+		/** Clear the window and render the world service */
 		static void Render(void);
+
+		/** Shutdown services */
 		static void Shutdown(void);
+
+		/** Get the instance of the engine */
 		static Engine* GetInstance();
 
 		/** Called when WindowQuit is called */

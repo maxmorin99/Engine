@@ -29,17 +29,42 @@ namespace Core
 		MAX
 	};
 
+	/**
+	* @brief Represents a rectangular region with position and dimensions.
+	*
+	* @tparam T The type of the components (X, Y, W, H).
+	*/
 	template <typename T>
 	struct Rect
 	{
+
+		/**
+		* @brief Default constructor, initializes all components to zero.
+		*/
 		Rect() :
 			X(0), Y(0), W(0), H(0) {}
+
+		/**
+		* @brief Parameterized constructor, initializes components with provided values.
+		*
+		* @param InX The X-coordinate of the top-left corner.
+		* @param InY The Y-coordinate of the top-left corner.
+		* @param InW The width of the rectangle.
+		* @param InH The height of the rectangle.
+		*/
 		Rect(T InX, T InY, T InW, T InH)
 			: X(InX), Y(InY), W(InW), H(InH) {}
 
+		/** X-coordinate of the top-left corner */
 		T X;
+
+		/** Y-coordinate of the top-left corner */
 		T Y;
+
+		/** Width of the rectangle */
 		T W;
+
+		/** Height of the rectangle */
 		T H;
 	};
 
@@ -103,25 +128,55 @@ namespace Core
 	struct Vector
 	{
 	public:
+
+		/**
+		* @brief Default constructor, initializes X and Y to zero.
+		*/
 		Vector() : X(0), Y(0) {}
+
+		/**
+		* @brief Parameterized constructor, initializes X and Y with provided values.
+		*
+		* @param InX The value to set for the X component.
+		* @param InY The value to set for the Y component.
+		*/
 		Vector(T InX, T InY) : X(InX), Y(InY) {}
+
+		/**
+		* @brief Calculates the rotation angle (in radians) from the positive X-axis.
+		*
+		* @return The rotation angle from the positive X-axis.
+		*/
 		float GetRotationFromX()
 		{
 			return (float)(acos(X / sqrt(pow(X, 2) + pow(Y, 2))));
 		}
 
-		
+		/** Vector components */
 		T X;
 		T Y;
 	
 
 		/** Operator overload ----------------------------------------- */
 
+
+		/**
+		* @brief Addition operator overload.
+		*
+		* @param Other The vector to add.
+		* @return The result of the addition operation.
+		*/
 		Vector<T> operator + (const Vector& Other) const
 		{
 			return Vector<T>(X + Other.X, Y + Other.Y);
 		}
 
+		/**
+		* @brief Compound addition operator overload.
+		*
+		* @param Other The vector to add.
+		* @return A reference to the modified vector after addition.
+		*/
 		Vector<T>& operator += (const Vector& Other)
 		{
 			X += Other.X;
@@ -129,16 +184,33 @@ namespace Core
 			return *this;
 		}
 
+		/**
+		* @brief Subtraction operator overload.
+		*
+		* @param Other The vector to subtract.
+		* @return The result of the subtraction operation.
+		*/
 		Vector<T> operator - (const Vector& Other) const
 		{
 			return Vector<T>(X - Other.X, Y - Other.Y);
 		}
 
+		/**
+		* @brief Negation operator overload.
+		*
+		* @return The negated vector.
+		*/
 		Vector<T> operator - () const
 		{
 			return Vector<T>(-X, -Y);
 		}
 
+		/**
+		* @brief Compound subtraction operator overload.
+		*
+		* @param Other The vector to subtract.
+		* @return A reference to the modified vector after subtraction.
+		*/
 		Vector<T>& operator -= (const Vector& Other)
 		{
 			X -= Other.X;
@@ -146,6 +218,12 @@ namespace Core
 			return *this;
 		}
 
+		/**
+		* @brief Scalar subtraction operator overload.
+		*
+		* @param Scalar The scalar value to subtract.
+		* @return A reference to the modified vector after subtraction.
+		*/
 		Vector<T>& operator -= (const T Scalar)
 		{
 			X -= Scalar;
@@ -153,16 +231,34 @@ namespace Core
 			return *this;
 		}
 
+		/**
+		* @brief Equality comparison operator overload.
+		*
+		* @param Other The vector to compare.
+		* @return A boolean indicating equality.
+		*/
 		bool operator == (const Vector& Other) const
 		{
 			return this->X == Other.X && this->Y == Other.Y;
 		}
 
+		/**
+		* @brief Inequality comparison operator overload.
+		*
+		* @param Other The vector to compare.
+		* @return A boolean indicating inequality.
+		*/
 		bool operator != (const Vector& Other) const
 		{
 			return this->X != Other.X || this->Y != Other.Y;
 		}
 
+		/**
+		* @brief Assignment operator overload.
+		*
+		* @param Other The vector to assign.
+		* @return A reference to the modified vector after assignment.
+		*/
 		Vector<T>& operator = (const Vector& Other)
 		{
 			this->X = Other.X;
@@ -170,30 +266,54 @@ namespace Core
 			return *this;
 		}
 
+		/**
+		* @brief Scalar multiplication operator overload.
+		*
+		* @param Scalar The scalar value to multiply.
+		* @return The result of the multiplication operation.
+		*/
 		Vector<T> operator * (T Scalar) const
 		{
 			return Vector<T>(X * Scalar, Y * Scalar);
 		}
 
+		/**
+		* @brief Scalar division operator overload.
+		*
+		* @param Scalar The scalar value to divide.
+		* @return The result of the division operation.
+		*/
 		Vector<T> operator / (T Scalar) const
 		{
 			return Vector<float>(X / Scalar, Y / Scalar);
 		}
 
 
-		/* return a vector with X(0) and Y (0) */
+		/**
+		* @brief Returns a vector with X(0) and Y(0).
+		*
+		* @return The zero vector.
+		*/
 		static Vector<T> ZeroVector() 
 		{
 			return Vector<T>(0, 0);
 		}
 
-		/* return the magnitude of the vector */
+		/**
+		* @brief Calculates the magnitude (length) of the vector.
+		*
+		* @return The magnitude of the vector.
+		*/
 		T Length() const
 		{
 			return static_cast<T>(sqrt(pow(X, 2) + pow(Y, 2)));
 		}
 
-		/* return the normalize version of the vector */
+		/**
+		* @brief Returns the normalized version of the vector.
+		*
+		* @return The normalized vector.
+		*/
 		Vector<T> GetNormalized() const
 		{
 			if (Length() != 0.f)
@@ -206,13 +326,21 @@ namespace Core
 			return *this;
 		}
 
-		/* Normalize the vector */
+		/**
+		* @brief Normalizes the vector in-place.
+		*/
 		void Normalize()
 		{
 			*this = Vector<T>::ZeroVector();
 		}
 
-		/* Distance between Point1 and Point2 */
+		/**
+		* @brief Calculates the distance between two points represented by vectors.
+		*
+		* @param Point1 The first point.
+		* @param Point2 The second point.
+		* @return The distance between the two points.
+		*/
 		static float Dist(const Vector<T>& Point1, const Vector<T>& Point2)
 		{
 			float DistX = abs(Point1.X - Point2.X);
@@ -220,6 +348,12 @@ namespace Core
 			return (float)sqrt(pow(DistX, 2) + pow(DistY, 2));
 		}
 
+		/**
+		* @brief Calculates the dot product of this vector with another vector.
+		*
+		* @param Other The other vector.
+		* @return The dot product of the two vectors.
+		*/
 		T Dot(const Vector<T>& Other) const
 		{
 			return X * Other.X + Y * Other.Y;
@@ -271,26 +405,44 @@ namespace Core
 		static const Flip None;
 	};
 
+	/**
+	* @brief Represents data for a texture, including details for sprite sheet handling.
+	*/
 	struct TextureData
 	{
+
+		/**
+		* @brief Constructor for initializing texture data.
+		*
+		* @param Texture The file path of the texture.
+		* @param R The number of rows in the sprite sheet.
+		* @param C The number of columns in the sprite sheet.
+		* @param Idx The index in the sprite sheet of the desired sprite.
+		* @param Pad Padding in pixels between each sprite.
+		*/
 		TextureData(const std::string& Texture, int R, int C, int Idx, uint8_t Pad) :
 			File(Texture), Rows(R), Col(C), Index(Idx), Padding(Pad) {}
 
-		/* File path of the texture */
+		/** File path of the texture */
 		std::string File;
 
-		/* Rows count */
+		/** Rows count */
 		int Rows;
 
-		/* Columns count */
+		/** Columns count */
 		int Col;
 
-		/* Index in the sprite sheet of the desired sprite */
+		/** Index in the sprite sheet of the desired sprite */
 		int Index;
 
-		/* Padding in Px between each sprites */
+		/** Padding in Px between each sprites */
 		uint8_t Padding;
 
+		/**
+		* @brief Creates an empty TextureData instance with default values.
+		*
+		* @return An empty TextureData instance.
+		*/
 		static TextureData Empty()
 		{
 			return TextureData("", 0, 0, 0, 0);
@@ -300,6 +452,9 @@ namespace Core
 
 	/** Collision ------------------------------------------------- */
 
+	/**
+	* @brief Enumerates collision shapes.
+	*/
 	enum class ECollisionShape : uint8_t
 	{
 		Circle = 0,
@@ -309,6 +464,9 @@ namespace Core
 		MAX
 	};
 
+	/**
+	* @brief Enumerates collision channels for categorizing collision objects.
+	*/
 	enum class ECollisionChannel : uint8_t
 	{
 		Player = 0,
@@ -320,6 +478,9 @@ namespace Core
 		MAX
 	};
 
+	/**
+	* @brief Enumerates collision responses for determining how collisions should be handled.
+	*/
 	enum class ECollisionResponse : uint8_t
 	{
 		Block = 0,
@@ -329,6 +490,9 @@ namespace Core
 		MAX
 	};
 
+	/**
+	* @brief Enumerates collision sides for indicating the side of a collision.
+	*/
 	enum class ECollisionSide
 	{
 		Undefined = 0,

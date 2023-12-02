@@ -39,25 +39,34 @@ namespace Core
 		virtual ~AnimationComponent() = default;
 		virtual void Start();
 		virtual void Destroy();
-
-		/** Called to clone this component and all important member variables */
 		virtual Component* Clone(Object* Owner) override;
-
-		/** If a child component calls Clone(), it will call SetupClone to clone all important member variables of its parents component */
 		virtual void SetupClone(Component* Child) override;
 		
 		void Update(float DeltaTime) override;
 		virtual void Draw() override;
 
-		/** Add a new animation clip */
+		/** Add a new animation clip
+		*	@param InName: Name of the clip to add
+		*	@param InClip: Reference to the clip to add
+		*/
 		void AddClip(const std::string& InName, Clip& InClip);
 
-		/** Set a new clip to start playing it */
+		/** Set a new clip to start playing it
+		*	@param InClipName: Name of the clip
+		*	@param bLoop: Loop or not the clip
+		*	@param FunPtr: Function to call when a non looping clip ends
+		*/
 		void SetClip(const std::string& InClipName, bool bLoop, std::function<void()> FunPtr = nullptr);
 
-		/** This clip will be selected when a non looping animation ends and no other is requested */
+		/** This clip will be selected when a non looping animation ends and no other is requested
+		*	@param InClip: Reference to the clip that will be considered as the default clip
+		*/
 		void SetDefaultClip(Clip& InClip);
+
+		/** Allow this component to update animation */
 		void Enable();
+
+		/** Stop this component to update animation */
 		void Disable();
 
 	private:
@@ -72,8 +81,13 @@ namespace Core
 		bool bShouldPlay = true;
 
 	public:
+		/** Get the name of the currently playing clip */
 		inline std::string GetCurrentClipName() const { return mCurrentClip.Name; }
+
+		/** Set the color for the death animation */
 		inline void SetDeathAnimationColor(const Color& InColor) { mDeathAnimationColor = InColor; }
+
+		/** Get the color set for the death animation */
 		inline Color GetDeathAnimationColor() const { return mDeathAnimationColor; }
 	};
 }

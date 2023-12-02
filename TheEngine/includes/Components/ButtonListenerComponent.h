@@ -12,7 +12,11 @@ namespace Core
 	public:
 		ButtonListenerComponent(Object* Owner);
 		virtual ~ButtonListenerComponent() = default;
+
+		/** Called when the play button is pressed */
 		void Play();
+
+		/** Called when the quit button is pressed */
 		void Quit();
 
 		/** Called when the listened button is clicked */

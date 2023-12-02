@@ -29,10 +29,14 @@ namespace Core
 		float GetFirstAvailablePositionY();
 
 	public:
-		/** Set the rect that defines the box boundaries */
+		/** Set the rect that defines the box boundaries
+		*	@param InRect: The rect that will be used to set the button's rect
+		*/
 		inline void SetRect(const Rect<float>& InRect) { mRect = InRect; }
 
-		/** Set the padding value to apply between eah buttons */
+		/** Set the padding value to apply between eah buttons
+		*	@param InPadding: Value that represents the padding to apply
+		*/
 		inline void SetPadding(float InPadding) { mPadding = InPadding; }
 	};
 }
